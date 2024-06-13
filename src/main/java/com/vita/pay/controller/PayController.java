@@ -41,9 +41,6 @@ public class PayController {
 	   
 	    Long userId = getUserIdService.getId(request);
 	    
-	    System.out.println("userId :" + userId);
-	    System.out.println("userId :" + userId);
-	    
 	    ModelAndView mv = new ModelAndView();
 	    // 장바구니 목록 가져오기
 	    List<BasketPageVo> basketPageList = new ArrayList<>();
