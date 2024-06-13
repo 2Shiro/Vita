@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.oauth.mapper.RefreshMapper">  
+  
+   
+   <select id="existsByRefresh">
+   	SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+	  FROM refresh_tocken
+     WHERE refresh = #{refresh}
+       AND ISVALID = 1
+	
+   </select>
+   
+   <select id = "findByToken">
+   
+	     SELECT
+	        tocken_id,
+	        username,
+	        refresh,
+	        expiration,
+	        id,
+	        isValid
+	    FROM
+	        refresh_tocken
+	    WHERE
+	        refresh = #{refresh}
+	    AND isValid = 1
+    </select>
+    
+   <insert id="save">
+   	  INSERT INTO refresh_tocken (
+		    tocken_id,
+		    username,
+		    refresh,
+		    expiration,
+		    id
+		) VALUES (
+		    (SELECT NVL(MAX(tocken_id), 0) + 1 FROM refresh_tocken),
+		    #{username},
+		    #{refresh},
+		    #{expiration},
+		    #{id}
+		)
+   </insert>
+   <update id="invalidateOldTokens">
+	    UPDATE refresh_tocken
+	    SET isValid = 0
+	    WHERE id = #{id}
+   </update>
+   
+   <update id="deleteByRefresh">
+        UPDATE refresh_tocken
+	       SET isValid = 0
+	     WHERE refresh = #{refresh}
+   
+   </update>
+   
+   
+   
+   
+    <insert id="saveNewToken">
+	    INSERT INTO refresh_tocken (tocken_id, username, refresh, expiration, id, isValid)
+	    VALUES (#{tocken_id}, #{username}, #{refresh}, #{expiration}, #{id}, 1)
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

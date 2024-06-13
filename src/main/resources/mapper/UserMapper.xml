@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.oauth.mapper.UserMapper">  
+  
+    <select   id="findByUsername">
+		  SELECT
+		    ID,
+		    EMAIL,
+		    NAME,
+		    PASSWORD,
+		    SEX,
+		    BIRTH,
+		    ROLE,
+		    OAUTH_PROVIDER,
+		    OAUTH_EMAIL
+		FROM
+		    users
+		where OAUTH_EMAIL = #{oauth_email}
+		OR EMAIL = #{oauth_email}
+     </select>
+     <insert id="save">
+    
+		INSERT INTO USERS (
+		    ID,
+	        NAME,
+	        SEX,
+	        ROLE,
+	        OAUTH_PROVIDER,
+	        OAUTH_EMAIL
+		)
+		SELECT
+		    NVL(MAX(ID), 0) + 1,	   
+		    #{name},
+		    'M',
+		    'ROLE_USER',
+		    #{oauth_provider},
+		    #{oauth_email}
+		   	    
+		FROM USERS
+     </insert>
+     
+     <update id="updateOauth">
+     	UPDATE users
+		SET
+		 OAUTH_PROVIDER = #{oauth_provider},
+		    OAUTH_EMAIL = #{oauth_email}
+		    
+		WHERE   
+		   email = #{oauth_email}
+     
+     </update>
+   
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

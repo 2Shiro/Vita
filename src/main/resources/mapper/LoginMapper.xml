@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.login.mapper.LoginMapper">  
+  
+    <select   id="findByUsername">
+		  SELECT
+		    ID,
+		    EMAIL,
+		    NAME,
+		    PASSWORD,
+		    SEX,
+		    BIRTH,
+		    ROLE,
+		    OAUTH_PROVIDER,
+		    OAUTH_EMAIL
+		FROM
+		    users
+		where email = #{email}
+     </select>
+     <select id="findOAuthEmail">
+    
+		SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+		FROM
+		    users
+		where OAUTH_EMAIL = #{email}
+     
+     </select>
+     <update id ="UpdateSignup">
+       UPDATE users
+	   SET
+		    PASSWORD = #{password},
+		    EMAIL = #{email}
+	   WHERE   
+		     OAUTH_EMAIL = #{email}
+     
+     </update>
+     
+     <insert id="saveSignup">
+    
+		INSERT INTO USERS (
+		    ID,
+	        EMAIL,
+	        NAME,
+	        PASSWORD,
+	        SEX,
+	        ROLE	   
+		)
+		SELECT
+		    NVL(MAX(ID), 0) + 1,
+		    #{email},
+		    #{name},
+		    #{password},
+		    'M',
+		    'ROLE_USER'
+ 
+		FROM USERS
+     </insert>
+     
+     <select id ="getMaxUserId">
+     
+     	SELECT MAX(ID) FROM USERS
+     </select>
+     <insert id="saveDelivery">
+      INSERT INTO delivery (
+    address_id,
+    id,
+    name,
+    recipent,
+    tel,
+    zipcode,
+    address,
+    addressdetail,
+    req,
+    defualt
+)
+VALUES (
+    #{id},
+    (SELECT NVL(MAX(id), 0) + 1 FROM delivery),
+    '기본배송지',
+    #{name},
+    #{tel},
+    #{zipcode},
+    #{address},
+    #{addressdetail},
+    '없음',
+    1
+);
+     
+     </insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
