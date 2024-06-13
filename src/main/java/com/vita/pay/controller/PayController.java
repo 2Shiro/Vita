@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.vita.controller.GetUserIdService;
 import com.vita.oauth.domain.CustomOAuth2User;
 import com.vita.oauth.jwt.JWTUtil;
 import com.vita.pay.domain.BasketPageVo;
@@ -19,6 +20,8 @@ import com.vita.pay.domain.ImgsVo;
 import com.vita.pay.domain.MakeVo;
 import com.vita.pay.domain.ProdVo;
 import com.vita.pay.mapper.PayMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class PayController {
@@ -29,15 +32,17 @@ public class PayController {
 	@Autowired
 	private PayMapper payMapper;
 	
+	@Autowired
+	private GetUserIdService getUserIdService;
+	
 	@GetMapping("/Pay/Basket")
-	public ModelAndView basket() {
+	public ModelAndView basket(HttpServletRequest request) {
 
-	    // 인증 정보 확인
-	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	   
+	    Long userId = getUserIdService.getId(request);
 	    
-	    // 사용자 정보 확인
-	    CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-	    Long userId = customOAuth2User.getUserId();
+	    System.out.println("userId :" + userId);
+	    System.out.println("userId :" + userId);
 	    
 	    ModelAndView mv = new ModelAndView();
 	    // 장바구니 목록 가져오기
