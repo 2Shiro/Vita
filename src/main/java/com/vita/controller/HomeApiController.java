@@ -51,7 +51,7 @@ public class HomeApiController {
                 product.setAverage_rating(0L);
                 product.setString_average_arting("3.0");
             } else {
-            	  double avgRating = (product.getAverage_rating() / 2.0) / 10.0;
+            	  double avgRating = product.getAverage_rating();
                   
                   product.setString_average_arting(String.format("%.2f", avgRating));
             }
@@ -60,7 +60,7 @@ public class HomeApiController {
         for (AllProductsDto allProducts : productsDto) {
             System.out.println(allProducts);
         }
-
+ 
         return ResponseEntity.ok(productsDto);
     }
 	
