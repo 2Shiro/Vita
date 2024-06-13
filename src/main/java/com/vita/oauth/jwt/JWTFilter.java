@@ -29,13 +29,13 @@ public class JWTFilter extends OncePerRequestFilter {
 
 	private final JWTUtil jwtUtil;
 	private final CustomUserDetailsService customUserDetailsService;
-    private final TokenRotate tokenRotate;
+   
 
-	public JWTFilter(JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService, TokenRotate tokenRotate) {
+	public JWTFilter(JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
 
 		this.jwtUtil = jwtUtil;
 		this.customUserDetailsService = customUserDetailsService;
-		this.tokenRotate = tokenRotate;
+		
 	}
 	
 	@Override
@@ -69,57 +69,23 @@ public class JWTFilter extends OncePerRequestFilter {
 	        
 	        
 
-	        try {
-	            // 토큰 만료 여부 확인
-	            jwtUtil.isExpired(token);
-	        } catch (ExpiredJwtException e) {
-	            System.out.println("토큰 만료됨");
-	            try {
-	                System.out.println("새로운 토큰 만들기중");
-	                tokenRotate.handleExpiredAccessToken(request, response);
+				try {
+				    jwtUtil.isExpired(token);
+				} catch (ExpiredJwtException e) {
 
-	                // 새로운 토큰을 발급한 후, 새로운 토큰으로 계속 처리
-	                token = null;
-	                Cookie[] recookies = request.getCookies();
-	                if (recookies != null) {
-	                    for (Cookie cookie : recookies) {
-	                        if ("access".equals(cookie.getName())) {
-	                            token = cookie.getValue();
-	                            break;
-	                        }
-	                    }
-	                }
+				    //response body
+				    PrintWriter writer = response.getWriter();
+				    writer.print("access token expired");
 
-	                if (token == null) {
-	                    System.out.println("새로 발급된 토큰이 없음 또는 잘못된 토큰 형식");
-	                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	                    response.getWriter().print("새로 발급된 토큰이 없음 또는 잘못된 토큰 형식");
-	                    return;
-	                }
-	            } catch (ExpiredJwtException ex) {
-	                System.out.println("리프레시 토큰도 만료됨");
-	                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	                response.getWriter().print("refresh token expired");
-	                return;
-	            } catch (Exception ex) {
-	                System.out.println("토큰 갱신 중 오류 발생: " + ex.getMessage());
-	                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	                response.getWriter().print("토큰 갱신 중 오류 발생");
-	                return;
-	            }
-	        }
+				    //response status code
+				    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				    return;
+				}
+
+	             
 	        
 	        
 
-	        System.out.println("-------------------------------");
-	        // 토큰에서 category 확인 (access 토큰인지 확인)
-	        String category = jwtUtil.getCategory(token);
-	        if (!"access".equals(category)) {
-	            System.out.println("유효하지 않은 access 토큰");
-	            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	            response.getWriter().print("invalid access token");
-	            return;
-	        }
 
 	       // System.out.println("2222222222222222222222222222222222222");
 	      //  System.out.println("888888888888888888888888");
@@ -131,6 +97,8 @@ public class JWTFilter extends OncePerRequestFilter {
 		Long user_id = jwtUtil.getUserId(token);
 	
 		String name = jwtUtil.getName(token);
+		
+		String oauth = jwtUtil.getOauth(token);
 
 		// userDTO를 생성하여 값 set
 		/*
@@ -150,27 +118,41 @@ public class JWTFilter extends OncePerRequestFilter {
 		System.out.println(request.getRequestURI());
 		System.out.println(request.getRequestURI());
 		 // 일반 로그인 토큰인지 OAuth2 토큰인지 확인 후 처리
-        if (isOAuth2User(token)&& request.getRequestURI().equals("/gohome")) {
-        	//System.out.println("오스로그인으로옴");
+        if (isOAuth2User(token)&& request.getRequestURI().equals("/home")) {
+        	System.out.println("오스로그인으로옴");
         
             // OAuth2 토큰 처리
             CustomOAuth2User customOAuth2User = new CustomOAuth2User(userVo);
             Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
             
+         
+            response.sendRedirect("/");
             // 단순히 성공 응답만 반환
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentType("application/json");
-            response.getWriter().print("{\"message\": \"OAuth2 login successful\"}");
+			/*
+			 * response.setStatus(HttpServletResponse.SC_OK);
+			 * response.setContentType("application/json");
+			 * response.getWriter().print("{\"message\": \"OAuth2 login successful\"}");
+			 */
             
             return;
         } else {
-        //	System.out.println("444444444444444444444444444444");
-            // 일반 로그인 토큰 처리
-            CustomUserDetails customUserDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(email);
-            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authToken);
-         //   System.out.println("23333333333333333333333");
+        	
+        	if(isOAuth2User(token)) {
+        		System.out.println("오스로그인처리");
+        		  CustomOAuth2User customOAuth2User = new CustomOAuth2User(userVo);
+                  Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+                  SecurityContextHolder.getContext().setAuthentication(authToken);
+        	}else{
+        		System.out.println("일반 로그인 토큰 처리");
+                // 일반 로그인 토큰 처리
+                CustomUserDetails customUserDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(email);
+                Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+             //   System.out.println("23333333333333333333333");
+        		
+        	}
+        	
         }
 		
 
@@ -178,6 +160,9 @@ public class JWTFilter extends OncePerRequestFilter {
 	}
 	 private boolean isOAuth2User(String token) {
 	        // OAuth2 토큰 여부를 확인하는 로직 (예: 토큰의 특정 클레임을 확인)
-	        return jwtUtil.getCategory(token).equals("access");
+		
+		
+		 System.out.println(jwtUtil.getOauth(token).equals("oauth"));
+	        return jwtUtil.getOauth(token).equals("oauth");
 	    }
 }

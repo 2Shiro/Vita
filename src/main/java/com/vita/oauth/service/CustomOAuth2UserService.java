@@ -74,7 +74,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             
             // 저장된 사용자 정보를 다시 조회
             userVo = userMapper.findByUsername(getEmail); // 유저아이뒤 가지고오기 위해서
-           
+            userVo.setOauth("oauth");
             System.out.println("null이 아닐때 userVo : " + userVo);
             return new CustomOAuth2User(userVo);
         }
@@ -91,7 +91,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         	//oauth회원이면 update를 할 필요가 없음
         	
         	   System.out.println("유저아뒤 oauth로 있을떄 이메일이 일로오나?");
-			
+        	userVo.setOauth("oauth");
             return new CustomOAuth2User(userVo);
         }
     }

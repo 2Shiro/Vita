@@ -19,4 +19,6 @@ public class UserVo {
 	private String oauth_provider;
 	private String oauth_email;
 	
+	private String oauth;
+	
 }

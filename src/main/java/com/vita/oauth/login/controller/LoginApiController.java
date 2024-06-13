@@ -25,33 +25,7 @@ public class LoginApiController {
         return "스쳐지나감";
     }
 	
-	 @GetMapping("/fsdfsdf/fsd")
-	    public ResponseEntity<String> headerToken(@RequestHeader("Authorization") String authorizationHeader) {
-		   System.out.println("headerToken 패치 진행중");
-		   System.out.println(authorizationHeader);
-		   System.out.println("headerToken 패치 진행중");
-	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        HttpHeaders headers = new HttpHeaders();
-	        
-	        // 'Authorization' 헤더에서 토큰 추출
-	        String accessToken = null;
-	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            accessToken = authorizationHeader.substring(7); // 토큰 부분 추출
-	        }
-	        
-	        // 토큰을 다시 'Authorization' 헤더에 추가
-	        headers.add("Authorization", "Bearer " + accessToken);
-	        
-	        if (authentication.isAuthenticated()) {
-	            return ResponseEntity.ok()
-	                                 .headers(headers)
-	                                 .body("Success"); // 성공적인 응답 본문
-	        } else {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-	                                 .headers(headers)
-	                                 .body("Unauthorized"); // 권한 없는 응답 본문
-	        }
-	    }
+	
 	 
 
 

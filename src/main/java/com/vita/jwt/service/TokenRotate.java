@@ -69,8 +69,9 @@ public class TokenRotate {
         String name = jwtUtil.getName(refresh);
         int accessTokenValiditySeconds = 600; // 600초 = 10분
         int refreshTokenValiditySeconds = 86400; // 86400초 = 24시간
+        String oauth = "oauth";
         // make new JWT
-        String newAccess = jwtUtil.createJwt("access", username, role, (long) accessTokenValiditySeconds * 1000, userId, name);
+        String newAccess = jwtUtil.createJwt("access", username, role, (long) accessTokenValiditySeconds * 1000, userId, name, oauth);
        
         // add new access token to the response cookies
         System.out.println("어디서문제지4");
