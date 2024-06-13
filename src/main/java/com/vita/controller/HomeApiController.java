@@ -38,6 +38,7 @@ public class HomeApiController {
             // nutrient 리스트가 비어 있으면 기본값 "비타민A" 설정
             if (nutrients.isEmpty()) {
                 nutrients.add("비타민A");
+                nutrients.add("비타민A");
             }
             product.setNutrient(nutrients.toArray(new String[0]));
             
