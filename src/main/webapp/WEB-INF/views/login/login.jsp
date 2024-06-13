@@ -410,17 +410,7 @@ ul li {
 		        })
 		        .then(text => {
 		            console.log(text); // 반환된 텍스트를 콘솔에 출력
-		            // 로그인 성공 시, 필요한 로직을 추가
-		            fetch('/gohome', {
-		                method: 'GET',
-		            })
-		            .then(response => {
-		                if (response.ok) {
-		                    window.location.href = '/home';
-		                } else {
-		                    console.error('Token validation failed');
-		                }
-		            });
+		            window.location.href = '/home'; // 로그인 성공 시 홈으로 이동
 		        })
 		        .catch(error => console.error('Error:', error));
 		    });

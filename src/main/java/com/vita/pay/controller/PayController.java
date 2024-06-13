@@ -80,27 +80,27 @@ public class PayController {
 
 	
 	@RequestMapping("/Pay/PayForm")
-	public String payform() {
+	public String payform(HttpServletRequest request) {
+		 Long userId = getUserIdService.getId(request);
 		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		
-		CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-		Long userId = customOAuth2User.getUserId();
 		
 		System.out.println("user_id: " + userId);
+		System.out.println("일로오긴하나?");
+		System.out.println("일로오긴하나?");
+		System.out.println("일로오긴하나?");
 		
 		return "pay/pay";
 	}
 	
 	@RequestMapping("/Pay/Success")
-	public String success() {
+	public String success(HttpServletRequest request) {
 		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		
-		CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-		Long userId = customOAuth2User.getUserId();
+		Long userId = getUserIdService.getId(request);
 		
 		System.out.println("user_id: " + userId);
+		System.out.println("일로오긴하나?");
+		System.out.println("일로오긴하나?");
+		System.out.println("일로오긴하나?");
 		
 		return "pay/success";
 	}

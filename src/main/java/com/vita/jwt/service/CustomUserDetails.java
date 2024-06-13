@@ -78,4 +78,7 @@ public class CustomUserDetails implements UserDetails {
 
         return UserVo.getName();
     }
+    public String getOauth() {
+    	return UserVo.getOauth();
+    }
 }

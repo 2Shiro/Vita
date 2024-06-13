@@ -74,8 +74,8 @@
     defualt
 )
 VALUES (
+    (SELECT NVL(MAX(address_id), 0) + 1 FROM delivery),
     #{id},
-    (SELECT NVL(MAX(id), 0) + 1 FROM delivery),
     '기본배송지',
     #{name},
     #{tel},
