@@ -15,7 +15,7 @@
 		    OAUTH_EMAIL
 		FROM
 		    users
-		where email = #{email}
+		where OAUTH_EMAIL = #{email}
      </select>
      <select id="findOAuthEmail">
     
@@ -84,7 +84,7 @@ VALUES (
     #{addressdetail},
     '없음',
     1
-);
+)
      
      </insert>
 </mapper>

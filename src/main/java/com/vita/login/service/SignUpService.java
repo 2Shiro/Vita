@@ -22,7 +22,7 @@ public class SignUpService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     
 	
-	@Transactional
+	
     public void save( SignUpDTO dto) { //도메인 유저
     	
     	String bCryPasswd = bCryptPasswordEncoder.encode(dto.getPassword());
