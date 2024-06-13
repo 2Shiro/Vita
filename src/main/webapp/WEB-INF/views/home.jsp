@@ -121,7 +121,7 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 8px;
-    max-height: 44px;
+    max-height: 36px;
     line-height: 34px;
     overflow: hidden;
     padding-left: 4px;
@@ -230,11 +230,11 @@
       
       <div id="tab_wrap" class="inner">
         <div class="tabs">
-          <div class="tab active" data-target="allProducts">전체</div>
-          <div class="tab" data-target="rank">인기</div>
-          <div class="tab" data-target="ingredient">성분별</div>
-          <div class="tab" data-target="worry">건강고민별</div>
-          <div class="tab" data-target="gender">성별</div>
+          <div class="tab active" data-target="allProducts"><a href="/Item/View">전체</a></div>
+          <div class="tab" data-target="rank"><a href="/Item/View">인기</a></div>
+          <div class="tab" data-target="ingredient"><a href="/Item/View">성분별</a></div>
+          <div class="tab" data-target="worry"><a href="/Item/View">건강고민별</a></div>
+          <div class="tab" data-target="gender"><a href="/Item/View">성별</a></div>
 
         </div>
 
@@ -449,41 +449,7 @@
  <script>
  
  document.addEventListener("DOMContentLoaded", function() {
-	 fetch('/home/allproducts')
-     .then(response => response.json())
-     .then(data => {
-         console.log("데이터가 옴");
-         console.log(data);
-         const allProductsEl = document.getElementById('allProducts');
-         allProductsEl.innerHTML = '';  // 기존 내용을 비웁니다.
-
-         data.forEach((product, index) => {
-             const nutrientStr = product.nutrient.map(nutrient => `<p class="type">#\${nutrient}</p>`).join('');
-             const productHtml = `
-                 <a href="#" class="product">
-                     <div class="ranking_list">
-                         <div class="ranking">\${index + 1}위</div>
-                     </div>
-                     <img src="/img/\${product.img}.jpg" alt="Product ${index + 1}">
-                     <div class="product_util">
-                         <div class="txt1">\${product.make_name}</div>
-                         <div class="txt2">\${product.name}</div>
-                         <div class="review">
-                             <span class="star-point">\${product.string_average_arting}</span>
-                             <span class="txt3">(\${product.total_sell}개)</span>
-                         </div>
-                         <div class="type_list">
-                             \${nutrientStr}
-                         </div>
-                     </div>
-                 </a>
-             `;
-             allProductsEl.innerHTML += productHtml;
-         });
-     })
-     .catch(error => {
-         console.error('Error fetching products:', error);
-     });
+	 
 	});
  /*--------------------------  */
  

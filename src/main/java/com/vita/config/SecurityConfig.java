@@ -104,6 +104,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/home.jsp", "/home").permitAll()
                 .requestMatchers("/reissue").permitAll()
                 .requestMatchers("/ffdd").permitAll()
+                .requestMatchers("/home/allproducts").permitAll()
                 .anyRequest().authenticated()
         );
 

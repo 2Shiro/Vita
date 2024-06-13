@@ -1,61 +1,41 @@
 document.addEventListener("DOMContentLoaded", function() {
-	 const token = getCookie('access');
-	    console.log(token);
-	     if (token) {
-	        const memberList = document.getElementById('header-member-list');
-	        memberList.innerHTML = `
-	            <li><a href="#" id="logout">Logout</a></li>
-	        `;
+	 fetch('/home/allproducts')
+     .then(response => response.json())
+     .then(data => {
+         console.log("데이터가 옴");
+         console.log(data);
+         const allProductsEl = document.getElementById('allProducts');
+         allProductsEl.innerHTML = '';  // 기존 내용을 비웁니다.
 
-	        document.getElementById('logout').addEventListener('click', function(event) {
-	            event.preventDefault();
-	            logout(token);
-	        });
-	    } 
-	    
-	    /* -------------------------------------------------- */
-	
+         data.forEach((product, index) => {
+             const nutrientStr = product.nutrient.map(nutrient => `<p class="type">#${nutrient}</p>`).join('');
+             const productHtml = `
+                 <a href="#" class="product">
+                     <div class="ranking_list">
+                         <div class="ranking">${index + 1}위</div>
+                     </div>
+                     <img src="/img/${product.img}.jpg" alt="Product ${index + 1}">
+                     <div class="product_util">
+                         <div class="txt1">${product.make_name}</div>
+                         <div class="txt2">${product.name}</div>
+                         <div class="review">
+                             <span class="star-point">${product.string_average_arting}</span>
+                             <span class="txt3">(${product.total_sell}개)</span>
+                         </div>
+                         <div class="type_list">
+                             ${nutrientStr}
+                         </div>
+                     </div>
+                 </a>
+             `;
+             allProductsEl.innerHTML += productHtml;
+         });
+     })
+     .catch(error => {
+         console.error('Error fetching products:', error);
+     });
 
  });
  /* -------------------------------------------------------------- */
 
  
-function logout() {
-    console.log("패치 실행됨");
-    fetch('/logout', {
-        method: 'POST'
-    })
-    .then(response => {
-        if (response.ok) {
-            // 쿠키 삭제
-          
-            location.reload();
-        } else {
-            alert('Logout failed!');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
- 
- /* ----------------------------------------- */
- 
- 
- function parseJwt(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    return JSON.parse(jsonPayload);
-}
- function getCookie(name) {
-	    let cookieArr = document.cookie.split(";");
-	    for (let i = 0; i < cookieArr.length; i++) {
-	        let cookiePair = cookieArr[i].split("=");
-	        if (name === cookiePair[0].trim()) {
-	            return decodeURIComponent(cookiePair[1]);
-	        }
-	    }
-	    return null;
-	}

@@ -1,0 +1,280 @@
+button{
+	border: none;
+	background: none;
+}
+.recruitTitContainer {
+    width: 100%;   
+    position: relative;
+}
+
+.recruitTitBox {
+    background-color: #f9f9f9;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 20px;
+    position: relative;
+   
+    
+}
+
+.recontainer {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+}
+
+.box_top {
+    display: flex;
+    align-items: center;
+   padding: 24px 0;
+   flex: 2;
+}
+
+
+.recruitTit {
+    font-size: 28px;
+    letter-spacing: -5px;
+    display:flex;
+    margin-right: 20px;
+}
+
+.btn_filter {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.fiex_layout {
+    display: flex;
+    align-items: center;
+}
+
+.filter_text {
+    line-height: 22px;
+    font-weight: bold;
+    color: #007bff;
+    font-size: 16px;
+}
+
+
+
+.arrow {
+   width: 20px;
+    height: 20px;
+    background-image: url(/img/arrownone.svg);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 100%;
+    margin-left: 12px;
+}
+
+.filter-box {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.department-box,
+.district-box,
+.carreer-box {
+    width: 466px;
+    padding: 10px;
+}
+
+.filter-box ul {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 32px 24px 32px 32px;
+}
+
+.filter-box ul li {
+    width: 94px;
+}
+
+.filter-box ul li button {
+    padding: 13px 0;
+    border: 1px solid #e8e8e8;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 22px;
+    color: #6a6a6a;
+    background: #f8f8f8;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    vertical-align: middle;
+}
+
+.filter-box ul li button.active,
+.filter-box ul li button:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.button-box {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.button-box button {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   width: 100%;
+   padding: 24px 0;
+   border-bottom: 1px solid #e8e8e8;
+}
+
+.search-reset {
+    background-color: #f1f1f1;
+}
+
+.search-button {
+	border: none;
+    height: 48px;
+    background: url(/img/icon_search.png) no-repeat 50%;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    display: block;
+    width: 28px;
+}
+
+.box_bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 24px 0;
+    flex: 8;
+}
+
+.btn_boxes {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+
+.btn_box {
+  
+}
+
+.btn_filter_box span {
+    font-size: 16px;
+    letter-spacing: 0;
+    line-height: 22px;
+}
+.btn_filter_box span.filter_text {
+    font-weight: 700;
+    color: #003ecb;
+    margin-left: 12px;
+    display: none;
+}
+
+.btn_filter_box {
+     padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid #d2d2d2;
+    display: flex;
+    align-items: center;
+}
+
+.btn_reset {
+    display: flex;
+    align-items: center;
+}
+
+.btn_reset i {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: url(/img/reset-icon.svg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    margin-right: 4px;
+}
+ .btn_box .btn_reset span {
+    font-size: 16px;
+    letter-spacing: 0;
+    color: #9e9e9e;
+    line-height: 22px;
+}
+.search-box {
+    width: 300px;
+    height: 48px;
+    border: 1px solid #d2d2d2;
+    position: relative;
+    border-radius: 8px;
+}
+
+.search-box input {
+	border: none;
+    display: block;
+    padding: 0 58px 0 10px;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    color: #333;
+    margin-left: 0;
+    border-radius: 8px;
+    font-size: 15px;
+    letter-spacing: 0;
+}
+
+
+
+.tag_box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+    margin-top: -1px
+}
+
+.tag_box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag_box ul li {
+    
+}
+
+.tag_box ul li button {
+    padding: 7px 11px 8px;
+    display: block;
+    border: 1px solid #d2d2d2;
+    border-radius: 99px;
+}
+
+.tag_box ul li button:hover {
+    background: #007bff;
+    color: #fff;
+}
+.recruitTitBox.tag_box ul li button span {
+    font-size: 14px;
+    letter-spacing: 0;
+    font-weight: 500;
+    color: #444;
+}

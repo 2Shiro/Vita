@@ -14,6 +14,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class CustomLogoutFilter extends GenericFilterBean{
 	  private final JWTUtil jwtUtil;
@@ -102,6 +103,8 @@ public class CustomLogoutFilter extends GenericFilterBean{
 	        //Refresh 토큰 DB에서 제거
 	        refreshTokenService.deleteByRefresh(refresh);
 
+	        
+	      
 	        //Refresh 토큰 Cookie 값 0
 	        Cookie refreshCookie  = new Cookie("refresh", null);
 	        refreshCookie.setMaxAge(0);
@@ -110,9 +113,12 @@ public class CustomLogoutFilter extends GenericFilterBean{
 	        Cookie accessCookie  = new Cookie("access", null);
 	        accessCookie.setMaxAge(0);
 	        accessCookie.setPath("/");
-
+	        
+	        
 	        response.addCookie(refreshCookie);
 	        response.addCookie(accessCookie);
+	        
 	        response.setStatus(HttpServletResponse.SC_OK);
+	      
 	    }
 }
