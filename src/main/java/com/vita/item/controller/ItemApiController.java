@@ -102,6 +102,7 @@ public class ItemApiController {
         response.put("totalProducts", productsDto.size());
         
         System.out.println("가지고옴");
+        System.out.println("가지고옴");
         System.out.println(productsDto);
         // 적절한 응답 반환
         return ResponseEntity.ok(response);
