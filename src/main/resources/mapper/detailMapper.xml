@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.detail.mapper.DetailMapper">  
+	
+<!-- 상품정보 가져오기 -->
+<select id="getProductDetail" parameterType="int" resultType="com.vita.detail.domain.ProductVo">
+SELECT 
+    P.PRO_ID, 
+    P.NAME, 
+    P.URL, 
+    P.EXPLAIN, 
+    P.CAUTION, 
+    (SELECT 
+        (a.total_count_1 + b.total_count_0) AS total_count
+     FROM
+        (SELECT SUM(count) AS total_count_1 FROM stock WHERE pro_id = P.PRO_ID AND state = 1) a,
+        (SELECT SUM(count) AS total_count_0 FROM stock WHERE pro_id = P.PRO_ID AND state = 0) b) AS STOCK_COUNT, 
+    P.PRICE AS PRO_PRICE,
+    LISTAGG(DISTINCT IM.IMG, ', ') WITHIN GROUP (ORDER BY IM.IMG) AS IMAGES,     
+    F.TYPE AS FORM_TYPE,  
+    M.NAME AS BRAND_NAME, 
+    LISTAGG(DISTINCT I.NAME || ' (' || N.CAPACITY || ')', ', ') WITHIN GROUP (ORDER BY I.NAME) AS INGREDIENTS
+FROM PRODUCT P
+LEFT JOIN FORM F        ON P.FORM_ID = F.FORM_ID
+LEFT JOIN NUTRIENT N    ON P.PRO_ID = N.PRO_ID
+LEFT JOIN INGREDIENT I  ON N.ING_ID = I.ING_ID
+LEFT JOIN STOCK S       ON P.PRO_ID = S.PRO_ID
+LEFT JOIN IMGS IM       ON P.PRO_ID = IM.PRO_ID
+LEFT JOIN MAKE M        ON P.MAKE_ID = M.MAKE_ID
+WHERE P.PRO_ID = #{pro_id}
+GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
+</select>
+
+<!-- 상품 리뷰 페이징 -->
+<select id="getReviewList" parameterType="map" resultType="com.vita.detail.domain.ReviewVo">
+    SELECT R.REV_ID, R.PRO_ID, R.CONTENT, TO_CHAR(R.CREATED,'YYYY-MM-DD') AS CREATED,
+           SUBSTR(U.EMAIL,1,5)||'***' AS NICK, R.RATING, R.IMG
+    FROM REVIEW R
+    LEFT JOIN USERS U ON R.ID = U.ID
+    WHERE PRO_ID = #{pro_id}
+    ORDER BY CREATED DESC
+    OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+</select>
+
+<!-- 리뷰 총 개수 -->
+<select id="getReviewCount" parameterType="int" resultType="int">
+	SELECT COUNT(*)
+	FROM 	 REVIEW
+	WHERE  PRO_ID = #{pro_id}
+</select>
+
+<!-- 리뷰 별 평균 -->
+<select id="getAvgStar" parameterType="int" resultType="Double">
+  SELECT ROUND(AVG(RATING),1) AS AVGSTAR
+	FROM  REVIEW
+	WHERE PRO_ID=#{pro_id}
+</select>
+
+<!-- 리뷰 점수 별 퍼센트 -->
+<select id="one" parameterType="int" resultType="int">
+	SELECT CASE 
+		WHEN (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id}) = 0 THEN 0 
+		ELSE (SELECT COUNT(*) FROM REVIEW WHERE RATING = 1 AND PRO_ID=#{pro_id}) / (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id})*100 
+	END AS RATIO
+	FROM DUAL
+</select>
+<select id="two" parameterType="int" resultType="int">
+	SELECT CASE 
+		WHEN (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id}) = 0 THEN 0 
+		ELSE (SELECT COUNT(*) FROM REVIEW WHERE RATING = 2 AND PRO_ID=#{pro_id}) / (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id})*100 
+	END AS RATIO
+	FROM DUAL
+</select>
+<select id="three" parameterType="int" resultType="int">
+	SELECT CASE 
+		WHEN (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id}) = 0 THEN 0 
+		ELSE (SELECT COUNT(*) FROM REVIEW WHERE RATING = 3 AND PRO_ID=#{pro_id}) / (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id})*100 
+	END AS RATIO
+	FROM DUAL
+</select>
+<select id="four" parameterType="int" resultType="int">
+	SELECT CASE 
+		WHEN (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id}) = 0 THEN 0 
+		ELSE (SELECT COUNT(*) FROM REVIEW WHERE RATING = 4 AND PRO_ID=#{pro_id}) / (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id})*100 
+	END AS RATIO
+	FROM DUAL
+</select>
+<select id="five" parameterType="int" resultType="int">
+	SELECT CASE 
+		WHEN (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id}) = 0 THEN 0 
+		ELSE (SELECT COUNT(*) FROM REVIEW WHERE RATING = 5 AND PRO_ID=#{pro_id}) / (SELECT COUNT(*) FROM REVIEW WHERE PRO_ID=#{pro_id})*100 
+	END AS RATIO
+	FROM DUAL
+</select>
+
+<!-- 리뷰 평점 별 인원수 -->
+<select id="star1" parameterType="int" resultType="int">
+	SELECT COUNT(*)
+	FROM   REVIEW
+	WHERE  RATING = 1 AND PRO_ID=#{pro_id}
+</select>
+<select id="star2" parameterType="int" resultType="int">
+	SELECT COUNT(*)
+	FROM   REVIEW
+	WHERE  RATING = 2 AND PRO_ID=#{pro_id}
+</select>
+<select id="star3" parameterType="int" resultType="int">
+	SELECT COUNT(*)
+	FROM   REVIEW
+	WHERE  RATING = 3 AND PRO_ID=#{pro_id}
+</select>
+<select id="star4" parameterType="int" resultType="int">
+	SELECT COUNT(*)
+	FROM   REVIEW
+	WHERE  RATING = 4 AND PRO_ID=#{pro_id}
+</select>
+<select id="star5" parameterType="int" resultType="int">
+	SELECT COUNT(*)
+	FROM   REVIEW
+	WHERE  RATING = 5 AND PRO_ID=#{pro_id}
+</select>
+
+<!-- 상품 FAQ -->
+<!-- <select id="getFaqList" resultType="com.vita.domain.FaqVo"> -->
+<!--     SELECT QUESTION, ANSWER -->
+<!--     FROM FAQ -->
+<!-- </select> -->
+
+<!-- 카트에 상품이 존재? -->
+<select id="incart">
+	SELECT COUNT(*)
+	FROM BASKET
+	WHERE PRO_ID = #{pro_id}
+</select>
+
+<!-- 카트에 상품 넣기 1)카트에 없는 상품일 경우 -->
+<insert id="cart">
+	INSERT INTO BASKET(BASKET_ID,ID,PRO_ID,COUNT,STATE,PRICE,DELIVERY_CHARGE)
+	VALUES((SELECT NVL(MAX(BASKET_ID),0) FROM BASKET)+1,#{id},#{pro_id},#{count},1,#{price},#{delivery_charge})
+</insert>	
+
+<!-- 카트에 상품 넣기 2)카트에 있는 상품일 경우-->
+<update id="cart2">
+  UPDATE BASKET
+	SET COUNT = (SELECT COUNT FROM BASKET WHERE PRO_ID = #{pro_id})+#{count}
+  WHERE PRO_ID = #{pro_id}
+</update>
+</mapper>
+  

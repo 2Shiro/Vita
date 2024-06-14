@@ -119,10 +119,8 @@ public class PayController {
 	
 	@RequestMapping("/Pay/PayForm")
 	public String payform(HttpServletRequest request) {
-		
-		Long userId = getUserIdService.getId(request);
-		
-		System.out.println("user_id: " + userId);
+
+		 Long userId = getUserIdService.getId(request);
 		
 		return "pay/pay";
 	}
@@ -131,8 +129,6 @@ public class PayController {
 	public String success(HttpServletRequest request) {
 		
 		Long userId = getUserIdService.getId(request);
-		
-		System.out.println("user_id: " + userId);
 		
 		return "pay/success";
 	}

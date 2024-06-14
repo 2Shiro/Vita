@@ -14,9 +14,11 @@ public class UserVo {
 	private String name;
 	private String password;
 	private String sex;
-	private String BIRTH;
+	private String birth;
 	private String role;
 	private String oauth_provider;
 	private String oauth_email;
+	
+	private String oauth;
 	
 }

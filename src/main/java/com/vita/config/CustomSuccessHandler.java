@@ -40,6 +40,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
     	System.out.println("onAuthenticationSuccess");
+    	System.out.println("일반로그인은 일로오나마지막?");
+    	System.out.println("일반로그인은 일로오나마지막?");
+    	System.out.println("일반로그인은 일로오나마지막?");
         //OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
@@ -52,25 +55,19 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
         Long userId = customUserDetails.getUserId();
         String name = customUserDetails.getName();
-        
+        String oauth = customUserDetails.getOauth();
         int accessTokenValiditySeconds = 600; // 600초 = 10분
         int refreshTokenValiditySeconds = 86400; // 86400초 = 24시간
      
         //access토큰 600000
-        String access = jwtUtil.createJwt("access", username, role, (long) refreshTokenValiditySeconds * 1000, userId, name);
+        String access = jwtUtil.createJwt("access", username, role, (long) refreshTokenValiditySeconds * 1000, userId, name, oauth);
         System.out.println("access 값이 들어가나?"+access);
-        String refresh = jwtUtil.createJwt("refresh", username, role, (long) refreshTokenValiditySeconds * 1000, userId, name);
+        String refresh = jwtUtil.createJwt("refresh", username, role, (long) refreshTokenValiditySeconds * 1000, userId, name, oauth);
         System.out.println("refresh 값이 들어가나?"+refresh);
         
         addRefreshDTO(username, refresh,  refreshTokenValiditySeconds * 1000L, userId);
         
-        //String redirectURL = "/loginsuccess?access=" + URLEncoder.encode(access, "UTF-8") + "&refresh=" + URLEncoder.encode(refresh, "UTF-8");
-        
-        // 응답 설정
        
-        //response.addCookie(createCookie("access", access));
-       // addSecureHttpOnlyCookie(response, "refresh", refresh, 24 * 60 * 60);
- 
         // 쿠키 설정
          //createCookie(response, "access", access, accessTokenValiditySeconds);
          CookieUtil.createCookie(response, "refresh", refresh, refreshTokenValiditySeconds, true);
