@@ -18,7 +18,7 @@ public class AllProductsDto {
 	int price;
 	String img;
 	Integer total_sell;
-	Long average_rating;
+	Double average_rating;
 	
 	
 	String string_average_arting;

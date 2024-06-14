@@ -256,6 +256,27 @@ ul li {
 .card .card-body.active {
 	display: block;
 }
+.login-tab{}
+.login-tab logo{}
+.login-tab a{
+
+display: block;
+    height: 80px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+
+}
+.login-tab img{
+    max-width: 100%;
+    width: 234px;
+    /* height: auto; */
+    display: inline-block;
+    vertical-align: middle;
+    position: absolute;
+    top: 54px;
+    left: 77px;
+}
 </style>
 </head>
 <body class="gradient-custom">
@@ -264,13 +285,14 @@ ul li {
 			class="container-fluid row justify-content-center align-content-center">
 			<div class="card bg-white" style="border-radius: 1rem;">
 				<section class="login-tab">
-					<ul id="devMemTab">
-						<li class="on" role="tab" data-tab="tab1"><button data-m-type ="M">개인회원</a></li>
-						<li role="tab" data-tab="tab2" class=""><button data-m-type="Co">기업회원</a></li>
-					</ul>
+					<h1 class ="logo">
+						<a href="/">
+							<img src ="/img/logo.png">
+						</a>
+					</h1>
 				</section>
 				<div class="card-body p-5 tab1 active">
-					<h2>로그인</h2>
+					
 					<section class="section_kakao">
 						<a class="btn_signup_kakao" href="/users/oauth/kakao"> <img
 							src="img/kakao.svg"><span>카카오 로그인</span>

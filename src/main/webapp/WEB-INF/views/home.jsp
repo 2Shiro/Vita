@@ -231,8 +231,8 @@
       <div id="tab_wrap" class="inner">
         <div class="tabs">
           <div class="tab active" data-target="allProducts"><a href="/Item/View">전체</a></div>
-          <div class="tab" data-target="rank"><a href="/Item/View">인기</a></div>
-          <div class="tab" data-target="ingredient"><a href="/Item/View">성분별</a></div>
+          <div class="tab" data-target="rank"><a href="/Item/View">연령별</a></div>
+          <div class="tab" data-target="ingredient"><a href="/Item/View">고민별</a></div>
           <div class="tab" data-target="worry"><a href="/Item/View">건강고민별</a></div>
           <div class="tab" data-target="gender"><a href="/Item/View">성별</a></div>
 

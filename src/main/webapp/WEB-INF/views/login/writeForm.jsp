@@ -50,6 +50,7 @@ background: #fff;
 	flex-direction: column;
 	position: relative;
 	height: 100%;
+	gap: 40px;
 }
  .logo {
             text-align: center; /* 로고 이미지를 가운데 정렬 */
@@ -59,7 +60,7 @@ background: #fff;
 
         .logo a {
     display: block;
-    width: 120px;
+    
     height: 80px; /* a 태그의 높이에 맞게 조절 */
     margin: 0 auto; /* 수평 가운데 정렬 */
     text-align: center; /* 로고 이미지를 수평 가운데 정렬 */
@@ -67,15 +68,14 @@ background: #fff;
 }
 
 .logo img {
-    max-width: 100%; /* 이미지 최대 너비는 부모 요소에 맞게 설정 */
-   
-    width: auto; /* 이미지 너비 자동으로 조절 */
-    height: auto; /* 이미지 높이 자동으로 조절 */
-    display: inline-block; /* 이미지를 블록 요소가 아닌 인라인 블록 요소로 변경 */
-    vertical-align: middle; /* 이미지를 수직 가운데 정렬 */
+          max-width: 100%;
+    width: 234px;
+    /* height: auto; */
+    display: inline-block;
+    vertical-align: middle;
     position: absolute;
-    top: -18px;
-    left: 0;
+    top: 54px;
+    left: 133px;
 }
 
 .nanum-gothic-extrabold {
@@ -315,23 +315,23 @@ select:not(#birth-year){
 .Sucess-message.hide, .failure-message.hide{
 	font-size: 0
 } 
+#fullAddr, #address_detail{
+ 	box-sizing: border-box;
+}
 </style>
 </head>
 <body class="container">
 	<section class="inner">
 		<h1 class ="logo">
 			<a href="/">
-				<img src ="img/logo.png">
+				<img src ="/img/logo.png">
 			</a>
 		</h1>
 		<div class="content">
 			<div class="card bg-white" style="border-radius: 1rem;">
 				<section class="login-tab">
 					<ul id="devMemTab">
-						<li class="on" role="tab" data-tab="tab1"><a href="#"
-							data-m-type="M">개인회원</a></li>
-						<li role="tab" data-tab="tab2" class=""><a href="#"
-							data-m-type="Co">기업회원</a></li>
+						
 					</ul>
 				</section>
 				<div class="card-body p-5">

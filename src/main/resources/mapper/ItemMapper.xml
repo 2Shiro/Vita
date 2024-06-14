@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.item.mapper.ItemMapper">  
+  
+    <select id="findLikeProducts">
+      SELECT
+        P.PRO_ID,
+        P.NAME,
+        M.NAME AS MAKE_NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img,
+        SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
+        AVG(R.rating) AS average_rating
+    FROM 
+        PRODUCT P
+    JOIN 
+        MAKE M ON P.MAKE_ID = M.MAKE_ID
+    JOIN 
+        FORM F ON P.form_id = F.form_id
+    JOIN 
+        IMGS I ON P.pro_id = I.pro_id
+    LEFT JOIN
+        (SELECT 
+            pro_id,
+            SUM(count) AS total_sell
+         FROM 
+            stock
+         WHERE 
+            state = 0
+         GROUP BY 
+            pro_id) S ON P.pro_id = S.pro_id
+    LEFT JOIN 
+        review R ON P.pro_id = R.pro_id
+    <where>
+       
+        <if test="ingredient != null">
+            AND  P.NAME LIKE '%' ||  #{ingredient} || '%'
+        </if>
+        <if test="price != null">
+            AND P.PRICE <![CDATA[<]]> #{intprice}
+        </if>
+         <if test="searchIcon != null ">
+         AND (P.NAME LIKE '%' || #{searchIcon} || '%' 
+                     OR M.NAME LIKE '%' || #{searchIcon} || '%'
+                     OR F.TYPE LIKE '%' || #{searchIcon} || '%')
+         </if>
+        
+    </where>
+    GROUP BY
+        P.PRO_ID,
+        P.NAME,
+        M.NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img
+  
+    
+    </select>
+    
+    
+    <select id="findLikeGoodProducts">
+      SELECT
+        P.PRO_ID,
+        P.NAME,
+        M.NAME AS MAKE_NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img,
+        SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
+        AVG(R.rating) AS average_rating
+    FROM 
+        PRODUCT P
+    JOIN 
+        MAKE M ON P.MAKE_ID = M.MAKE_ID
+    JOIN 
+        FORM F ON P.form_id = F.form_id
+    JOIN 
+        IMGS I ON P.pro_id = I.pro_id
+    LEFT JOIN
+        (SELECT 
+            pro_id,
+            SUM(count) AS total_sell
+         FROM 
+            stock
+         WHERE 
+            state = 0
+         GROUP BY 
+            pro_id) S ON P.pro_id = S.pro_id
+    LEFT JOIN 
+        review R ON P.pro_id = R.pro_id
+    <where>
+       
+        <if test="ingredient != null">
+            AND  P.NAME LIKE '%' ||  #{ingredient} || '%'
+        </if>
+        <if test="price != null">
+            AND P.PRICE <![CDATA[<]]> #{intprice}
+        </if>
+         <if test="searchIcon != null ">
+         AND (P.NAME LIKE '%' || #{searchIcon} || '%' 
+                     OR M.NAME LIKE '%' || #{searchIcon} || '%'
+                     OR F.TYPE LIKE '%' || #{searchIcon} || '%')
+         </if>
+        
+    </where>
+    GROUP BY
+        P.PRO_ID,
+        P.NAME,
+        M.NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img
+  ORDER BY 
+    total_sell ASC
+    
+    </select>
+    <select id="findPriceProducts">
+    SELECT
+        P.PRO_ID,
+        P.NAME,
+        M.NAME AS MAKE_NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img,
+        SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
+        AVG(R.rating) AS average_rating
+    FROM 
+        PRODUCT P
+    JOIN 
+        MAKE M ON P.MAKE_ID = M.MAKE_ID
+    JOIN 
+        FORM F ON P.form_id = F.form_id
+    JOIN 
+        IMGS I ON P.pro_id = I.pro_id
+    LEFT JOIN
+        (SELECT 
+            pro_id,
+            SUM(count) AS total_sell
+         FROM 
+            stock
+         WHERE 
+            state = 0
+         GROUP BY 
+            pro_id) S ON P.pro_id = S.pro_id
+    LEFT JOIN 
+        review R ON P.pro_id = R.pro_id
+    <where>
+       
+        <if test="ingredient != null">
+            AND  P.NAME LIKE '%' ||  #{ingredient} || '%'
+        </if>
+        <if test="price != null">
+            AND P.PRICE <![CDATA[<]]> #{intprice}
+        </if>
+         <if test="searchIcon != null ">
+         AND (P.NAME LIKE '%' || #{searchIcon} || '%' 
+                     OR M.NAME LIKE '%' || #{searchIcon} || '%'
+                     OR F.TYPE LIKE '%' || #{searchIcon} || '%')
+         </if>
+        
+    </where>
+    GROUP BY
+        P.PRO_ID,
+        P.NAME,
+        M.NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img
+  ORDER BY 
+    P.PRICE ASC
+    
+    
+    </select>
+    
+    
+    <select id="findLikenutrients">
+    	SELECT
+    nu.pro_id,
+    ings.name,
+    nu.capacity
+FROM
+    nutrient nu
+JOIN 
+    ingredient ings ON nu.ing_id = ings.ing_id
+    
+    </select>
+   
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
