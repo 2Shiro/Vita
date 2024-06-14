@@ -82,7 +82,7 @@
 
 /* 입력 상자의 기본 스타일 조정 */
 .item-count {
-    width: 30px; /* 입력 상자의 너비를 조정 */
+    width: 25px; /* 입력 상자의 너비를 조정 */
     text-align: center; /* 텍스트 중앙 정렬 */
 }
 
@@ -98,6 +98,12 @@
     line-height: 1;
     margin: 0 5px;
     cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+.button-group button:hover {
+    background-color: #e0e0e0;
 }
 </style>
 </head>
@@ -125,63 +131,63 @@
 										</div>
 										<%-- 총합을 저장할 변수를 선언합니다. --%>
 										<c:set var="totalPrice" value="0" />
-										<c:forEach var="basketPageList" items="${basketPageList}">
-											<%-- 각 항목의 가격을 계산합니다. --%>
-											<c:set var="prodPrice" value="${basketPageList.price * basketPageList.count}" />
-											<%-- 계산된 가격을 총합 변수에 더합니다. --%>
-											<c:set var="totalPrice" value="${totalPrice + prodPrice}" />
-											<div class="box__goods js-goods-space">
-												<ul class="list__goods-view">
-													<li class="list-item">
-														<br>
-														<div class="box__goods-info">
-															<div class="box__thmb">
-																<a class="link__goods"
-																	href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
-																	target="_blank"><img src="${basketPageList.img}"
-																	width="86" height="86" alt="제품사진" class="image__goods"></a>
-															</div>
-															<div class="box__info ">
-																<div class="box__goods-name">
-																	<a
-																		href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
-																		class="text__goods-name" target="_blank">${basketPageList.pname}</a>
-																</div>
-																<div class="box__option">
-																	<p class="text__option">
-																		<span class="text__option-make">${basketPageList.mname}</span>
-																	</p>
-																</div>
-																<div class="box__price">
-																	<span class="text__value text__num" data-price="${prodPrice}"></span>
-																	<span class="text__unit">원 / </span><span class="text__amount">
-																		<span class="button-group">
-																			<input type="number" class="item-count" value="${basketPageList.count}" min="1">개
-																			<button class="increment">+</button>
-																			<button class="decrement">-</button>
-																		</span>
-																	</span>
-																</div>
-																<input type="checkbox" class="checkbox__goods" style="width: 36px; height: 36px;">
-															</div>
-														</div>
-														<div class="box__delivery-charge">
-															<span class="text__delivery">배송비</span>
-															<span class="text__delivery-charge" >
-																<c:choose>
-																	<c:when test="${basketPageList.delivery_charge == 0}">
-																		무료배송
-																	</c:when>
-																	<c:otherwise>
-																		<span class="text__num" data-price="${basketPageList.delivery_charge}"></span>
-																	</c:otherwise>
-																</c:choose>
-															</span>
-														</div>
-													</li>
-												</ul>
-											</div>
-										</c:forEach>
+<c:forEach var="basketPageList" items="${basketPageList}" varStatus="status">
+    <input type="hidden" id="basket_id_${status.index}" value="${basketPageList.basket_id}">
+    <%-- 각 항목의 가격을 계산합니다. --%>
+    <c:set var="prodPrice" value="${basketPageList.price * basketPageList.count}" />
+    <%-- 계산된 가격을 총합 변수에 더합니다. --%>
+    <c:set var="totalPrice" value="${totalPrice + prodPrice + basketPageList.delivery_charge}" />
+    <div class="box__goods js-goods-space" data-index="${status.index}">
+        <ul class="list__goods-view">
+            <li class="list-item">
+                <br>
+                <div class="box__goods-info">
+                    <div class="box__thmb">
+                        <a class="link__goods"
+                            href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
+                            target="_blank"><img src="/img/${basketPageList.img}.jpg"
+                            width="86" height="86" alt="제품사진" class="image__goods"></a>
+                    </div>
+                    <div class="box__info">
+                        <div class="box__goods-name">
+                            <a href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
+                               class="text__goods-name" target="_blank">${basketPageList.pname}</a>
+                        </div>
+                        <div class="box__option">
+                            <p class="text__option">
+                                <span class="text__option-make">${basketPageList.mname}</span>
+                            </p>
+                        </div>
+                        <div class="box__price">
+                            <span class="text__value text__num price" data-price="${prodPrice}" id="prodPrice_${status.index}"></span>
+                            <span class="text__unit">원 / </span><span class="text__amount">
+                                <span class="button-group">
+                                    <input type="number" class="item-count" value="${basketPageList.count}" min="1" id="itemCount_${status.index}">개
+                                    <button class="increment" data-index="${status.index}">+</button>
+                                    <button class="decrement" data-index="${status.index}">-</button>
+                                </span>
+                            </span>
+                        </div>
+                        <input type="checkbox" class="checkbox__goods" style="width: 36px; height: 36px;">
+                    </div>
+                </div>
+                <div class="box__delivery-charge">
+                    <span class="text__delivery">배송비</span>
+                    <span class="text__delivery-charge">
+                        <c:choose>
+                            <c:when test="${basketPageList.delivery_charge == 0}">
+                                무료배송
+                            </c:when>
+                            <c:otherwise>
+                                <span class="text__num" data-price="${basketPageList.delivery_charge}"></span>
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</c:forEach>
 									</div>
 								</div>
 							</div>
@@ -194,7 +200,7 @@
 									<div class="box__inner">
 										<ul class="list__detail-price">
 											<li class="list-item"><div class="box__option">
-													<span class="text__title">상품금액</span><span class="text__num" data-price="${totalPrice}"><span
+													<span class="text__title">상품금액</span><span class="text__num price" data-price="${totalPrice}"><span
 														class="text__unit">원</span></span>
 												</div></li>
 											<li class="list-item list-discount"><div
@@ -214,7 +220,7 @@
 											<li class="list-item list__total-price"><div
 													class="box__option">
 													<span class="text__title">총 결제금액</span>
-													<span class="text__num" data-price="${totalPrice}"><span class="text__unit">원</span></span>
+													<span class="text__num price" data-price="${totalPrice}"><span class="text__unit">원</span></span>
 												</div></li>
 										</ul>
 										<button type="submit"
@@ -268,33 +274,58 @@ function getCookie(name) {
         priceElement.textContent = formattedPrice;
     });
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-	// 아이템 개수 입력 상자와 버튼에 이벤트 리스너 추가
-	document.querySelectorAll('.button-group').forEach(group => {
-	    const input = group.querySelector('.item-count');
-	    const incrementButton = group.querySelector('.increment');
-	    const decrementButton = group.querySelector('.decrement');
-	
-	    incrementButton.addEventListener('click', (event) => {
-	        event.preventDefault(); // 기본 동작을 막음
-	        let currentValue = parseInt(input.value, 10);
-	        input.value = currentValue + 1;
-	        console.log(`새로운 개수: ${input.value}`);
-	    });
-	
-	    decrementButton.addEventListener('click', (event) => {
-	        event.preventDefault(); // 기본 동작을 막음
-	        let currentValue = parseInt(input.value, 10);
-	        if (currentValue > parseInt(input.min, 10)) {
-	            input.value = currentValue - 1;
-	            console.log(`새로운 개수: ${input.value}`);
-	        }
-	    });
-	
-	    input.addEventListener('input', (event) => {
-	        const newValue = event.target.value;
-	        console.log(`새로운 개수: ${newValue}`);
-	    });
-	});
+$(document).ready(function() {
+    // 플러스 버튼 클릭 이벤트
+    $('.increment').click(function(event) {
+        event.preventDefault(); // 기본 동작 막기
+        var index = $(this).data('index');
+        var $countInput = $('#itemCount_' + index);
+        var newCount = parseInt($countInput.val()) + 1;
+        $countInput.val(newCount);
+        updatePrice(index, newCount);
+    });
+
+    // 마이너스 버튼 클릭 이벤트
+    $('.decrement').click(function(event) {
+        event.preventDefault(); // 기본 동작 막기
+        var index = $(this).data('index');
+        var $countInput = $('#itemCount_' + index);
+        var newCount = parseInt($countInput.val()) - 1;
+        if (newCount >= 1) {
+            $countInput.val(newCount);
+            updatePrice(index, newCount);
+        }
+    });
+
+    function updatePrice(index, newCount) {
+        var basketId = $('#basket_id_' + index).val();
+        var $priceElement = $('#prodPrice_' + index);
+        var $totalPriceElement = $('.list__detail-price .price');
+        var $totalPaymentElement = $('.list__total-price .price');
+
+        $.ajax({
+            type: 'POST',
+            url: '/Pay/UpdateCount',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                basket_id: basketId,
+                count: newCount
+            }),
+            success: function(response) {
+                // 개별 상품 가격 업데이트
+                $priceElement.text(response.prodPrice + '원');
+
+                // 총 상품 금액 업데이트
+                $totalPriceElement.text(response.totalPrice + '원');
+                $totalPaymentElement.text(response.totalPrice + '원');
+            },
+            error: function() {
+                alert('가격 업데이트에 실패했습니다.');
+            }
+        });
+    }
+});
 </script>
 </html>
