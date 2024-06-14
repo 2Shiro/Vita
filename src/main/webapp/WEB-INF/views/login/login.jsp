@@ -342,7 +342,7 @@ ul li {
 					</section>
 					<section class="section_google">
 						<a class="btn_signup_google" href="http://localhost:8080/oauth2/authorization/google"> <img
-							src="img/google.png"><span>구글 로그인</span>
+							src="img/google.png"><span>구글 로그인 </span>
 						</a>
 					</section>
 
