@@ -37,9 +37,6 @@ public class PayController {
 	@Autowired
 	private PayMapper payMapper;
 	
-	@Autowired
-    private BasketService basketService;
-	
 	// 장바구니 화면 출력
 	@GetMapping("/Pay/Basket")
 	public ModelAndView basket(HttpServletRequest request) {
@@ -83,39 +80,6 @@ public class PayController {
 	    
 	    return mv;
 	}
-	
-	@PostMapping("/Pay/UpdateCount")
-	public Map<String, Object> updateCount(@RequestBody Map<String, Object> params, HttpServletRequest request) {
-	    Long id = getUserIdService.getId(request);
-	    
-	    Long basket_id = Long.parseLong(params.get("basket_id").toString());
-	    int count = Integer.parseInt(params.get("count").toString());
-
-	    Map<String, Object> response = new HashMap<>();
-
-	    try {
-	        // 장바구니 아이템 수량 업데이트
-	        basketService.updateItemCount(basket_id, count);
-
-	        // 새로운 가격 정보 계산
-	        int prodPrice = basketService.calculateItemPrice(basket_id, count);
-	        int totalPrice = basketService.calculateTotalPrice(id);
-
-	        // 응답 데이터 생성
-	        response.put("status", "success");
-	        response.put("prodPrice", prodPrice);
-	        response.put("totalPrice", totalPrice);
-	    } catch (BasketService.ItemNotFoundException e) {
-	        response.put("status", "error");
-	        response.put("message", e.getMessage());
-	    } catch (Exception e) {
-	        response.put("status", "error");
-	        response.put("message", "예상치 못한 오류가 발생했습니다.");
-	    }
-
-	    return response;
-	}
-
 	
 	@RequestMapping("/Pay/PayForm")
 	public String payform(HttpServletRequest request) {
