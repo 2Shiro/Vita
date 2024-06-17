@@ -7,6 +7,7 @@
       <div id="headerInnerWrap">
         <!-- ****************** 헤더상단 ********************** -->
         <div id="headerInner" class="clearfix area-box">
+         
           <h1 class="logo">
             <a href="/">
               <img class="ori-ver" src="/img/logo.png" alt="랭콘">
@@ -34,8 +35,8 @@
                   <li><a href="./program/curriculum"><span>비타민</span></a></li>
                   <li><a href="./program/textbooks"><span>밀크씨슬</span></a></li>
                   <li><a href="./program/homework"><span>프로바이오틱스</span></a></li>
-                  <li><a href="./program/assessment"><span>오메카3</span></a></li>
-                  <li><a href="./program/assessment"><span>미네랄</span></a></li>
+                  <li><a href="/Pds/List"><span>리스트</span></a></li>
+                  <li><a href="/Pds/Write"><span>글쓰기</span></a></li>
                 </ul>
               </div>
             </li>
