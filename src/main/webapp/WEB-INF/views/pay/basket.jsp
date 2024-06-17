@@ -131,63 +131,65 @@
 										</div>
 										<%-- 총합을 저장할 변수를 선언합니다. --%>
 										<c:set var="totalPrice" value="0" />
-<c:forEach var="basketPageList" items="${basketPageList}" varStatus="status">
-    <input type="hidden" id="basket_id_${status.index}" value="${basketPageList.basket_id}">
-    <%-- 각 항목의 가격을 계산합니다. --%>
-    <c:set var="prodPrice" value="${basketPageList.price * basketPageList.count}" />
-    <%-- 계산된 가격을 총합 변수에 더합니다. --%>
-    <c:set var="totalPrice" value="${totalPrice + prodPrice + basketPageList.delivery_charge}" />
-    <div class="box__goods js-goods-space" data-index="${status.index}">
-        <ul class="list__goods-view">
-            <li class="list-item">
-                <br>
-                <div class="box__goods-info">
-                    <div class="box__thmb">
-                        <a class="link__goods"
-                            href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
-                            target="_blank"><img src="/img/${basketPageList.img}.jpg"
-                            width="86" height="86" alt="제품사진" class="image__goods"></a>
-                    </div>
-                    <div class="box__info">
-                        <div class="box__goods-name">
-                            <a href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
-                               class="text__goods-name" target="_blank">${basketPageList.pname}</a>
-                        </div>
-                        <div class="box__option">
-                            <p class="text__option">
-                                <span class="text__option-make">${basketPageList.mname}</span>
-                            </p>
-                        </div>
-                        <div class="box__price">
-                            <span class="text__value text__num price" data-price="${prodPrice}" id="prodPrice_${status.index}"></span>
-                            <span class="text__unit">원 / </span><span class="text__amount">
-                                <span class="button-group">
-                                    <input type="number" class="item-count" value="${basketPageList.count}" min="1" id="itemCount_${status.index}">개
-                                    <button class="increment" data-index="${status.index}">+</button>
-                                    <button class="decrement" data-index="${status.index}">-</button>
-                                </span>
-                            </span>
-                        </div>
-                        <input type="checkbox" class="checkbox__goods" style="width: 36px; height: 36px;">
-                    </div>
-                </div>
-                <div class="box__delivery-charge">
-                    <span class="text__delivery">배송비</span>
-                    <span class="text__delivery-charge">
-                        <c:choose>
-                            <c:when test="${basketPageList.delivery_charge == 0}">
-                                무료배송
-                            </c:when>
-                            <c:otherwise>
-                                <span class="text__num" data-price="${basketPageList.delivery_charge}"></span>
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                </div>
-            </li>
-        </ul>
-    </div>
-</c:forEach>
+										<c:forEach var="basketPageList" items="${basketPageList}" varStatus="status">
+										    <input type="hidden" id="basket_id_${status.index}" value="${basketPageList.basket_id}">
+										    <%-- 각 항목의 가격을 계산합니다. --%>
+										    <c:set var="prodPrice" value="${basketPageList.price * basketPageList.count}" />
+										    <%-- 계산된 가격을 총합 변수에 더합니다. --%>
+										    <c:set var="totalPrice" value="${totalPrice + prodPrice + basketPageList.delivery_charge}" />
+										    <div class="box__goods js-goods-space" data-index="${status.index}">
+										        <ul class="list__goods-view">
+										            <li class="list-item">
+										                <br>
+										                <div class="box__goods-info">
+										                    <div class="box__thmb">
+										                        <a class="link__goods"
+										                            href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
+										                            target="_blank"><img src="/img/${basketPageList.img}.jpg"
+										                            width="86" height="86" alt="제품사진" class="image__goods"></a>
+										                    </div>
+										                    <div class="box__info">
+										                        <div class="box__goods-name">
+										                            <a href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
+										                               class="text__goods-name" target="_blank">${basketPageList.pname}</a>
+										                        </div>
+										                        <div class="box__option">
+										                            <p class="text__option">
+										                                <span class="text__option-make">${basketPageList.mname}</span>
+										                            </p>
+										                        </div>
+										                        <div class="box__price">
+										                            <span class="text__value text__num price" data-price="${prodPrice}" id="prodPrice_${status.index}"></span>
+										                            <span class="text__unit">원 / </span><span class="text__amount">
+										                                <span class="button-group">
+										                                    <input type="number" class="item-count" value="${basketPageList.count}" min="1" id="itemCount_${status.index}">개
+										                                    <button class="increment" data-index="${status.index}">+</button>
+										                                    <button class="decrement" data-index="${status.index}">-</button>
+										                                </span>
+										                            </span>
+										                        </div>
+										                        <input type="checkbox" class="checkbox__goods" style="width: 36px; height: 36px;" 
+																data-basket-id="${basketPageList.basket_id}" 
+																${basketPageList.state == 1 ? 'checked' : ''}>
+										                    </div>
+										                </div>
+										                <div class="box__delivery-charge">
+										                    <span class="text__delivery">배송비</span>
+										                    <span class="text__delivery-charge">
+										                        <c:choose>
+										                            <c:when test="${basketPageList.delivery_charge == 0}">
+										                                무료배송
+										                            </c:when>
+										                            <c:otherwise>
+										                                <span class="text__num" data-price="${basketPageList.delivery_charge}"></span>
+										                            </c:otherwise>
+										                        </c:choose>
+										                    </span>
+										                </div>
+										            </li>
+										        </ul>
+										    </div>
+										</c:forEach>
 									</div>
 								</div>
 							</div>
@@ -235,6 +237,7 @@
 		</form>
 	</div>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="/js/header.js"></script>
 <script>
 function getCookie(name) {
@@ -274,8 +277,9 @@ function getCookie(name) {
         priceElement.textContent = formattedPrice;
     });
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script>
+// 상품 수량 변경 기능
 $(document).ready(function() {
     // 플러스 버튼 클릭 이벤트
     $('.increment').click(function(event) {
@@ -326,6 +330,30 @@ $(document).ready(function() {
             }
         });
     }
+});
+</script>
+<script>
+// 구매상태 체크박스 변화 감지
+$(".checkbox__goods").change(function() {
+    var basketId = $(this).data("basket-id"); // 올바른 속성 접근 방식
+    var state = $(this).is(":checked") ? 1 : 0;
+
+    console.log("basketId: ", basketId); // 디버깅을 위한 로그
+    console.log("state: ", state);       // 디버깅을 위한 로그
+
+    // AJAX 요청으로 상태 업데이트
+    $.ajax({
+        url: "/Pay/UpdateState",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ basketId: basketId, state: state }),
+        success: function(response) {
+            console.log("State updated successfully");
+        },
+        error: function(error) {
+            console.error("Error updating state", error);
+        }
+    });
 });
 </script>
 </html>

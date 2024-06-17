@@ -70,5 +70,14 @@
 	    WHERE BASKET_ID = #{basket_id}
 	
 	</update>
+	
+	<!-- 장바구니 구매 상태 변경 -->
+	<update id="updateState">
+	
+	    UPDATE	BASKET
+	    SET		STATE = #{state}
+	    WHERE	BASKET_ID = #{basket_id}
+	
+	</update>
 
 </mapper>
