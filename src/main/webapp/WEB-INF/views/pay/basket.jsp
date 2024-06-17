@@ -314,12 +314,12 @@ $(document).ready(function() {
                 count: newCount
             }),
             success: function(response) {
-                // 개별 상품 가격 업데이트
-                $priceElement.text(response.prodPrice + '원');
+            	// 개별 상품 가격 업데이트
+                $priceElement.text(Number(response.prodPrice).toLocaleString('ko-KR'));
 
                 // 총 상품 금액 업데이트
-                $totalPriceElement.text(response.totalPrice + '원');
-                $totalPaymentElement.text(response.totalPrice + '원');
+                $totalPriceElement.text(Number(response.totalPrice).toLocaleString('ko-KR') + '원');
+                $totalPaymentElement.text(Number(response.totalPrice).toLocaleString('ko-KR') + '원');
             },
             error: function() {
                 alert('가격 업데이트에 실패했습니다.');
