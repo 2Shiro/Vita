@@ -15,6 +15,7 @@ public class BasketPageVo {
 	private int make_id;
 	
 	private String img;
+	private String url;
 	private String pname;
 	private String mname;
 	private int price;

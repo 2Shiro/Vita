@@ -144,13 +144,13 @@
 										                <div class="box__goods-info">
 										                    <div class="box__thmb">
 										                        <a class="link__goods"
-										                            href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
+										                            href="https://${basketPageList.url}"
 										                            target="_blank"><img src="/img/${basketPageList.img}.jpg"
 										                            width="86" height="86" alt="제품사진" class="image__goods"></a>
 										                    </div>
 										                    <div class="box__info">
 										                        <div class="box__goods-name">
-										                            <a href="https://www.pillyze.com/products/19469/%EB%A0%88%EB%93%9C%EB%A6%AC%EB%B2%84%EC%97%B0%EC%A7%88%EC%BA%A1%EC%8A%90"
+										                            <a href="https://${basketPageList.url}"
 										                               class="text__goods-name" target="_blank">${basketPageList.pname}</a>
 										                        </div>
 										                        <div class="box__option">
