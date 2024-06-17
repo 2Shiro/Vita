@@ -24,4 +24,6 @@ public interface LoginMapper {
 
 	Long getMaxUserId();
 
+	UserVo findByCommonUsername(String email);
+
 }
