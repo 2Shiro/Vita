@@ -127,7 +127,7 @@
 								<div class="box__card box__order-info">
 									<div class="box__inner">
 										<div class="text__title">
-											주문상품 <span class="text__count"></span>
+											주문상품<span class="text__count"></span>
 										</div>
 										<%-- 총합을 저장할 변수를 선언합니다. --%>
 										<c:set var="totalPrice" value="0" />
