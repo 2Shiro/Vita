@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 				
 				//DB에서 조회
-        UserVo userVo = loginMapper.findByUsername(email);
+        UserVo userVo = loginMapper.findByCommonUsername(email);
         userVo.setOauth("common");
 
         if (userVo != null) {

@@ -83,10 +83,12 @@ public class ItemApiController {
             
             //별점 계산 나누기 2한거
             if (product.getAverage_rating() == null) {
+            	System.out.println("다일로옴?");
                 product.setAverage_rating(0.0);
                 product.setString_average_arting("3.0");
             } else {
             	  double avgRating = product.getAverage_rating();
+            	 
                   product.setString_average_arting(String.format("%.2f", avgRating));
             }
         }
@@ -99,6 +101,7 @@ public class ItemApiController {
         response.put("products", productsDto);
         response.put("totalProducts", productsDto.size());
         
+        System.out.println("가지고옴");
         System.out.println("가지고옴");
         System.out.println(productsDto);
         // 적절한 응답 반환

@@ -13,8 +13,8 @@ public class CookieUtil {
             cookie.setHttpOnly(true);
         }
 
-        // SameSite 속성을 수동으로 설정
-        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=/; Secure; %s; SameSite=None", 
+        // SameSite 속성을 수동으로 설정 strick도 고려해볼것 CSRF보안처리도 할것
+        String cookieHeader = String.format("%s=%s; Max-Age=%d; Path=/; Secure; %s; SameSite=Lax", 
                                              name, value, maxAge, isHttpOnly ? "HttpOnly" : "");
         response.addHeader("Set-Cookie", cookieHeader);
     }
