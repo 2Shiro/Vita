@@ -79,5 +79,19 @@
 	    WHERE	BASKET_ID = #{basket_id}
 	
 	</update>
+	
+	<!-- 구매상태 상품 가져오기 -->
+	<select id="getPayList">
+		SELECT	BASKET_ID,
+				ID,
+				PRO_ID,
+				COUNT,
+				STATE,
+				PRICE,
+				DELIVERY_CHARGE
+		FROM	BASKET
+		WHERE	ID = #{id}
+			AND	STATE = 1
+	</select>
 
 </mapper>

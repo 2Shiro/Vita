@@ -16,7 +16,7 @@ public interface PayMapper {
 	// 장바구니 목록
 	List<BasketVo> getBasketList(Long id);
 	
-	// 장바구니 상품에 대한 정보
+	// 장바구니 상품 조회
 	ProdVo getProd(int pro_id);
 	ImgsVo getImg(int pro_id);
 	MakeVo getMake(int make_id);
@@ -28,5 +28,9 @@ public interface PayMapper {
 
 	// 장바구니 상품 구매 상태
 	void updateState(@Param("basket_id") Long basket_id, @Param("state") int state);
+
+	// 구매 상태 상품 조회
+	List<BasketVo> getPayList(Long id);
+
 
 }

@@ -83,11 +83,46 @@ public class PayController {
 	}
 	
 	@RequestMapping("/Pay/PayForm")
-	public String payform(HttpServletRequest request) {
+	public ModelAndView payform(HttpServletRequest request) {
 
-		 Long userId = getUserIdService.getId(request);
-		
-		return "pay/pay";
+	    Long id = getUserIdService.getId(request);
+	    
+	    ModelAndView mv = new ModelAndView();
+	    // 장바구니 목록 가져오기
+	    List<BasketPageVo> payPageList = new ArrayList<>();
+	    List<BasketVo> payList = payMapper.getPayList(id);
+	    
+	    for (BasketVo basketvo : payList) {
+	        
+	        ProdVo prodvo = payMapper.getProd(basketvo.getPro_id());
+	        
+	        ImgsVo imgsvo = payMapper.getImg(basketvo.getPro_id());
+	        
+	        MakeVo makevo = payMapper.getMake(prodvo.getMake_id());
+	        
+	        BasketPageVo basketpagevo = new BasketPageVo(
+	            basketvo.getBasket_id(),
+	            basketvo.getPro_id(),
+	            imgsvo.getImg_id(),
+	            prodvo.getMake_id(),
+	            imgsvo.getImg(),
+	            prodvo.getUrl(),
+	            prodvo.getName(),
+	            makevo.getName(),
+	            basketvo.getPrice(),
+	            basketvo.getCount(),
+	            basketvo.getDelivery_charge(),
+	            basketvo.getState()
+	        );
+	        
+	        payPageList.add(basketpagevo);
+	    }
+	    
+	    mv.addObject("payList", payList);
+	    mv.addObject("payPageList", payPageList);
+	    mv.setViewName("pay/pay");
+	    
+	    return mv;
 	}
 	
 	@RequestMapping("/Pay/Success")
