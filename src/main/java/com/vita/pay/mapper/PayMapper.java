@@ -26,9 +26,7 @@ public interface PayMapper {
 	// 장바구니 상품 수량 변경
 	void updateBasketCount(BasketVo basketvo);
 
-	
-
-	
-
+	// 장바구니 상품 구매 상태
+	void updateState(@Param("basket_id") Long basket_id, @Param("state") int state);
 
 }

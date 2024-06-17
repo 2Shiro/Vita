@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vita.controller.GetUserIdService;
 import com.vita.oauth.jwt.JWTUtil;
+import com.vita.pay.mapper.PayMapper;
 import com.vita.pay.service.BasketService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +28,9 @@ public class PayApiController {
 	
 	@Autowired
     private BasketService basketService;
+	
+	@Autowired
+    private PayMapper payMapper;
 	
 	@PostMapping("/Pay/UpdateCount")
 	public Map<String, Object> updateCount(@RequestBody Map<String, Object> params, HttpServletRequest request) {
@@ -59,6 +65,19 @@ public class PayApiController {
 
 	    return response;
 	}
-
 	
+	
+	
+    @PostMapping("/Pay/UpdateState")
+    public ResponseEntity<String> updateBasketState(@RequestBody Map<String, Object> payload) {
+        
+            Long basket_id = Long.valueOf(payload.get("basketId").toString());
+            int state = Integer.parseInt(payload.get("state").toString());
+
+            payMapper.updateState(basket_id, state);
+
+            return ResponseEntity.ok("State updated successfully");
+       
+    }
+
 }

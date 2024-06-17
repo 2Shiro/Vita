@@ -58,16 +58,17 @@ public class PayController {
 	        MakeVo makevo = payMapper.getMake(prodvo.getMake_id());
 	        
 	        BasketPageVo basketpagevo = new BasketPageVo(
-	            basketvo.getBasket_id(), 
-	            basketvo.getPro_id(), 
-	            imgsvo.getImg_id(), 
+	            basketvo.getBasket_id(),
+	            basketvo.getPro_id(),
+	            imgsvo.getImg_id(),
 	            prodvo.getMake_id(),
-	            imgsvo.getImg(), 
-	            prodvo.getName(), 
+	            imgsvo.getImg(),
+	            prodvo.getUrl(),
+	            prodvo.getName(),
 	            makevo.getName(),
-	            basketvo.getPrice(), 
-	            basketvo.getCount(), 
-	            basketvo.getDelivery_charge(), 
+	            basketvo.getPrice(),
+	            basketvo.getCount(),
+	            basketvo.getDelivery_charge(),
 	            basketvo.getState()
 	        );
 	        
