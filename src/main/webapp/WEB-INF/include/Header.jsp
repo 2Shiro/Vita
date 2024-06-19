@@ -37,6 +37,7 @@
                   <li><a href="./program/homework"><span>프로바이오틱스</span></a></li>
                   <li><a href="/Pds/List"><span>리스트</span></a></li>
                   <li><a href="/Pds/Write"><span>글쓰기</span></a></li>
+                  <li><a href="/Pds/View?post_id=2&nowpage=1"><span>글상세보기</span></a></li>
                 </ul>
               </div>
             </li>

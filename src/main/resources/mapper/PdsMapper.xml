@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.pds.mapper.PdsMapper">  
+  
+    <insert id="SavePost">
+    INSERT INTO post (
+    post_id,
+    id,
+    ptype_id,
+    title,
+    content,
+    state  
+) VALUES (
+    (SELECT NVL(MAX(post_id), 0) + 1 FROM post),
+    #{id},
+    1,
+    #{title},
+    #{content},
+    0  
+)
+    
+    </insert>
+   <select id="FindPostId">
+   SELECT
+    P.post_id,
+    P.id AS id,
+    U.name,
+    P.ptype_id,
+    P.title,
+    P.content,
+    P.state,
+    P.created,
+    COALESCE(H.hit_count, 0) AS hit_count,
+    COALESCE(PL.like_count, 0) AS like_count,
+    COALESCE(C.comment_count, 0) AS comment_count
+FROM
+    post P
+JOIN
+    USERS U ON P.id = U.id
+LEFT JOIN
+    (SELECT post_id, COUNT(hit_id) AS hit_count FROM HIT GROUP BY post_id) H ON P.post_id = H.post_id
+LEFT JOIN
+    (SELECT post_id, COUNT(like_id) AS like_count FROM POSTLIKE GROUP BY post_id) PL ON P.post_id = PL.post_id
+LEFT JOIN
+    (SELECT post_id, COUNT(COMME_ID) AS comment_count FROM COMMENTS GROUP BY post_id) C ON P.post_id = C.post_id
+WHERE
+    P.post_id = #{post_id}
+   
+   
+   </select>
+   
+   <select id="FindComments">
+   
+   SELECT
+    comme_id,
+    id,
+    post_id,
+    content,
+    created
+FROM
+    comments
+WHERE
+	post_id = #{post_id}
+    OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+   </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
