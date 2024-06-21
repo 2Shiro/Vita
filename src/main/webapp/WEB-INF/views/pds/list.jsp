@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -336,6 +338,20 @@
     background: #f6fafd !important;
   }
   
+  .pagination{
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
+  }
+  .pagination li{
+  padding: 5px;
+  }
+  .pagination .prev_item{
+  	margin-right: 10px
+  }
+  .pagination .next_item{
+  	margin-left: 10px
+  }
 </style>
 </head>
 <body>
@@ -405,43 +421,73 @@
         </div>
         <div id="전체" class="tabcontent listWrap" style="display: block;">
           <ul>
-            <li class="background-blue">
-              <div class="topArea recommend">
+          <c:forEach var="post" items="${response.list}">
+       
+                   
+                <c:choose>	     
+		     <c:when test="${post.read}">
+		  	     <li class="background-blue">
+		  	     	<div class="topArea recommend">
 
-                <div class="labelSwiper swiper-container swiper-container-horizontal">
-                  <div class="labelBx swiper-wrapper" style="transition-duration: 0ms;">
-                    <a href="#" class="label swiper-slide swiper-slide-active" target="_blank">잡코리아(유)</a>
-                  </div>
-                </div>
-                <div class="contArea visited">
+	                <div class="labelSwiper swiper-container swiper-container-horizontal">
+	                  <div class="labelBx swiper-wrapper" style="transition-duration: 0ms;">
+	                   <c:forEach var="mark" items="${post.content_mark}">
+	                     <a href="#" class="label swiper-slide swiper-slide-active" target="_blank">#${mark}</a>
+	                   </c:forEach>
+	               
+	                  </div>
+	                </div>
+	                <div class="contArea visited">
+		     </c:when>
+		     <c:otherwise>
+		     	 <li>
+		     	 <div class="topArea recommend">
+
+	                <div class="labelSwiper swiper-container swiper-container-horizontal">
+	                  <div class="labelBx swiper-wrapper" style="transition-duration: 0ms;">
+	                    <c:forEach var="mark" items="${post.content_mark}">
+	                     <a href="#" class="label swiper-slide swiper-slide-active" target="_blank">#${mark}</a>
+	                   </c:forEach>
+	                  </div>
+	                </div>
+	                <div class="contArea">
+		    
+		     </c:otherwise>
+	    </c:choose>
+                
+             
+		     
+            
+        
                   <!-- [Dev] 이미지 포함 컨텐츠 : image 클래스 추가 -->
                   <a href="#" class="post-type ">
                     <div class="post-title">
-                      <span class="lineOne">(커리어첵첵) 이직 시 연봉 인상, 어느 정도가 적당할까요?</span>
+                      <span class="lineOne">${post.title}</span>
                     </div>
                     <div class="post-summary ">
-                      <span class="lineTwo">직장인이라면 어느 정도 벌어야 고연봉자라 할 수 있을까요?최근 잡코리아 조사에 따르면 직장인이 생각하는&nbsp;고연봉의 기준은
-                        8,550만원이라고 해요.그렇다면 어떻게 해야 고연봉자가 될 수 있을까요?
-                      </span>
+                   
+                       <span class="lineTwo">
+                       	${post.content_str } ...
+                      </span> 
                     </div>
                   </a>
 
                   <div class="post-cell-box">
                     <span class="cell">
                       <i class="bi bi-airplane-engines-fill"></i>
-                      <i class="eyes">조회수</i>376
+                      <i class="eyes">조회수</i>${post.hit_count}
 
 
                     </span>
                     <button type="button" class="cell devQstnListLike " data-likecnt="1" data-qstnno="127013">
                       <i class=" icon-like">좋아요</i>
-                      <em>1</em>
+                      <em>${post.like_count}</em>
                     </button>
                     <!-- [Dev] 신규 답변의 경우 icnNew 클래스 추가 -->
                     <span class="cell ">
-                      <i class="icon-answer">답변</i><span class="num">0</span>
+                      <i class="icon-answer">답변</i><span class="num">${post.comment_count}</span>
                     </span>
-                    <span class="cell">2024-06-04 작성</span>
+                    <span class="cell">${post.created}</span>
                   </div>
                   <!-- [Dev] 북마크 툴팁 show - class tooltip-open 추가 -->
                   <div class="post-util has-tooltip">
@@ -472,140 +518,11 @@
                 </div>
               </div>
             </li>
-            <li>
-              <div class="topArea recommend">
-
-                <div class="labelSwiper swiper-container swiper-container-horizontal">
-                  <div class="labelBx swiper-wrapper" style="transition-duration: 0ms;">
-                    <a href="#" class="label swiper-slide swiper-slide-active" target="_blank">잡코리아(유)</a>
-                  </div>
-                </div>
-                <div class="contArea">
-                  <!-- [Dev] 이미지 포함 컨텐츠 : image 클래스 추가 -->
-                  <a href="#" class="post-type ">
-                    <div class="post-title">
-                      <span class="lineOne">(커리어첵첵) 이직 시 연봉 인상, 어느 정도가 적당할까요?</span>
-                    </div>
-                    <div class="post-summary ">
-                      <span class="lineTwo">직장인이라면 어느 정도 벌어야 고연봉자라 할 수 있을까요?최근 잡코리아 조사에 따르면 직장인이 생각하는&nbsp;고연봉의 기준은
-                        8,550만원이라고 해요.그렇다면 어떻게 해야 고연봉자가 될 수 있을까요?
-                      </span>
-                    </div>
-                  </a>
-
-                  <div class="post-cell-box">
-                    <span class="cell">
-                      <i class="bi bi-airplane-engines-fill"></i>
-                      <i class="eyes">조회수</i>376
-
-
-                    </span>
-                    <button type="button" class="cell devQstnListLike " data-likecnt="1" data-qstnno="127013">
-                      <i class=" icon-like">좋아요</i>
-                      <em>1</em>
-                    </button>
-                    <!-- [Dev] 신규 답변의 경우 icnNew 클래스 추가 -->
-                    <span class="cell ">
-                      <i class="icon-answer">답변</i><span class="num">0</span>
-                    </span>
-                    <span class="cell">2024-06-04 작성</span>
-                  </div>
-                  <!-- [Dev] 북마크 툴팁 show - class tooltip-open 추가 -->
-                  <div class="post-util has-tooltip">
-                    <div class="post-util-item">
-                      <!-- [Dev] 북마크 - class on 추가/제거 -->
-                      <button type="button" class="btnBookmark">
-                        <i class="icon-bookmark"></i>
-                      </button>
-                      <div class="book-mark-layer tooltip-layer qnaSpA">
-
-                      </div>
-                    </div>
-                    <div class="post-util-item">
-                      <button type="button" class="iconMore">
-                        <i class="icon-dots"></i>
-                      </button>
-                      <div class="view-more-layer devQnaListPopupMenu">
-                        <ul>
-                          <li>
-                            <a href="#" class="view-more-item devCancelSubscribe" data-subscrno="10031191">구독 취소</a>
-                          </li>
-                          <li><a href="#" class="view-more-item devSingo" data-idfno="127013" data-type="1">신고</a></li>
-                          <li><a href="#" class="view-more-item devBtnBlock" data-mid="jobkoreaofficial">차단</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="topArea recommend">
-
-                <div class="labelSwiper swiper-container swiper-container-horizontal">
-                  <div class="labelBx swiper-wrapper" style="transition-duration: 0ms;">
-                    <a href="#" class="label swiper-slide swiper-slide-active" target="_blank">잡코리아(유)</a>
-                  </div>
-                </div>
-                <div class="contArea">
-                  <!-- [Dev] 이미지 포함 컨텐츠 : image 클래스 추가 -->
-                  <a href="#" class="post-type ">
-                    <div class="post-title">
-                      <span class="lineOne">(커리어첵첵) 이직 시 연봉 인상, 어느 정도가 적당할까요?</span>
-                    </div>
-                    <div class="post-summary ">
-                      <span class="lineTwo">직장인이라면 어느 정도 벌어야 고연봉자라 할 수 있을까요?최근 잡코리아 조사에 따르면 직장인이 생각하는&nbsp;고연봉의 기준은
-                        8,550만원이라고 해요.그렇다면 어떻게 해야 고연봉자가 될 수 있을까요?
-                      </span>
-                    </div>
-                  </a>
-
-                  <div class="post-cell-box">
-                    <span class="cell">
-                      <i class="bi bi-airplane-engines-fill"></i>
-                      <i class="eyes">조회수</i>376
-
-
-                    </span>
-                    <button type="button" class="cell devQstnListLike " data-likecnt="1" data-qstnno="127013">
-                      <i class=" icon-like">좋아요</i>
-                      <em>1</em>
-                    </button>
-                    <!-- [Dev] 신규 답변의 경우 icnNew 클래스 추가 -->
-                    <span class="cell ">
-                      <i class="icon-answer">답변</i><span class="num">0</span>
-                    </span>
-                    <span class="cell">2024-06-04 작성</span>
-                  </div>
-                  <!-- [Dev] 북마크 툴팁 show - class tooltip-open 추가 -->
-                  <div class="post-util has-tooltip">
-                    <div class="post-util-item">
-                      <!-- [Dev] 북마크 - class on 추가/제거 -->
-                      <button type="button" class="btnBookmark">
-                        <i class="icon-bookmark"></i>
-                      </button>
-                      <div class="book-mark-layer tooltip-layer qnaSpA">
-
-                      </div>
-                    </div>
-                    <div class="post-util-item">
-                      <button type="button" class="iconMore">
-                        <i class="icon-dots"></i>
-                      </button>
-                      <div class="view-more-layer devQnaListPopupMenu">
-                        <ul>
-                          <li>
-                            <a href="#" class="view-more-item devCancelSubscribe" data-subscrno="10031191">구독 취소</a>
-                          </li>
-                          <li><a href="#" class="view-more-item devSingo" data-idfno="127013" data-type="1">신고</a></li>
-                          <li><a href="#" class="view-more-item devBtnBlock" data-mid="jobkoreaofficial">차단</a></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
+            
+            </c:forEach>
+            
+            
+            
           </ul>
         </div>
         <div id="인기" class="tabcontent">
@@ -616,6 +533,9 @@
           <h2>북마크 게시판</h2>
           <p>여기에 북마크 게시판 내용이 들어갑니다.</p>
         </div>
+        
+        <%@include file="/WEB-INF/pagination/pdsListPaging.jsp"%>
+        
       </div>
       <div class="right-sidebar">
         <h2>내가 본 상품</h2>

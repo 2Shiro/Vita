@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+ <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -143,28 +144,28 @@
     box-sizing: border-box;
   }
 
-  .comments ul {
+  .comments .comments_wrap {
     list-style: none;
     padding: 0;
   }
 
-  .comments ul li {
+  .comments .comments_wrap li {
     margin-bottom: 20px;
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
   }
 
-  .comments ul li .comment-details {
+  .comments .comments_wrap li .comment-details {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
-  .comments ul li .comment-content {
+  .comments .comments_wrap li .comment-content {
     margin-top: 10px;
   }
 
-  .comments ul li .like-dislike {
+  .comments .comments_wrap li .like-dislike {
     margin-top: 10px;
   }
 
@@ -205,7 +206,20 @@
     padding: 0;
     cursor: pointer;
   }
-  
+  .pagination{
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
+  }
+  .pagination li{
+  padding: 5px;
+  }
+  .pagination .prev_item{
+  	margin-right: 10px
+  }
+  .pagination .next_item{
+  	margin-left: 10px
+  }
 </style>
 </head>
 <body>
@@ -277,33 +291,26 @@
           </div>
           <div class="comments">
             <h4>댓글 89개</h4>
-            <ul>
+            <ul class ="comments_wrap">
+              <c:forEach var="c" items="${response.list}">
               <li>
                 <div class="comment-details">
-                  <span>작성자: <b>user1</b></span>
+                  <span>작성자: <b>${c.name }</b></span>
                   <div class="like-dislike">
-                    <button>좋아요</button>
+                    <button>좋아요 <b>${ c.like_count }</b></button>
                     <button>싫어요</button>
                   </div>
                 </div>
                 <div class="comment-content">
-                  댓글 내용입니다.
+                  ${c.content}
                 </div>
               </li>
-              <li>
-                <div class="comment-details">
-                  <span>작성자: <b>user2</b></span>
-                  <div class="like-dislike">
-                    <button>좋아요</button>
-                    <button>싫어요</button>
-                  </div>
-                </div>
-                <div class="comment-content">
-                  또 다른 댓글 내용입니다.
-                </div>
-              </li>
+              </c:forEach>
+             
               <!-- 추가 댓글은 여기에 추가 -->
             </ul>
+            <%@include file="/WEB-INF/pagination/pdsViewPaging.jsp"%>
+            
             <div class="cmt_editor" style="margin-top:0px; ">
               <label for="editor_7158233100" class="cmt_editor_tl">
                 <strong style="padding-left:5px;">댓글 쓰기</strong>

@@ -21,5 +21,5 @@ public class PostViewVo {
 	private int hit_count;
 	private int like_count;
 	private int comment_count;
-
+	
 }

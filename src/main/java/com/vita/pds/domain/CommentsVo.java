@@ -15,6 +15,8 @@ public class CommentsVo {
 	private Long post_id;
 	private String content;
 	private LocalDate created;
+	private String name;
+	private int like_count;
 	
 	
 	

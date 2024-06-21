@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vita.pds.domain.CommentsVo;
+import com.vita.pds.domain.PostListVo;
 import com.vita.pds.domain.PostViewVo;
 import com.vita.pds.domain.PostVo;
 import com.vita.pds.mapper.PdsMapper;
@@ -31,13 +32,13 @@ public class PdsServiceImpl implements PdsService{
 		
 		Long id = Long.parseLong(map.get("id").toString()); // 유저아이뒤
         String title = (String) map.get("title"); // 게시글 제목
-        String content = (String) map.get("content"); 
+        String content = (String) map.get("content");
+        String tags = (String) map.get("tags");
         String updatedContent = saveBase64ImagesAndReplaceWithUrls(content);// 게시글 내용 변환 파일저장하고 변환값 가져옴
 		
-        String StringContent = updatedContent;
+        String StringContent = updatedContent + ',' + tags;
         
-        System.out.println("updatedContent");
-        System.out.println("updatedContent");
+
        
         System.out.println("updatedContent : " + updatedContent);
         
@@ -46,8 +47,7 @@ public class PdsServiceImpl implements PdsService{
         postVo.setTitle(title);
         postVo.setContent(StringContent);
         System.out.println("postVo : " + postVo);
-        
-        System.out.println("save까지 안가나?");
+    
         pdsMapper.SavePost(postVo);
         System.out.println("파일저장 db저장 둘다 완료");
 	}
@@ -60,33 +60,27 @@ public class PdsServiceImpl implements PdsService{
 
         // 정규식을 사용하여 Base64 이미지를 찾기
         Pattern pattern = Pattern.compile("src=\"data:image/(png|jpg|jpeg|svg\\+xml);base64,([^\"]+)\"");
-        System.out.println("");
+
         System.out.println("정규식 사용");
         System.out.println(pattern);
-        Matcher matcher = pattern.matcher(content);
-        System.out.println("");
+        Matcher matcher = pattern.matcher(content);     
         System.out.println("matcher 사용");
         System.out.println(matcher);
         StringBuffer updatedContent = new StringBuffer();
 
         while (matcher.find()) {
             String base64Image = matcher.group(2);
-            System.out.println("");
-            System.out.println("그룹2 base64Image");
-            System.out.println(base64Image);
+      
             String fileExtension = matcher.group(1);
          // 확장자가 svg+xml인 경우 svg로 단순화
             if (fileExtension.equals("svg+xml")) {
                 fileExtension = "svg";
             }
-            System.out.println("");
-            System.out.println("그룹1 fileExtension");
-            System.out.println(fileExtension);
             String savedFileName = saveBase64Image(base64Image, fileExtension);
 
             // 파일 저장 후 HTML에서 해당 이미지 부분을 파일 경로로 교체
             //파일 시스템 경로가 아닌, 클라이언트가 접근할 수 있는 웹 경로를 생성합니다.
-            String filePath = "/uploads/" + savedFileName;
+            String filePath = "/board/" + savedFileName;
             matcher.appendReplacement(updatedContent, "src=\"" + filePath + "\"");
         }
         matcher.appendTail(updatedContent);
@@ -100,7 +94,7 @@ public class PdsServiceImpl implements PdsService{
         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
         String uuid = UUID.randomUUID().toString();
         String fileName = uuid + "." + fileExtension;
-        String dirPath = "D:/dev/data/board/img/";
+        String dirPath = "src/main/resources/static/board/";
         String filePath = dirPath + fileName;
 
         //경로가 없으면 생성
@@ -132,6 +126,27 @@ public class PdsServiceImpl implements PdsService{
 	public List<CommentsVo> findPageingComments(HashMap<String, Object> params) {
 		List<CommentsVo> commentsVos = pdsMapper.FindComments(params);
 		return commentsVos;
+	}
+
+
+	@Override
+	public int findAllPost( ) {
+		int  count = pdsMapper.FindListPost();
+		
+		return count;
+	}
+
+
+	@Override
+	public List<PostListVo> PostList(HashMap<String, Object> params) {
+		List<PostListVo> list = pdsMapper.FindAllPostList(params);
+		
+		for (PostListVo post : list) {
+            post.splitContent();
+            System.out.println(post);
+        }
+        return list;
+		
 	}
 
 }
