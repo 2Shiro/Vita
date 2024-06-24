@@ -200,7 +200,9 @@ td {
 		<a href="/AdminHome">홈</a> <a href="/AdminList">직원 리스트</a> <a
 			href="/AdminProduct">상품등록</a> <a href="/AdminUserList">사용자 관리</a> <a
 			href="/MakeList">제조사</a> <a href="/Ingredient">성분</a> <a
-			href="/FormList">제형</a> <a href="/NutrientList">영양분</a> <a
+			href="/FormList">제형</a> <a href="/NutrientList">영양분</a>
+			<a href="/Inquiry">문의 글</a>
+			 <a
 			href="/AdminLogout">로그아웃</a>
 	</div>
 
