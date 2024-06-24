@@ -121,16 +121,32 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 </select>
 
 <!-- 상품 FAQ -->
-<!-- <select id="getFaqList" resultType="com.vita.domain.FaqVo"> -->
-<!--     SELECT QUESTION, ANSWER -->
-<!--     FROM FAQ -->
-<!-- </select> -->
+<select id="getFaqList" resultType="com.vita.detail.domain.FaqVo">
+    SELECT FAQ_ID, QUESTION, ANSWER
+    FROM   FAQ
+</select>
+
+<!-- 카트 -->
 
 <!-- 카트에 상품이 존재? -->
-<select id="incart">
+<select id="incart" parameterType="map" resultType="int">
 	SELECT COUNT(*)
 	FROM BASKET
 	WHERE PRO_ID = #{pro_id}
+</select>
+
+<!-- 장바구니에 존재하는 상품의 재고 수량 확인 -->
+<select id="getProductStock" parameterType="map" resultType="int">
+	SELECT SUM(COUNT)
+	FROM STOCK
+	WHERE PRO_ID = #{pro_id}
+</select>
+
+<!-- 장바구니에 존재하는 상품의 금액 확인 -->
+<select id="getPrice" parameterType="map" resultType="int">
+	SELECT PRICE
+	FROM 	 BASKET
+	WHERE  PRO_ID = #{pro_id} AND ID = #{id}
 </select>
 
 <!-- 카트에 상품 넣기 1)카트에 없는 상품일 경우 -->
@@ -140,10 +156,99 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 </insert>	
 
 <!-- 카트에 상품 넣기 2)카트에 있는 상품일 경우-->
-<update id="cart2">
+<update id="cart2" parameterType="map">
   UPDATE BASKET
-	SET COUNT = (SELECT COUNT FROM BASKET WHERE PRO_ID = #{pro_id})+#{count}
-  WHERE PRO_ID = #{pro_id}
+	SET COUNT = COUNT + #{count}, PRICE = PRICE + #{price}
+  WHERE PRO_ID = #{pro_id} AND ID=#{id}
 </update>
+
+<!-- 카트에 존재하는 상품 배송비 -->
+<update id="delivery">
+	UPDATE BASKET
+	SET 	 DELIVERY_CHARGE = 0
+	WHERE  PRO_ID=#{pro_id} AND ID=#{id}
+</update>
+
+<!-- 카트에 존재하는 상품 수량 -->
+<select id="getCurrentBasketCount" parameterType="map" resultType="int">
+	SELECT COUNT(*)
+	FROM BASKET
+	WHERE PRO_ID = #{pro_id} AND ID = #{id}
+</select>
+
+<!-- 장바구니 추천 아이템 -->
+<select id="getProdList" parameterType="int" resultType="com.vita.detail.domain.ProductVo">
+	SELECT P.PRO_ID, P.NAME, P.PRICE, I.IMG, ROUND(AVG(R.RATING),1) AS AVG_RATING, COUNT(R.REV_ID) AS REVIEW_COUNT
+	FROM PRODUCT P
+	LEFT JOIN REVIEW R ON P.PRO_ID = R.PRO_ID
+	LEFT JOIN IMGS I ON P.PRO_ID = I.PRO_ID
+	WHERE P.PRO_ID IN (	 SELECT PRO_ID FROM NUTRIENT
+									    WHERE ING_ID IN (SELECT ING_ID FROM NUTRIENT WHERE PRO_ID = #{pro_id})
+									    AND PRO_ID &lt;&gt; #{pro_id}  )
+	GROUP BY P.PRO_ID, P.NAME, P.PRICE, I.IMG
+</select>
+
+<!-- 바로 구매 -->
+<insert id="buy">
+    DECLARE
+        v_new_basket_id NUMBER;
+    BEGIN
+        INSERT INTO BASKET (BASKET_ID, ID, PRO_ID, COUNT, STATE, PRICE, DELIVERY_CHARGE)
+        VALUES ((SELECT NVL(MAX(BASKET_ID), 0) FROM BASKET) + 1, #{id}, #{pro_id}, #{count}, 1, #{price}, #{delivery_charge})
+        RETURNING BASKET_ID INTO v_new_basket_id;
+
+        UPDATE BASKET
+        SET STATE = 0
+        WHERE BASKET_ID &lt;&gt; v_new_basket_id;
+        
+        COMMIT;
+    END;
+</insert>
+
+<!-- 좋아요 개수 -->
+<!-- <select id="countLikes" parameterType="int" resultType="int"> -->
+<!--     SELECT COUNT(*) -->
+<!--     FROM RLIKES -->
+<!--     WHERE REV_ID = #{param1} -->
+<!-- </select> -->
+
+<!-- id가 좋아요 눌렀는지 상태 -->
+<!-- <select id="getLikeStatus" parameterType="map" resultType="int"> -->
+<!--     SELECT COUNT(*) -->
+<!--     FROM RLIKES -->
+<!--     WHERE REV_ID = #{rev_id} AND ID = #{id} -->
+<!-- </select> -->
+
+<!-- 좋아요 추가 -->
+<!-- <insert id="addLike" parameterType="map"> -->
+<!--     INSERT INTO RLIKES (REV_ID, ID, LIKES) -->
+<!--     VALUES (#{rev_id}, #{id}, 1) -->
+<!-- </insert> -->
+
+<!-- 좋아요 삭제 -->
+<!-- <delete id="removeLike" parameterType="map"> -->
+<!--     DELETE FROM RLIKES -->
+<!--     WHERE REV_ID = #{rev_id} AND ID = #{id} -->
+<!-- </delete> -->
+
+<!-- 위시리스트에 존재? -->
+<select id="getWish" parameterType="map" resultType="int">
+	SELECT COUNT(*)
+	FROM   WISHLIST
+	WHERE  ID=#{id} AND PRO_ID=#{pro_id}
+</select>
+
+<!-- 위시리스트 추가 -->
+<insert id="addWishlist" >
+	INSERT INTO WISHLIST(PRO_ID,ID)
+	VALUES(#{pro_id},#{id})
+</insert>
+
+<!-- 위시리스트에서 삭제 -->
+<delete id="deleteWishlist" parameterType="map">
+	DELETE FROM WISHLIST
+	WHERE  ID=#{id} AND PRO_ID=#{pro_id}
+</delete>
+
 </mapper>
   

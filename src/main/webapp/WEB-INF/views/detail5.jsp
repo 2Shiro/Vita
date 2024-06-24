@@ -59,15 +59,11 @@
 		
 		#section1{
 				margin:0;
-/* 				height: 1200px; */
  				margin-right: 400px;
  		    margin-left : 66px; 
 		}
 		#section2,#section3 {
-		/* 		margin-top:250px; */
 		    padding-top : 290px;
-/* 		    height: 1200px; */
-/* 		    border-bottom: 1px solid #ccc; */
 		    margin-right: 400px;
 		    margin-left : 66px;
 		}
@@ -284,6 +280,25 @@
 	font-size:22px;
 	padding : 12px;
 }
+a{
+	color:black;
+	text-decoration-line: none;
+}
+a:hover{
+	text-decoration-line: underline;
+}
+td > img{
+	width:120px;
+	height :130px;
+}
+  .unfill {
+      color: grey;
+  }
+  .fill {
+    color: red;
+  }
+/* section3 */
+
 </style>
 </head>
 <body>
@@ -316,13 +331,29 @@
 <!--     어사이드의 구매창 끝 -->
 
 			<!-- offcanvas -->
-			<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+			<div class="offcanvas offcanvas-end  tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
 			  <div class="offcanvas-header">
 			    <h5 id="offcanvasRightLabel"></h5>
 			    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 			  </div>
 			  <div class="offcanvas-body">
 			    <div>함께 보시면 좋은 상품</div>
+			    <table>
+			    	<c:forEach var="re" items="${prodList}">
+				    	<tr>
+				    		<input type="hidden"  id="prodList_id"  value="${re.pro_id }">
+				    		<td rowspan="3"><img src="img/${ re.img }.jpg"></td>
+				    		<td><a href="/Detail?pro_id=${re.pro_id}&nowpage=1">${ re.name }</a></td>
+				    	</tr>
+				    	<tr>
+				    		<td>가격 ${ re.price }</td>
+				    	</tr>
+				    	<tr>
+				    		<td> ${ re.avg_rating }, ${ re.review_count }
+				    			<button type="button" id="wishButton" style="border:none; background-color:white;">♥</button></td>
+				    	</tr>
+			    	</c:forEach>
+			    </table>			    
 			    <button type="button" onclick="location.href='/Pay/Basket'">장바구니로 가기</button>
 			  </div>
 			</div>
@@ -476,7 +507,7 @@
                         	<!-- 리뷰 좋아요 버튼 -->
                         	<td>
                         		<input type="hidden" name="rev_id">
-										        <button class="like-button" data-user-id="1">👍</button>
+										        <button class="like-button" data-user-id="1"><ion-icon name="thumbs-up-outline"></ion-icon></button>
 										        <span></span>
 										        <span class="like-status"></span>
                         	</td>
@@ -535,11 +566,31 @@
         </section>
         
         <!-- FAQ -->
+        <section id="section3">
+            <h1>상품 Q&A (FAQ)</h1>
+            <div class="accordion" id="faqAccordion">
+                <c:forEach var="faq" items="${ faqList }">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading-${faq.faq_id}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${faq.faq_id}" 
+                            aria-expanded="false" aria-controls="collapse-${faq.faq_id}" style="font-size:18px; ">
+                                ${faq.question}
+                            </button>
+                        </h2>
+                        <div id="collapse-${faq.faq_id}" class="accordion-collapse collapse" aria-labelledby="heading-${faq.faq_id}" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                ${faq.answer}
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </section>
         <!-- FAQ 끝 -->
     </div>
     <!-- 상세페이지 끝 -->
     
-    <!-- 스크립트들 -->
+    <!--															 스크립트들 시작															 -->
     
     <!-- 상세페이지 스크립트 -->
      <script src="/js/header.js"></script>
@@ -703,6 +754,34 @@
 
 });
 </script>
+
+<!-- FAQ -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var faqButtons = document.querySelectorAll(".accordion-button");
+    faqButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var target = button.getAttribute("data-bs-target");
+            var collapseElement = document.querySelector(target);
+            var isCurrentlyOpen = collapseElement.classList.contains("show");
+
+            // 다른 모든 아코디언을 닫기
+            var allCollapseElements = document.querySelectorAll(".accordion-collapse");
+            allCollapseElements.forEach(function(element) {
+                element.classList.remove("show");
+            });
+
+            // 현재 클릭된 아코디언의 상태를 토글
+            if (isCurrentlyOpen) {
+                collapseElement.classList.remove("show");
+            } else {
+                collapseElement.classList.add("show");
+            }
+        });
+    });
+});
+
+</script>
  
 <!-- 리뷰 좋아요 
 <script>
@@ -772,7 +851,7 @@ $(document).ready(function() {
       document.addEventListener("DOMContentLoaded", (event) => {
           let id = parseInt(document.querySelector("#id").value);
           let pro_id = parseInt(document.querySelector("#pro_id").value);
-          let wishBtn = document.querySelector("#wishBtn");
+          let wishBtn = document.querySelector("#wishBtn");        
           
           const checkData = {
               id: id,
@@ -836,7 +915,79 @@ $(document).ready(function() {
           .catch(error => {
               console.error("Error:", error);
           });
+      });    
+  </script>
+  
+  <!-- 추천에서 위시리스트에 추가 -->
+   <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", (event) => {
+          let id = parseInt(document.querySelector("#id").value);
+          let pro_id = parseInt(document.querySelector("#prodList_id").value);
+          let wishButton = document.querySelector("#wishButton");        
+          
+          const checkData = {
+              id: id,
+              pro_id: pro_id
+          };
+          
+          const checkJSON = JSON.stringify(checkData);
+
+          fetch("/checkWishlist", {
+              method: "POST",
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: checkJSON
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === "existing") {
+            	  wishButton.classList.add("fill");
+          }else{
+        	  wishButton.classList.remove("fill");
+          }
+          })
+          .catch(error => {
+              console.error("Error:", error);
+          });
       });
+
+            
+      wishButton.addEventListener("click", (event) => {
+          let id = parseInt(document.querySelector("#id").value);
+          let pro_id = parseInt(document.querySelector("#prodList_id").value);
+          
+          const wishData = {
+                  id: id,
+                  pro_id: pro_id
+              };
+          
+          const wishJSON = JSON.stringify(wishData);
+
+          fetch("/addWishlist", {
+              method: "POST",
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: wishJSON
+          })
+          .then(response => response.json())
+          .then(data => {
+              console.log(data);
+              alert(data.msg);
+
+              if (data.status === "new") {
+                  wishButton.classList.add("fill");
+                  wishButton.classList.remove("unfill");
+              } else if (data.status === "existing") {
+                  wishButton.classList.add("unfill");
+                  wishButton.classList.remove("fill");
+              }
+          })
+          .catch(error => {
+              console.error("Error:", error);
+          });
+      });    
   </script>
   
   <!-- 리뷰 페이징 -->

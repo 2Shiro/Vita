@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+	console.log("헤더js 실행됨");
       var header = document.querySelector('#header');
       var menuItems = document.querySelectorAll('#gnb > ul > li');
       var overlay = document.querySelector('.gnb-overlay-bg');
@@ -37,6 +38,9 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       
        const token = getCookie('access');
+       console.log(token);
+       console.log(token);
+       console.log(token);
 	    
 	     if (token) {
 	        const memberList = document.getElementById('header-member-list');

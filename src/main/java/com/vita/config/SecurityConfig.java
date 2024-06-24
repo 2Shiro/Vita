@@ -75,6 +75,8 @@ public class SecurityConfig {
                 .requestMatchers("/login/WriteForm")
                 .requestMatchers("/login/write")
                 .requestMatchers("/reissue")
+                .requestMatchers("/Detail")
+                .requestMatchers("/cart")
                 .requestMatchers("/welcome");
     }
 

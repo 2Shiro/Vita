@@ -36,5 +36,11 @@ public class ProductVo {
 	
 	// 재고
 	private int count;
+	
+	// 리뷰 평점
+	private double avg_rating;
+	
+	// 리뷰 개수
+	private int review_count;
 
 }
