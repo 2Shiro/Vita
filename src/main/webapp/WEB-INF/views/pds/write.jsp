@@ -191,7 +191,7 @@
         e.preventDefault(); // 폼 제출 방지
         var formData = new FormData(this);
         formData.append('content', $('#content').summernote('code'));
-
+        formData.append('tags', document.querySelector('#devTags').value);
         fetch('/Pds/Submit/Write', {
           method: 'POST',
           body: formData
