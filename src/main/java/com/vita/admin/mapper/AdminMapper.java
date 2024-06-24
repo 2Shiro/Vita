@@ -3,14 +3,20 @@ package com.vita.admin.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.vita.admin.domain.AdminVo;
+import com.vita.admin.domain.BenVo;
 import com.vita.admin.domain.FormVo;
 import com.vita.admin.domain.ImgsVo;
 import com.vita.admin.domain.IngredientVo;
+import com.vita.admin.domain.InquiryVo;
 import com.vita.admin.domain.MakeVo;
 import com.vita.admin.domain.NutrientVo;
+import com.vita.admin.domain.PostVo;
 import com.vita.admin.domain.ProductVo;
+import com.vita.admin.domain.RefundVo;
+import com.vita.admin.domain.ReportVo;
 import com.vita.admin.domain.StockVo;
 import com.vita.oauth.domain.UserVo;
 
@@ -42,7 +48,7 @@ public interface AdminMapper {
 
 	void deleteAdmin(int id);
 
-	List<UserVo> getAllUsers(UserVo userVo);
+	int getAllUsers(UserVo userVo);
 
 	void insertProduct(ProductVo productVo);
 
@@ -78,6 +84,44 @@ public interface AdminMapper {
 	boolean updateIngDetails(int ing_id, String name);
 
 	List<MakeVo> LgetProdModalMakeList(MakeVo makeVo);
+
+	int getTotalAmount(ProductVo productVo);
+
+	List<StockVo> LgetStockList(StockVo stockVo);
+
+	List<StockVo> LgetMonthbutton(StockVo stockVo);
+
+	List<StockVo> LgetWeekbutton(StockVo stockVo);
+
+	List<StockVo> LgetDailybutton(StockVo stockVo);
+
+	List<InquiryVo> LgetinquiryList(InquiryVo inquiryVo);
+
+	List<PostVo> LgetReportList(PostVo postVo);
+
+	List<ReportVo> LgetallButtonReportList(ReportVo reportVo);
+
+	List<BenVo> LgetBenList(BenVo benVo);
+
+	List<ProductVo> LgetmodalproductList(ProductVo productVo);
+
+    boolean updateProdModal(@Param("pro_id") int pro_id,
+            @Param("name") String name,
+            @Param("make_name") String make_name,
+            @Param("ing_name") String ing_name,
+            @Param("url") String url,
+            @Param("type") String type,
+            @Param("explain") String explain,
+            @Param("caution") String caution,
+            @Param("price") int price);
+
+    boolean insertProMoadl(@Param("pro_id") int pro_id,
+           @Param("admin_name") String admin_name,
+           @Param("count") int count);
+
+	List<ReportVo> LcgetReportList(ReportVo reporttVo);
+
+
 
 
 

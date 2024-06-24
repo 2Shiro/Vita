@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!-- JSTL 태그 라이브러리 선언 -->
+    pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- JSTL 태그 라이브러리 선언 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -226,20 +225,20 @@ td {
 					<thead>
 						<tr>
 							<th>No.</th>
-							<th>아이디</th>
-							<th>이름</th>
-							<th>성별</th>
-							<th>생년월일</th>
+							<th>유저이름</th>
+							<th>제목</th>
+							<th>내용</th>
+							<th>작성일</th>
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${userList}" var="user">
+						<c:forEach items="${inquiryList}" var="inq">
 							<tr>
-								<td>${user.id}</td>
-								<td>${user.email}</td>
-								<td>${user.name}</td>
-								<td>${user.sex}</td>
-								<td>${user.birth}</td>
+								<td>${inq.inquiry_id}</td>
+								<td>${inq.name}</td>
+								<td>${inq.title}</td>
+								<td>${inq.content}</td>
+								<td>${inq.created}</td>
 						</c:forEach>
 					</tbody>
 				</table>
@@ -255,85 +254,6 @@ td {
     </div>
 </div>
 	
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    var modal = document.getElementById("myModal");
-    var modalContent = document.getElementById("modalContent");
-    var span = document.getElementsByClassName("close")[0];
-    var rows = document.querySelectorAll("table.post-listings tbody tr");
-
-    rows.forEach(function (row) {
-        row.addEventListener("click", function () {
-            var id = this.cells[0].innerText;
-            var userEmail = this.cells[1].innerText;
-            var userName = this.cells[2].innerText;
-            var userSex = this.cells[3].innerText;
-            var userBirth = this.cells[4].innerText;
-
-            modalContent.innerHTML = `
-                <h2>유저정보</h2>
-                <p><strong>회사번호:</strong> \${id}</p>
-                <p><strong>이메일:</strong> \${userEmail}</p>
-                <p><strong>이름:</strong> \${userName}</p>
-                <p><strong>성별:</strong> \${userSex}</p>
-                <p><strong>생년월일:</strong> \${userBirth}</p>
-                <button class="delete-btn" id="${id}">삭제</button>
-            `;
-            modal.style.display = "block";
-            
-            var deleteBtn = modalContent.querySelector(".delete-btn");
-            deleteBtn.addEventListener("click", function () {
-                console.log('Deleting user with ID:', id);
-
-                fetch('/AdminUserDelete', {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ id: id })
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json(); 
-                })
-                .then(data => {
-                    console.log('Delete Successful:', data);
-                    alert("삭제되었습니다"); 
-                    modal.style.display = "none";
-                    location.reload(); 
-                })
-                .catch((error) => {
-                    console.error('Delete Error:', error);
-                });
-            });
-        });
-
-        row.addEventListener("mouseover", function () {
-            this.style.cursor = 'pointer';
-            this.style.backgroundColor = '#f1f1f1';
-        });
-
-        row.addEventListener("mouseout", function () {
-            this.style.backgroundColor = '';
-        });
-    });
-
-    span.onclick = function () {
-        modal.style.display = "none";
-    };
-
-    window.onclick = function (event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    };
-});
-</script>
-
-
 
 </body>
 </html>
