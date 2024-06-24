@@ -133,6 +133,24 @@ WHERE
    
    </select>
    
+   <insert id ="saveComment">
+   	INSERT INTO comments (
+	    comme_id,
+	    id,
+	    post_id,
+	    content
+	   
+	) VALUES (
+	    (SELECT NVL(MAX(comme_id), 0) + 1 FROM comments),
+	    #{id},
+	    #{post_id},
+	    #{content}
+	    
+	)
+  
+   
+   </insert>
+   
 </mapper>
 
 

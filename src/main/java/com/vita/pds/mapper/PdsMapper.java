@@ -23,6 +23,8 @@ public interface PdsMapper {
 
 	List<PostListVo> FindAllPostList(HashMap<String, Object> params);
 
+	void saveComment(CommentsVo commentsVo);
+
 	
 
 	

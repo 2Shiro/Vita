@@ -19,6 +19,8 @@ public interface PdsService {
 	
 	  int findAllPost();
 
-	List<PostListVo> PostList(HashMap<String, Object> params);
+	  List<PostListVo> PostList(HashMap<String, Object> params);
+	
+	  void saveComment(CommentsVo commentsVo);
 
 }

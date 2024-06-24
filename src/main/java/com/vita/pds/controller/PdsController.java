@@ -201,6 +201,8 @@ public class PdsController {
 		mv.addObject("searchVo", searchVo);
 		mv.addObject("postVo", postVo);
 		mv.addObject("post_id", post_id);
+		mv.addObject("totalPageCount", pagination.getTotalPageCount());
+		System.out.println("totalPageCount : " +  pagination.getTotalPageCount());
 		mv.setViewName("pds/view");
 		
 		return mv;

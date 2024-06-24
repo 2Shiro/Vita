@@ -149,4 +149,13 @@ public class PdsServiceImpl implements PdsService{
 		
 	}
 
+
+	@Override
+	public void saveComment(CommentsVo commentsVo) {
+		pdsMapper.saveComment(commentsVo);
+		
+	}
+	
+	
+
 }
