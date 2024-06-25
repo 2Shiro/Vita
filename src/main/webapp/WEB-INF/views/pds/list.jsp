@@ -460,7 +460,7 @@
             
         
                   <!-- [Dev] 이미지 포함 컨텐츠 : image 클래스 추가 -->
-                  <a href="#" class="post-type ">
+                  <a href="/Pds/View?post_id=${post.post_id}&nowpage=1" class="post-type ">
                     <div class="post-title">
                       <span class="lineOne">${post.title}</span>
                     </div>

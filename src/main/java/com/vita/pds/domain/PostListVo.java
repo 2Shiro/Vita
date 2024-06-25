@@ -57,5 +57,7 @@ public class PostListVo {
       
         this.content = null; // content 초기화
     }
+	
+	
 
 }

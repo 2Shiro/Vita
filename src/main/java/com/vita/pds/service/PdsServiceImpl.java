@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -117,6 +118,7 @@ public class PdsServiceImpl implements PdsService{
 	@Override
 	public PostViewVo findPost(Long post_id) {
 		PostViewVo postVo = pdsMapper.FindPostId(post_id);
+		postVo.removeHash();
 		return postVo;
 		
 	}
@@ -148,5 +150,63 @@ public class PdsServiceImpl implements PdsService{
         return list;
 		
 	}
+
+
+	@Override
+	public void saveComment(CommentsVo commentsVo) {
+		pdsMapper.saveComment(commentsVo);
+		
+	}
+
+
+	
+	
+
+	@Override
+	public int addLike(Map<String, Long> params) {
+		int result = pdsMapper.countComment(params);
+		return result;
+	}
+
+
+	@Override
+	public boolean existsLike(Map<String, Long> params) {
+		 if (pdsMapper.existsLike(params)) {
+			 System.out.println("존재함");
+			 System.out.println("존재함");
+			 pdsMapper.saveCommentLike(params);
+	            return true; // 이미 존재하면 false 반환 고쳐야함 나중에 누르면 사라지게
+	        }
+		 pdsMapper.saveCommentLike(params);
+		return true;
+	}
+
+
+	@Override
+	public boolean existsPostLike(Map<String, Long> params) {
+		if(pdsMapper.existsPostLike(params)) {
+			System.out.println("존재함");
+			System.out.println("존재함");
+			pdsMapper.savePostLike(params);
+			return true;
+		}
+		pdsMapper.savePostLike(params);
+		return true;
+	}
+
+
+	@Override
+	public int postAddLike(Map<String, Long> params) {
+		int result = pdsMapper.countPostLike(params);
+		return result;
+	}
+	
+
+
+	
+
+	
+	
+	
 
 }

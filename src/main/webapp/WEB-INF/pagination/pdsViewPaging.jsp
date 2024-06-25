@@ -11,46 +11,40 @@
   <c:set  var = "nextPage"         value ="${searchVo.pagination.nextPage} "/>
 
   
-   <ul class="pagination">
-	    <c:choose>	     
-		     <c:when test="${searchVo.pagination.existPrevPage}">
-		  	    <li class ="page-item"><a class ="page-link" href="/Pds/View?post_id=${postId }&nowpage=1">처음</a> </li>
-	      		<li class ="page-item prev_item"><a class ="page-link" href="/Pds/View?post_id=${postId}&nowpage=${prevPage}">⏪</a> </li>
-		     </c:when>
-		     <c:otherwise>
-		     	<li class ="page-item"><a class ="page-link" href="#" onclick="return false;">처음</a> </li>
-	     	    <li class ="page-item prev_item"><a class ="page-link" href="#" onclick="return false;">⏪</a> </li>
-		     </c:otherwise>
-	    </c:choose>
-	      
-	   		
-			  
-		
-		   <c:forEach  var="pagenum"  begin="${startnum}"  end="${endnum}"  step="1">
-		     <c:choose>
-		       <c:when test="${pagenum eq searchVo.pagination.currentPage}">
-			        <li class="page-item"><a class="page-link" href="/Pds/View?post_id=${postId }&nowpage=${ pagenum }"
-			        style="font-weight: bold; color: blue; text-decoration: underline;">
-			        ${ pagenum }</a></li>
-		       </c:when>
-		       <c:otherwise>
-		       		<li class="page-item"><a class="page-link" href="/Pds/View?post_id=${postId }&nowpage=${ pagenum }">
-			        ${ pagenum }</a></li>
-		       </c:otherwise>
-		     </c:choose>     
-		   </c:forEach>
-		   <c:choose>
-		   	<c:when test="${searchVo.pagination.existNextPage}">
-		   		<li class ="page-item next_item"><a class ="page-link" href="/Pds/View?post_id=${postId}&nowpage=${ nextPage}">⏩</a> </li>
-		        <li class ="page-item"><a class ="page-link" href="/Pds/View?post_id=${postId}&nowpage=${ totalpagecount }">마지막</a> </li>
-		   	</c:when>
-		   	<c:otherwise>
-		   		<li class ="page-item next_item"><a class ="page-link" href="#" onclick="return false;">⏩</a> </li>
-		        <li class ="page-item"><a class ="page-link" href="#" onclick="return false;">마지막</a> </li>
-		   	</c:otherwise>
-		   </c:choose>
-		   
-	</ul>
+  <ul class="pagination">
+  <c:choose>
+    <c:when test="${searchVo.pagination.existPrevPage}">
+      <li class="page-item"><a class="page-link" href="#" data-page="1">처음</a></li>
+      <li class="page-item prev_item"><a class="page-link" href="#" data-page="${prevPage}">⏪</a></li>
+    </c:when>
+    <c:otherwise>
+      <li class="page-item"><a class="page-link" href="#" onclick="return false;">처음</a></li>
+      <li class="page-item prev_item"><a class="page-link" href="#" onclick="return false;">⏪</a></li>
+    </c:otherwise>
+  </c:choose>
+
+  <c:forEach var="pagenum" begin="${startnum}" end="${endnum}" step="1">
+    <c:choose>
+      <c:when test="${pagenum eq searchVo.pagination.currentPage}">
+        <li class="page-item"><a class="page-link" href="#" style="font-weight: bold; color: blue; text-decoration: underline;">${pagenum}</a></li>
+      </c:when>
+      <c:otherwise>
+        <li class="page-item"><a class="page-link" href="#" data-page="${pagenum}">${pagenum}</a></li>
+      </c:otherwise>
+    </c:choose>
+  </c:forEach>
+  
+  <c:choose>
+    <c:when test="${searchVo.pagination.existNextPage}">
+      <li class="page-item next_item"><a class="page-link" href="#" data-page="${nextPage}">⏩</a></li>
+      <li class="page-item"><a class="page-link" href="#" data-page="${totalpagecount}">마지막</a></li>
+    </c:when>
+    <c:otherwise>
+      <li class="page-item next_item"><a class="page-link" href="#" onclick="return false;">⏩</a></li>
+      <li class="page-item"><a class="page-link" href="#" onclick="return false;">마지막</a></li>
+    </c:otherwise>
+  </c:choose>
+</ul>
  
   
   

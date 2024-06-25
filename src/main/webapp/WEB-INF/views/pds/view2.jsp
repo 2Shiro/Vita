@@ -232,12 +232,6 @@
     background-position: 0 0;
     vertical-align: middle;
   }
-  .add-like.select_like .icon-like{
-  background-image: url(/img/hand-thumbs-up-fill.svg);
-  }
-  #editor_textarea{
-  	
-  }
 </style>
 </head>
 <body>
@@ -315,7 +309,7 @@
                 <div class="comment-details">
                   <span>작성자: <b>${c.name }</b></span>
                   <div class="like-dislike">
-                    <button class="add-like" data-comme-id ="${c.comme_id}"> 
+                    <button class="add-like"> 
                        <span class="icon-like"></span>
                        ${ c.like_count }
                     </button>
@@ -341,9 +335,11 @@
                 <div class="simple_wrt">
                   <div class="text">
                     
-                    <textarea id="editor_textarea" cols="50" rows="4"style="background: rgb(255, 255, 255); overflow: hidden; min-height: 4em; height: 49px; width: 98%; "class="keyup_alt"></textarea>
+                    <textarea id="editor_textarea" cols="50" rows="4"
+                      style="background: rgb(255, 255, 255); overflow: hidden; min-height: 4em; height: 49px; width: 98%; "
+                      class="keyup_alt">
+                    </textarea>
 
-					
                   </div>
                   <input type="submit" value="등록" class="bd_btn keyup_alt">
                 </div>
@@ -380,220 +376,216 @@
 
 
   <script>
-document.addEventListener('DOMContentLoaded', function() {
-    let postId = ${post_id};
-    let totalPageCount = 1; // 초기 페이지 수 설정, 실제 값으로 업데이트 필요
-
-    // 페이지 링크 클릭 이벤트 위임
-    document.querySelector('.pagination').addEventListener('click', function(event) {
-        if (event.target.classList.contains('page-link')) {
+  document.addEventListener('DOMContentLoaded', function () {
+	  let postId = ${post_id};
+	  console.log(postId);
+	  document.querySelectorAll('.page-item .page-link').forEach(link => {
+          link.addEventListener('click', function(event) {
+        	  console.log("리턴 여기로 오긴함?")
+        	  let page = parseInt(this.getAttribute('data-page'));
+        	  
+        	  if (!page || this.getAttribute('onclick') === "return false;") {
+        	        event.preventDefault();
+        	        console.log("리턴 false 잘됨 그런데 실행됨?")
+        	        return;
+        	      }
             event.preventDefault();
-            let page = parseInt(event.target.getAttribute('data-page'));
-
-            if (!page || event.target.getAttribute('onclick') === "return false;") {
-                return;
-            }
-            loadComments(page);
-        }
-    });
- // 좋아요 버튼 클릭 이벤트
-    document.querySelector('.content_like .icon-like').addEventListener('click', function(event) {
-        event.preventDefault();
-        
-        fetch('/Pds/Api/PostAddLike', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ post_id: postId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Like added:', data);
-            // 좋아요 개수 업데이트
-            if (data.success) {
-            	console.log("잘온듯")
-                  document.querySelector('.content_like span').textContent = data.post_like_count;
-                  document.querySelector('.post-details .right span:nth-child(2) b').textContent = data.post_like_count;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-
-    // 댓글 폼 제출 이벤트 처리
-    document.querySelector('#commentForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const commentText = document.querySelector('#editor_textarea').value;
-        totalPageCount = ${totalPageCount};
-        const data = {
-            content: commentText,
-            post_id: postId,
-            nowpage: totalPageCount
-        };
-
-        fetch('/Pds/Api/Review', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-
-            // 댓글 목록 업데이트
-            const commentList = document.querySelector('.comments_wrap');
-            commentList.innerHTML = ''; // 기존 댓글 목록 초기화
-            data.list.forEach(comment => {
-                const newComment = document.createElement('li');
-                newComment.innerHTML = `
-                    <div class="comment-details">
-                      <span>작성자: <b>\${comment.name}</b></span>
-                      <div class="like-dislike">
-                        <button class="add-like" data-comme-id ="\${comment.comme_id}">
-                          <span class="icon-like"></span>
-                          \${comment.like_count}
-                        </button>
-                      </div>
-                    </div>
-                    <div class="comment-content">
-                      \${comment.content}
-                    </div>
-                `;
-                commentList.appendChild(newComment);
-            });
-
-            // 페이징 정보 업데이트
-            updatePagination(data.pagination);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
-    
-    // 댓글 좋아요 버튼 클릭 이벤트 위임
-    document.querySelector('.comments_wrap').addEventListener('click', function(event) {
-        if (event.target.closest('.add-like')) {
-            event.preventDefault();
-            const likeButton = event.target.closest('.add-like');
-            const commentId = likeButton.getAttribute('data-comme-id');
+            console.log("실행되나 ?")
             
-            fetch('/Pds/Api/AddLike', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ comme_id: commentId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Like added:', data);
-                // 좋아요 개수 업데이트
-               
-	            if (data.success) {
-	            	
-	            	likeButton.classList.add('select_like'); // 클래스 추가
-	            	likeButton.querySelector('.icon-like').nextSibling.nodeValue = ` \${data.like_count}`;
-	            }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    });
-    
-    // 댓글 불러오기 함수
-    function loadComments(page) {
-        fetch('/Pds/Api/Comments', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ post_id: postId, nowpage: page })
-        })
+         
+            console.log(page);
+            console.log(page);
+            loadComments(page);
+            console.log("여기까지는 실행되나>?")
+          });
+        });
+  });
+  document.querySelector('#commentForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // 폼의 기본 제출을 방지합니다.
+
+      // textarea의 값을 가져옵니다.
+      const commentText = document.querySelector('#editor_textarea').value;
+      const postId = ${post_id};
+      
+      console.log(postId);
+      console.log(postId);
+      // 서버로 전송할 데이터 객체를 만듭니다.
+      const data = {
+    		  content: commentText,
+    		  post_id:${post_id},
+    		  nowpage:${totalPageCount}
+      };
+
+      // fetch를 사용하여 비동기 요청을 보냅니다.
+      fetch('/Pds/Api/Review', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+    	  console.log('Success:', data);
+
+    	  
+          // 리다이렉트
+          
+              // 현재 페이지 댓글 목록 업데이트
+              const commentList = document.querySelector('.comments_wrap');
+              commentList.innerHTML = ''; // 기존 댓글 목록 초기화
+              data.list.forEach(comment => {
+                  const newComment = document.createElement('li');
+                  
+                  newComment.innerHTML = `
+                      <div class="comment-details">
+                        <span>작성자: <b>\${comment.name}</b></span>
+                        <div class="like-dislike">
+                          <button class="add-like">
+                            <span class="icon-like"></span>
+                            \${comment.like_count}
+                          </button>
+                         
+                        </div>
+                      </div>
+                      <div class="comment-content">
+                        \${comment.content}
+                      </div>
+                  `;
+                  
+                  commentList.appendChild(newComment);
+                 
+              });    
+              // 페이징 정보 업데이트
+              updatePagination(data.pagination);
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+      
+      
+      
+      
+      
+      
+     
+      
+      
+      
+  });
+  function loadComments(page) {
+	  console.log("여기까지는 실행되나222>?")
+	  
+	  console.log("여기까지는 실행되나222>?")
+      fetch('/Pds/Api/Comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ post_id: ${postId}, nowpage: page })
+      })
         .then(response => response.json())
         .then(data => {
-            console.log('Comments loaded:', data);
+          // 서버로부터의 응답 데이터를 처리합니다.
+          console.log('Comments loaded:', data);
 
-            const commentList = document.querySelector('.comments_wrap');
-            commentList.innerHTML = ''; // 기존 댓글 목록 초기화
-            data.list.forEach(comment => {
-                const newComment = document.createElement('li');
-                newComment.innerHTML = `
-                    <div class="comment-details">
-                      <span>작성자: <b>\${comment.name}</b></span>
-                      <div class="like-dislike">
-                        <button class="add-like" data-comme-id ="\${comment.comme_id}">
-                          <span class="icon-like"></span>
-                          \${comment.like_count}
-                        </button>
-                      </div>
+          // 현재 페이지 댓글 목록 업데이트
+          const commentList = document.querySelector('.comments_wrap');
+          commentList.innerHTML = ''; // 기존 댓글 목록 초기화
+          data.list.forEach(comment => {
+              const newComment = document.createElement('li');
+              
+              newComment.innerHTML = `
+                  <div class="comment-details">
+                    <span>작성자: <b>\${comment.name}</b></span>
+                    <div class="like-dislike">
+	                    <button class="add-like">
+		                    <span class="icon-like"></span>
+		                    \${comment.like_count}
+		                </button>  
                     </div>
-                    <div class="comment-content">
-                      \${comment.content}
-                    </div>
-                `;
-                commentList.appendChild(newComment);
-            });
+                  </div>
+                  <div class="comment-content">
+                    \${comment.content}
+                  </div>
+              `;
+              
+              commentList.appendChild(newComment);
+             
+          });
 
-            // 페이징 정보 업데이트
-            updatePagination(data.pagination);
+          // 페이징 정보 업데이트
+          updatePagination(data.pagination);
         })
-        .catch(error => {
-            console.error('Error:', error);
+        .catch((error) => {
+          console.error('Error:', error);
         });
     }
-
-    // 페이징 정보 업데이트 함수
-    function updatePagination(pagination) {
-        const paginationElement = document.querySelector('.pagination');
+  function updatePagination(pagination) {
+      const paginationElement = document.querySelector('.pagination');
+      if (paginationElement) {
         paginationElement.innerHTML = ''; // 기존 페이징 정보 초기화
 
         if (pagination.existPrevPage) {
-            paginationElement.innerHTML += `
-                <li class="page-item"><a class="page-link" href="#" data-page="1">처음</a></li>
-                <li class="page-item prev_item"><a class="page-link" href="#" data-page="\${pagination.prevPage}">⏪</a></li>
-            `;
+          paginationElement.innerHTML += `
+            <li class="page-item"><a class="page-link" href="#" data-page="1">처음</a></li>
+            <li class="page-item prev_item"><a class="page-link" href="#" data-page="\${pagination.prevPage}">⏪</a></li>
+          `;
         } else {
-            paginationElement.innerHTML += `
-                <li class="page-item"><a class="page-link" href="#" onclick="return false;">처음</a></li>
-                <li class="page-item prev_item"><a class="page-link" href="#" onclick="return false;">⏪</a></li>
-            `;
+          paginationElement.innerHTML += `
+            <li class="page-item"><a class="page-link" href="#" onclick="return false;">처음</a></li>
+            <li class="page-item prev_item"><a class="page-link" href="#" onclick="return false;">⏪</a></li>
+          `;
         }
 
         for (let i = pagination.startPage; i <= pagination.endPage; i++) {
-            if (i === pagination.currentPage) {
-                paginationElement.innerHTML += `
-                    <li class="page-item"><a class="page-link" href="#" style="font-weight: bold; color: blue; text-decoration: underline;">\${i}</a></li>
-                `;
-            } else {
-                paginationElement.innerHTML += `
-                    <li class="page-item"><a class="page-link" href="#" data-page="\${i}">\${i}</a></li>
-                `;
-            }
+          if (i === pagination.currentPage) {
+            paginationElement.innerHTML += `
+              <li class="page-item"><a class="page-link" href="#" style="font-weight: bold; color: blue; text-decoration: underline;">\${i}</a></li>
+            `;
+          } else {
+            paginationElement.innerHTML += `
+              <li class="page-item"><a class="page-link" href="#" data-page="\${i}">\${i}</a></li>
+            `;
+          }
         }
 
         if (pagination.existNextPage) {
-            paginationElement.innerHTML += `
-                <li class="page-item next_item"><a class="page-link" href="#" data-page="\${pagination.nextPage}">⏩</a></li>
-                <li class="page-item"><a class="page-link" href="#" data-page="\${pagination.totalPageCount}">마지막</a></li>
-            `;
+          paginationElement.innerHTML += `
+            <li class="page-item next_item"><a class="page-link" href="#" data-page="\${pagination.nextPage}">⏩</a></li>
+            <li class="page-item"><a class="page-link" href="#" data-page="\${pagination.totalPageCount}">마지막</a></li>
+          `;
         } else {
-            paginationElement.innerHTML += `
-                <li class="page-item next_item"><a class="page-link" href="#" onclick="return false;">⏩</a></li>
-                <li class="page-item"><a class="page-link" href="#" onclick="return false;">마지막</a></li>
-            `;
+          paginationElement.innerHTML += `
+            <li class="page-item next_item"><a class="page-link" href="#" onclick="return false;">⏩</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="return false;">마지막</a></li>
+          `;
         }
+      }
+      
+      paginationElement.querySelectorAll('.page-item .page-link').forEach(link => {
+          link.addEventListener('click', function(event) {
+        	 let newPage = parseInt(this.getAttribute('data-page'));
+        	  
+        	  if (!newPage || this.getAttribute('onclick') === "return false;") {
+        	        event.preventDefault();
+        	        console.log("리턴 false 잘됨 그런데 실행됨?")
+        	        return;
+        	      }
+            event.preventDefault();
+            console.log("실행되나 ?")
+            
+            const page = parseInt(this.getAttribute('data-page'));
+            console.log(page);
+            console.log(page);
+            loadComments(page);
+            console.log("여기까지는 실행되나>?")
+          });
+        });
+      
+      
     }
-
-    // 페이지가 처음 로드될 때 댓글 불러오기
-    loadComments(1);
-});
-</script>
+  </script>
 </body>
  
 </body>

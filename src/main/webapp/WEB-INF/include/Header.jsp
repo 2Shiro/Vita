@@ -59,7 +59,7 @@
               <a href="./program/level_system">게시판</a>
               <div class="gnb-2dep">
                 <ul>
-                  <li><a href="#"><span>자유게시판</span></a></li>
+                  <li><a href="/Pds/List?nowpage=1"><span>자유게시판</span></a></li>
                   <li><a href="#"><span>정보</span></a></li>
                   <li><a href="#" target="_blank"><span>QnA</span></a></li>
 

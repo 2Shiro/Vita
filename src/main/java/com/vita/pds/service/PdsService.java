@@ -2,6 +2,7 @@ package com.vita.pds.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.vita.pds.domain.CommentsVo;
 import com.vita.pds.domain.PostListVo;
@@ -19,6 +20,16 @@ public interface PdsService {
 	
 	  int findAllPost();
 
-	List<PostListVo> PostList(HashMap<String, Object> params);
+	  List<PostListVo> PostList(HashMap<String, Object> params);
+	
+	  void saveComment(CommentsVo commentsVo);
+
+	  int addLike(Map<String, Long> params);
+
+	 boolean existsLike(Map<String, Long> params);
+
+	boolean existsPostLike(Map<String, Long> params);
+
+	int postAddLike(Map<String, Long> params);
 
 }

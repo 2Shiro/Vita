@@ -1,6 +1,7 @@
 package com.vita.pds.mapper;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -22,6 +23,20 @@ public interface PdsMapper {
 	int FindListPost();
 
 	List<PostListVo> FindAllPostList(HashMap<String, Object> params);
+
+	void saveComment(CommentsVo commentsVo);
+
+	void saveCommentLike(Map<String, Long> params);
+
+	boolean existsLike(Map<String, Long> params);
+
+	int countComment(Map<String, Long> params);
+
+	boolean existsPostLike(Map<String, Long> params);
+
+	void savePostLike(Map<String, Long> params);
+
+	int countPostLike(Map<String, Long> params);
 
 	
 
