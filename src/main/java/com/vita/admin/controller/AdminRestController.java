@@ -21,12 +21,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vita.admin.domain.AdminVo;
+import com.vita.admin.domain.BenVo;
 import com.vita.admin.domain.FormVo;
 import com.vita.admin.domain.ImgsVo;
 import com.vita.admin.domain.IngredientVo;
 import com.vita.admin.domain.MakeVo;
 import com.vita.admin.domain.NutrientVo;
+import com.vita.admin.domain.PostVo;
 import com.vita.admin.domain.ProductVo;
+import com.vita.admin.domain.ReportVo;
 import com.vita.admin.domain.StockVo;
 import com.vita.admin.mapper.AdminMapper;
 
@@ -378,4 +381,126 @@ public class AdminRestController {
 	            .body(Map.of("error", "서버 오류: " + e.getMessage()));
 	    }
 	}
+	
+	@PostMapping("/MonthlyButton")
+	public ResponseEntity<List<StockVo>> monthlybutton(@RequestBody StockVo stockVo) {
+	    try {
+	        List<StockVo> stockList = adminMapper.LgetMonthbutton(stockVo);
+	        return ResponseEntity.ok().body(stockList);
+	    } catch (Exception e) {
+	        e.printStackTrace(); // Add this line to log the exception details
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	@PostMapping("/AllDayButton")
+	public ResponseEntity<List<StockVo>> alldaybutton(@RequestBody StockVo stockVo) {
+	    try {
+	        List<StockVo> stockList = adminMapper.LgetStockList(stockVo);
+	        return ResponseEntity.ok().body(stockList);
+	    } catch (Exception e) {
+	        e.printStackTrace(); // Add this line to log the exception details
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+	@PostMapping("/WeekButton")
+	public ResponseEntity<List<StockVo>> weekbutton(@RequestBody StockVo stockVo) {
+		try {
+			List<StockVo> stockList = adminMapper.LgetWeekbutton(stockVo);
+			return ResponseEntity.ok().body(stockList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PostMapping("/DailyButton")
+	public ResponseEntity<List<StockVo>> dailybutton(@RequestBody StockVo stockVo) {
+		try {
+			List<StockVo> stockList = adminMapper.LgetDailybutton(stockVo);
+			return ResponseEntity.ok().body(stockList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PostMapping("/checkBanButton")
+	public ResponseEntity<List<PostVo>> checkbanbutton(@RequestBody PostVo postVo) {
+		try {
+			List<PostVo> repostList = adminMapper.LgetReportList(postVo);
+			return ResponseEntity.ok().body(repostList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PostMapping("/allReportButton")
+	public ResponseEntity<List<ReportVo>> allreportbutton(@RequestBody ReportVo reportVo) {
+		try {
+			List<ReportVo> stockList = adminMapper.LgetallButtonReportList(reportVo);
+			return ResponseEntity.ok().body(stockList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PostMapping("/banUserButton")
+	public ResponseEntity<List<BenVo>> banuserbutton(@RequestBody BenVo benVo) {
+		try {
+			List<BenVo> benList = adminMapper.LgetBenList(benVo);
+			return ResponseEntity.ok().body(benList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PostMapping("/GetModalProList")
+	public ResponseEntity<List<ProductVo>> getmodalprolist(@RequestBody ProductVo productVo) {
+		try {
+			List<ProductVo> benList = adminMapper.LgetmodalproductList(productVo);
+			return ResponseEntity.ok().body(benList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@PutMapping("/UpdatePro")
+	public ResponseEntity<?> UpdatePro(@RequestBody Map<String, Object> payload) {
+	    try {
+	        int pro_id = Integer.parseInt(payload.get("pro_id").toString());
+	        String name = payload.get("name").toString();
+	        String make_name = payload.get("make_name").toString();
+	        String ing_name = payload.get("ing_name").toString();
+	        String url = payload.get("url").toString();
+	        String type = payload.get("type").toString();
+	        String explain = payload.get("explain").toString();
+	        String caution = payload.get("caution").toString();
+	        int price = Integer.parseInt(payload.get("price").toString());
+	        int count = Integer.parseInt(payload.get("count").toString());
+	        String admin_name = payload.get("admin_name").toString();
+
+	        // 데이터베이스 업데이트
+	        boolean isUpdated = adminMapper.updateProdModal(pro_id, name, make_name, ing_name, url, type, explain, caution, price);
+	        boolean isInsert = adminMapper.insertProMoadl(pro_id, admin_name, count);
+
+	        if (isUpdated || isInsert) {
+	            return ResponseEntity.ok(Map.of("success", true));
+	        } else {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body(Map.of("error", "데이터 업데이트 실패"));
+	        }
+	    } catch (NumberFormatException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	            .body(Map.of("error", "잘못된 형식의 숫자: " + e.getMessage()));
+	    } catch (IllegalArgumentException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	            .body(Map.of("error", e.getMessage()));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body(Map.of("error", "서버 오류: " + e.getMessage()));
+	    }
+	}
+
 }

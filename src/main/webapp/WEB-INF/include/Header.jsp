@@ -35,8 +35,9 @@
                   <li><a href="./program/curriculum"><span>비타민</span></a></li>
                   <li><a href="./program/textbooks"><span>밀크씨슬</span></a></li>
                   <li><a href="./program/homework"><span>프로바이오틱스</span></a></li>
-                  <li><a href="/Pds/List"><span>리스트</span></a></li>
+                  <li><a href="/Pds/List?nowpage=1"><span>리스트</span></a></li>
                   <li><a href="/Pds/Write"><span>글쓰기</span></a></li>
+                  <li><a href="/Pds/View?post_id=2&nowpage=1"><span>글상세보기</span></a></li>
                 </ul>
               </div>
             </li>
@@ -58,7 +59,7 @@
               <a href="./program/level_system">게시판</a>
               <div class="gnb-2dep">
                 <ul>
-                  <li><a href="#"><span>자유게시판</span></a></li>
+                  <li><a href="/Pds/List?nowpage=1"><span>자유게시판</span></a></li>
                   <li><a href="#"><span>정보</span></a></li>
                   <li><a href="#" target="_blank"><span>QnA</span></a></li>
 
