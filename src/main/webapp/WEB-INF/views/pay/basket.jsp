@@ -218,7 +218,7 @@
 									<div class="box__inner">
 										<ul class="list__detail-price">
 											<li class="list-item"><div class="box__option">
-													<span class="text__title">상품금액</span><span
+													<span class="text__title">총 상품금액</span><span
 														class="text__num price" data-price="${totalPrice}"><span
 														class="text__unit">원</span></span>
 												</div></li>

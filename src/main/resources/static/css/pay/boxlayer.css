@@ -85,14 +85,13 @@
 }
 
 .box__address-title i {
-    margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
     font-size: 20px; /* 아이콘 크기 조정 */
 }
 
 .box__address-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; /* Flexbox를 사용 */
+    justify-content: space-between; /* 좌우 끝으로 배치 */
+    align-items: center; /* 수직으로 중앙에 배치 */
 }
 
 .box__address-actions {
@@ -106,6 +105,13 @@
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 12px;
+}
+
+.address_footer {
+    display: flex; /* Flexbox를 사용 */
+    justify-content: space-between; /* 요소를 양쪽 끝으로 배치 */
+    align-items: center; /* 요소를 수직으로 중앙에 배치 */
+    padding: 10px 0; /* 상하 여백 추가 */
 }
 
 .select-btn {
