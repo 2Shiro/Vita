@@ -598,6 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
 // 배송지 변경 팝업 열기
 document.getElementById('xo_id_open_address_book').addEventListener('click', function() {
