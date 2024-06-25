@@ -160,9 +160,11 @@ public class PdsController {
 		System.out.println("postId : " + post_id);
 		System.out.println("nowPage : " + nowPage);
 		
+		boolean myPostView = false;
 		
 		PostViewVo postVo = pdsService.findPost(post_id);
-	
+		
+		
 		
 		
 		/* ------------댓글 페이징-----------------  */
@@ -193,7 +195,10 @@ public class PdsController {
 		List<CommentsVo> pageingComments = pdsService.findPageingComments(params);
 		response = new PagingResponse<>(pageingComments, pagination);
 		
-		
+		System.out.println("---------------------");
+		System.out.println("---------------------");
+		System.out.println(response.getList());
+		System.out.println("---------------------");
 				
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("response",response);

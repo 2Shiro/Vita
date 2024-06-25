@@ -3,8 +3,10 @@ package com.vita.pds.controller;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,16 +39,7 @@ public class PdsApiController {
 		Long post_id = Long.valueOf(requestBody.get("post_id").toString());
 		String content = requestBody.get("content").toString();
 		int nowPage = (int) requestBody.get("nowpage");
-		
-		
-		System.out.println("id : " + id);
-		System.out.println("id : " + id);
-		System.out.println("post_id : " + post_id);
-		System.out.println("post_id : " + post_id);
-		System.out.println("content : " + content);
-		System.out.println("content : " + content);
-		System.out.println("nowPage : " + nowPage);
-		System.out.println("nowPage : " + nowPage);
+
 		
 		CommentsVo commentsVo = new CommentsVo();
 		commentsVo.setId(id);
@@ -90,20 +83,10 @@ public class PdsApiController {
 	public PagingResponse<CommentsVo>  CommentApi(HttpServletRequest request, @RequestBody HashMap<String, Object> requestBody){
 		
 		System.out.println("여기까지오나?");
-		System.out.println("여기까지오나?");
-		System.out.println("여기까지오나?");
-		System.out.println("여기까지오나?");
-		System.out.println("여기까지오나?");
+		
 		Long post_id = Long.valueOf(requestBody.get("post_id").toString());
 		int nowPage = (int) requestBody.get("nowpage");
 		
-		
-		
-		System.out.println("post_id : " + post_id);
-		System.out.println("post_id : " + post_id);
-		
-		System.out.println("nowPage : " + nowPage);
-		System.out.println("nowPage : " + nowPage);
 		CommentsVo commentsVo = new CommentsVo();
 		
 	    commentsVo.setPost_id(post_id);
@@ -113,8 +96,7 @@ public class PdsApiController {
 		PostViewVo postVo = pdsService.findPost(commentsVo.getPost_id());
 		
 		int count = postVo.getComment_count();
-		System.out.println("count 갯수 : " + count);
-		System.out.println("count 갯수 : " + count);
+
 		
 		PagingResponse<CommentsVo> response = null;
 		if( count<1 ) {
@@ -141,4 +123,58 @@ public class PdsApiController {
 		 
 		return response;
 	}
+	@PostMapping("/Pds/Api/AddLike")
+	public   ResponseEntity<Map<String, Object>> CommentAddLike(HttpServletRequest request, @RequestBody HashMap<String, Object> requestBody){
+		System.out.println("AddLike");
+		System.out.println("AddLike");
+		
+		Long id = getUserIdService.getId(request);
+		Long comme_id = Long.valueOf(requestBody.get("comme_id").toString());
+		
+		Map<String, Long> params = new HashMap<>();
+	    params.put("id", id);
+	    params.put("comme_id", comme_id);
+		//현제는 보여주기식 올라가는거를 처리하는데 추후 + - 해야됨
+	    
+	      
+	    boolean success = pdsService.existsLike(params);
+	    
+	    Map<String, Object> response = new HashMap<>();  
+	    response.put("success", success);
+	    
+	    if (success) {
+	    	int updatedLikeCount =pdsService.addLike(params);
+
+           response.put("like_count", updatedLikeCount);
+        }
+		
+		
+	    return ResponseEntity.ok(response);
+		
+	}
+	
+	@PostMapping("/Pds/Api/PostAddLike")
+	public ResponseEntity<Map<String, Object>> PostAddLike(HttpServletRequest request, @RequestBody Map<String, Object> requestBody) {
+	    Long postId = Long.valueOf(requestBody.get("post_id").toString());
+	    Long id = getUserIdService.getId(request);
+	    
+	    Map<String, Long> params = new HashMap<>();
+	    params.put("id", id);
+	    params.put("post_id", postId);
+	    
+	    boolean success = pdsService.existsPostLike(params);
+	    Map<String, Object> response = new HashMap<>();  
+	    response.put("success", success);
+	    // 좋아요 수 증가 로직 추가
+	    if (success) {
+	    	int updatedLikeCount =pdsService.postAddLike(params);
+            response.put("post_like_count", updatedLikeCount);
+        }
+	   
+
+	   
+	    
+	    return ResponseEntity.ok(response);
+	}
+	
 }

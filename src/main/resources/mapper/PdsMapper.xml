@@ -151,6 +151,67 @@ WHERE
    
    </insert>
    
+   
+   
+   	<select id="existsLike" >
+        SELECT CASE WHEN COUNT(1) > 0 THEN 1 ELSE 0 END
+        FROM clike
+        WHERE id = #{id}
+          AND comme_id = #{comme_id}
+    </select>
+    <select id="existsPostLike">
+    	SELECT CASE WHEN COUNT(1) > 0 THEN 1 ELSE 0 END 
+		FROM
+		    post p
+		JOIN postlike pl ON p.post_id = pl.post_id
+		where p.post_id = #{post_id}
+		AND pl.id =#{id}
+    
+    
+    </select>
+   
+   <insert id="saveCommentLike">
+   	  INSERT INTO clike (
+		    clike_id,
+		    id,
+		    comme_id
+		) VALUES (
+		    (SELECT NVL(MAX(clike_id), 0) + 1 FROM clike),
+		    #{id},
+		    #{comme_id}
+		)
+   
+   </insert>
+   
+   <insert id="savePostLike">
+	  INSERT INTO postlike (
+		    like_id,
+		    id,
+		    post_id
+		) VALUES (
+		    (SELECT NVL(MAX(like_id), 0) + 1 FROM postlike),
+		    #{id},
+		    #{post_id}
+		)
+   </insert>
+   
+   <select id ="countComment">
+	    SELECT
+		       count(*)
+		  FROM
+		       clike
+		 where comme_id =#{comme_id}
+   </select>
+   
+   <select id="countPostLike">
+	    SELECT
+		       count(*)
+	      FROM
+		       postlike
+		 WHERE
+		       post_id =#{post_id}
+   
+   </select>
 </mapper>
 
 

@@ -220,6 +220,18 @@
   .pagination .next_item{
   	margin-left: 10px
   }
+  .like-dislike button .icon-like{
+    display: inline-block;
+    font-size: 0;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    background-image: url(/img/hand-thumbs-up.svg);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    vertical-align: middle;
+  }
 </style>
 </head>
 <body>
@@ -281,8 +293,8 @@
             ${postVo.content}
           </div>
           <div class="content_like">
-            <button>좋아요</button>
-            <span>10</span>
+            <button class="icon-like">좋아요</button>
+            <span>${postVo.like_count}</span>
             <button>싫어요</button>
           </div>
           <div class="ben">
@@ -297,8 +309,11 @@
                 <div class="comment-details">
                   <span>작성자: <b>${c.name }</b></span>
                   <div class="like-dislike">
-                    <button>좋아요 <b>${ c.like_count }</b></button>
-                    <button>싫어요</button>
+                    <button class="add-like"> 
+                       <span class="icon-like"></span>
+                       ${ c.like_count }
+                    </button>
+                   
                   </div>
                 </div>
                 <div class="comment-content">
@@ -361,6 +376,30 @@
 
 
   <script>
+  document.addEventListener('DOMContentLoaded', function () {
+	  let postId = ${post_id};
+	  console.log(postId);
+	  document.querySelectorAll('.page-item .page-link').forEach(link => {
+          link.addEventListener('click', function(event) {
+        	  console.log("리턴 여기로 오긴함?")
+        	  let page = parseInt(this.getAttribute('data-page'));
+        	  
+        	  if (!page || this.getAttribute('onclick') === "return false;") {
+        	        event.preventDefault();
+        	        console.log("리턴 false 잘됨 그런데 실행됨?")
+        	        return;
+        	      }
+            event.preventDefault();
+            console.log("실행되나 ?")
+            
+         
+            console.log(page);
+            console.log(page);
+            loadComments(page);
+            console.log("여기까지는 실행되나>?")
+          });
+        });
+  });
   document.querySelector('#commentForm').addEventListener('submit', function(event) {
       event.preventDefault(); // 폼의 기본 제출을 방지합니다.
 
@@ -402,8 +441,11 @@
                       <div class="comment-details">
                         <span>작성자: <b>\${comment.name}</b></span>
                         <div class="like-dislike">
-                          <button>좋아요 <b>\${comment.like_count}</b></button>
-                          <button>싫어요</button>
+                          <button class="add-like">
+                            <span class="icon-like"></span>
+                            \${comment.like_count}
+                          </button>
+                         
                         </div>
                       </div>
                       <div class="comment-content">
@@ -426,53 +468,123 @@
       
       
       
-      function updatePagination(pagination) {
-          // 페이징 요소 업데이트
-          const paginationElement = document.querySelector('.pagination');
-          if (paginationElement) {
-              paginationElement.innerHTML = ''; // 기존 페이징 정보 초기화
-
-              if (pagination.existPrevPage) {
-                  paginationElement.innerHTML += `
-                      <li class="page-item"><a class="page-link" href="/Pds/View?post_id=\${postId}&nowpage=1">처음</a></li>
-                      <li class="page-item prev_item"><a class="page-link" href="/Pds/View?post_id=\${postId}&nowpage=\${pagination.prevPage}">⏪</a></li>
-                  `;
-              } else {
-                  paginationElement.innerHTML += `
-                      <li class="page-item"><a class="page-link" href="#" onclick="return false;">처음</a></li>
-                      <li class="page-item prev_item"><a class="page-link" href="#" onclick="return false;">⏪</a></li>
-                  `;
-              }
-
-              for (let i = pagination.startPage; i <= pagination.endPage; i++) {
-                  if (i === pagination.currentPage) {
-                      paginationElement.innerHTML += `
-                          <li class="page-item"><a class="page-link" href="#" style="font-weight: bold; color: blue; text-decoration: underline;">\${i}</a></li>
-                      `;
-                  } else {
-                      paginationElement.innerHTML += `
-                          <li class="page-item"><a class="page-link" href="/Pds/View?post_id=\${postId}&nowpage=\${i}">\${i}</a></li>
-                      `;
-                  }
-              }
-
-              if (pagination.existNextPage) {
-                  paginationElement.innerHTML += `
-                      <li class="page-item next_item"><a class="page-link" href="/Pds/View?post_id=\${postId}&nowpage=\${pagination.nextPage}">⏩</a></li>
-                      <li class="page-item"><a class="page-link" href="/Pds/View?post_id=\${postId}&nowpage=\${pagination.totalPageCount}">마지막</a></li>
-                  `;
-              } else {
-                  paginationElement.innerHTML += `
-                      <li class="page-item next_item"><a class="page-link" href="#" onclick="return false;">⏩</a></li>
-                      <li class="page-item"><a class="page-link" href="#" onclick="return false;">마지막</a></li>
-                  `;
-              }
-          }
-      }
+     
       
       
       
   });
+  function loadComments(page) {
+	  console.log("여기까지는 실행되나222>?")
+	  
+	  console.log("여기까지는 실행되나222>?")
+      fetch('/Pds/Api/Comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ post_id: ${postId}, nowpage: page })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // 서버로부터의 응답 데이터를 처리합니다.
+          console.log('Comments loaded:', data);
+
+          // 현재 페이지 댓글 목록 업데이트
+          const commentList = document.querySelector('.comments_wrap');
+          commentList.innerHTML = ''; // 기존 댓글 목록 초기화
+          data.list.forEach(comment => {
+              const newComment = document.createElement('li');
+              
+              newComment.innerHTML = `
+                  <div class="comment-details">
+                    <span>작성자: <b>\${comment.name}</b></span>
+                    <div class="like-dislike">
+	                    <button class="add-like">
+		                    <span class="icon-like"></span>
+		                    \${comment.like_count}
+		                </button>  
+                    </div>
+                  </div>
+                  <div class="comment-content">
+                    \${comment.content}
+                  </div>
+              `;
+              
+              commentList.appendChild(newComment);
+             
+          });
+
+          // 페이징 정보 업데이트
+          updatePagination(data.pagination);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }
+  function updatePagination(pagination) {
+      const paginationElement = document.querySelector('.pagination');
+      if (paginationElement) {
+        paginationElement.innerHTML = ''; // 기존 페이징 정보 초기화
+
+        if (pagination.existPrevPage) {
+          paginationElement.innerHTML += `
+            <li class="page-item"><a class="page-link" href="#" data-page="1">처음</a></li>
+            <li class="page-item prev_item"><a class="page-link" href="#" data-page="\${pagination.prevPage}">⏪</a></li>
+          `;
+        } else {
+          paginationElement.innerHTML += `
+            <li class="page-item"><a class="page-link" href="#" onclick="return false;">처음</a></li>
+            <li class="page-item prev_item"><a class="page-link" href="#" onclick="return false;">⏪</a></li>
+          `;
+        }
+
+        for (let i = pagination.startPage; i <= pagination.endPage; i++) {
+          if (i === pagination.currentPage) {
+            paginationElement.innerHTML += `
+              <li class="page-item"><a class="page-link" href="#" style="font-weight: bold; color: blue; text-decoration: underline;">\${i}</a></li>
+            `;
+          } else {
+            paginationElement.innerHTML += `
+              <li class="page-item"><a class="page-link" href="#" data-page="\${i}">\${i}</a></li>
+            `;
+          }
+        }
+
+        if (pagination.existNextPage) {
+          paginationElement.innerHTML += `
+            <li class="page-item next_item"><a class="page-link" href="#" data-page="\${pagination.nextPage}">⏩</a></li>
+            <li class="page-item"><a class="page-link" href="#" data-page="\${pagination.totalPageCount}">마지막</a></li>
+          `;
+        } else {
+          paginationElement.innerHTML += `
+            <li class="page-item next_item"><a class="page-link" href="#" onclick="return false;">⏩</a></li>
+            <li class="page-item"><a class="page-link" href="#" onclick="return false;">마지막</a></li>
+          `;
+        }
+      }
+      
+      paginationElement.querySelectorAll('.page-item .page-link').forEach(link => {
+          link.addEventListener('click', function(event) {
+        	 let newPage = parseInt(this.getAttribute('data-page'));
+        	  
+        	  if (!newPage || this.getAttribute('onclick') === "return false;") {
+        	        event.preventDefault();
+        	        console.log("리턴 false 잘됨 그런데 실행됨?")
+        	        return;
+        	      }
+            event.preventDefault();
+            console.log("실행되나 ?")
+            
+            const page = parseInt(this.getAttribute('data-page'));
+            console.log(page);
+            console.log(page);
+            loadComments(page);
+            console.log("여기까지는 실행되나>?")
+          });
+        });
+      
+      
+    }
   </script>
 </body>
  
