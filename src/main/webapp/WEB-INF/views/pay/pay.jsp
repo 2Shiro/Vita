@@ -360,14 +360,14 @@
             </div>
             <div class="box__address-list">
                 <c:if test="${not empty deliveryList}">
-                    <c:forEach var="deliveryList" items="${deliveryList}">
+                    <c:forEach var="delivery" items="${deliveryList}">
                         <!-- 예시 배송지 데이터 -->
-                        <div class="box__address-item" id="address-item-${deliveryList.address_id}">
+                        <div class="box__address-item" id="address-item-${delivery.address_id}">
                             <div class="box__address-header">
                                 <div class="box__address-title">
                                     <i class="fas fa-map-marker-alt"></i>
-                                    <h3 class="sprite__checkout--before text__title-address home">${deliveryList.name}</h3>
-                                    <c:if test="${deliveryList.defualt == 1}">
+                                    <h3 class="sprite__checkout--before text__title-address home">${delivery.name}</h3>
+                                    <c:if test="${delivery.defualt == 1}">
                                         <span class="default-label">기본</span> <!-- 기본 배송지 표시 -->
                                     </c:if>
                                 </div>
@@ -378,12 +378,12 @@
                             </div>
                             <div class="box__address-cont box__address--default">
                                 <div class="address_name">
-                                    <span class="text__name">${deliveryList.recipent}</span> / <span class="text__tel">${deliveryList.tel}</span>
+                                    <span class="text__name">${delivery.recipent}</span> / <span class="text__tel">${delivery.tel}</span>
                                 </div>
-                                <div class="address_txt">${deliveryList.address}</div>
+                                <div class="address_txt">${delivery.address}</div>
                                 <div class="box__address-header">
                                     <div class="box__address-detail">
-                                        <span class="address_txt">${deliveryList.addressdetail}</span>
+                                        <span class="address_txt">${delivery.addressdetail}</span>
                                     </div>
                                     <div class="box__address-actions">
                                         <button class="select-btn">선택</button>
@@ -614,13 +614,11 @@ function closeDialog() {
 // 배송지 추가 팝업 열기
 document.getElementById('add_address').addEventListener('click', function() {
     document.querySelector('.box__layer-add').style.display = 'block';
-    document.querySelector('.dimmed').style.display = 'block';
 });
 
 // 배송지 추가 팝업 닫기
 function closeAddDialog() {
     document.querySelector('.box__layer-add').style.display = 'none';
-    document.querySelector('.dimmed').style.display = 'none';
 }
 
 // 우편번호 찾기
@@ -691,12 +689,13 @@ function createElement(tag, classNames = '', textContent = '') {
 
 function createAddressItem(delivery) {
     const addressItem = createElement('div', 'box__address-item');
+    addressItem.id = `address-item-${delivery.address_id}`;
 
     const addressHeader = createElement('div', 'box__address-header');
     const addressTitle = createElement('div', 'box__address-title');
     addressTitle.appendChild(createElement('i', 'fas fa-map-marker-alt'));
     addressTitle.appendChild(createElement('h3', 'sprite__checkout--before text__title-address home', delivery.name));
-    
+
     if (delivery.defualt) {
         addressTitle.appendChild(createElement('span', 'default-label', '기본'));
     }
@@ -705,8 +704,15 @@ function createAddressItem(delivery) {
     const editButton = createElement('button', 'edit-btn', '수정');
     editButton.addEventListener('click', () => openEditDialog(delivery));
     const deleteButton = createElement('button', 'delete-btn', '삭제');
+    deleteButton.setAttribute('data-address-id', delivery.address_id);
+    deleteButton.addEventListener('click', function() {
+        const addressId = this.getAttribute('data-address-id');
+        deleteAddress(addressId);
+    });
+
     addressActions.appendChild(editButton);
     addressActions.appendChild(deleteButton);
+
     addressHeader.appendChild(addressTitle);
     addressHeader.appendChild(addressActions);
 
@@ -715,6 +721,7 @@ function createAddressItem(delivery) {
     addressName.appendChild(createElement('span', 'text__name', delivery.recipent));
     addressName.appendChild(createElement('span', '', ' / '));
     addressName.appendChild(createElement('span', 'text__tel', delivery.tel));
+
     addressCont.appendChild(addressName);
     addressCont.appendChild(createElement('div', 'address_txt', delivery.address));
 
@@ -724,7 +731,8 @@ function createAddressItem(delivery) {
     addressDetailHeader.appendChild(addressDetail);
 
     const selectButtonContainer = createElement('div', 'box__address-actions');
-    selectButtonContainer.appendChild(createElement('button', 'select-btn', '선택'));
+    const selectButton = createElement('button', 'select-btn', '선택');
+    selectButtonContainer.appendChild(selectButton);
     addressDetailHeader.appendChild(selectButtonContainer);
 
     addressCont.appendChild(addressDetailHeader);
@@ -751,6 +759,14 @@ function fetchDeliveryList() {
                     const addressItem = createAddressItem(delivery);
                     addressListContainer.appendChild(addressItem);
                 });
+
+                // 삭제 버튼 이벤트 리스너 다시 추가
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const addressId = this.getAttribute('data-address-id');
+                        deleteAddress(addressId);
+                    });
+                });
             } else {
                 addressListContainer.innerHTML = '<p>저장된 배송지가 없습니다. 배송지를 추가해주세요.</p>';
             }
@@ -759,8 +775,6 @@ function fetchDeliveryList() {
             console.error('Error fetching delivery list:', error);
         });
 }
-
-document.addEventListener('DOMContentLoaded', fetchDeliveryList);
 
 //수정 팝업 열기
 function openEditDialog(delivery) {
@@ -852,6 +866,39 @@ function editDeliveryAddress() {
             fetchDeliveryList();
         } else {
             alert('배송지 수정에 실패했습니다.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+// 배송지 삭제
+document.addEventListener('DOMContentLoaded', function() {
+    // 삭제 버튼 클릭 이벤트 리스너 추가
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const addressId = this.getAttribute('data-address-id');
+            deleteAddress(addressId);
+        });
+    });
+});
+
+function deleteAddress(addressId) {
+    const url = '/Pay/deleteDeliveryAddress';
+    const data = { address_id: addressId };
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            fetchDeliveryList();
         }
     })
     .catch(error => {
