@@ -103,6 +103,11 @@ public class PayApiController {
 
        deliveryVo.setDefualt(Integer.parseInt(params.get("defualt"))); // String을 int로 변환
 
+       if (deliveryVo.getDefualt() == 1) {
+           // 다른 배송지의 defualt 값을 0으로 설정
+           payMapper.resetAddDefaultForOtherAddresses(deliveryVo.getId(), null);
+       }
+
        int rowsAffected = payMapper.addDeliveryAddress(deliveryVo);
 
        Map<String, Object> response = new HashMap<>();
@@ -125,6 +130,7 @@ public class PayApiController {
    @PostMapping("/updateDeliveryAddress")
    public ResponseEntity<Map<String, Object>> updateDeliveryAddress(@RequestBody Map<String, String> params, HttpServletRequest request) {
        Long id = getUserIdService.getId(request);
+       System.out.println(params);
        DeliveryVo deliveryVo = new DeliveryVo();
        deliveryVo.setAddress_id(Integer.parseInt(params.get("address_id")));
        deliveryVo.setId(id.intValue());
@@ -143,7 +149,27 @@ public class PayApiController {
 
        deliveryVo.setDefualt(Integer.parseInt(params.get("defualt")));
 
+       if (deliveryVo.getDefualt() == 1) {
+           // 다른 배송지의 defualt 값을 0으로 설정
+           payMapper.resetUpdateDefaultForOtherAddresses(deliveryVo.getId(), deliveryVo.getAddress_id());
+       }
+
        int rowsAffected = payMapper.updateDeliveryAddress(deliveryVo);
+
+       Map<String, Object> response = new HashMap<>();
+       response.put("success", rowsAffected > 0);
+
+       return ResponseEntity.ok(response);
+   }
+   
+   @PostMapping("/deleteDeliveryAddress")
+   public ResponseEntity<Map<String, Object>> deleteDeliveryAddress(@RequestBody Map<String, String> params, HttpServletRequest request) {
+       Long id = getUserIdService.getId(request);
+       int address_id = Integer.parseInt(params.get("address_id"));
+       
+       System.out.println("Request received to delete address with ID: " + address_id); // 로그 추가
+
+       int rowsAffected = payMapper.deleteDeliveryAddress(id.intValue(), address_id);
 
        Map<String, Object> response = new HashMap<>();
        response.put("success", rowsAffected > 0);

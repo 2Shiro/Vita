@@ -362,7 +362,7 @@
                 <c:if test="${not empty deliveryList}">
                     <c:forEach var="deliveryList" items="${deliveryList}">
                         <!-- 예시 배송지 데이터 -->
-                        <div class="box__address-item">
+                        <div class="box__address-item" id="address-item-${deliveryList.address_id}">
                             <div class="box__address-header">
                                 <div class="box__address-title">
                                     <i class="fas fa-map-marker-alt"></i>
@@ -373,7 +373,7 @@
                                 </div>
                                 <div class="box__address-actions">
                                     <button class="edit-btn">수정</button>
-                                    <button class="delete-btn">삭제</button>
+                                    <button class="delete-btn" data-address-id="${delivery.address_id}">삭제</button>
                                 </div>
                             </div>
                             <div class="box__address-cont box__address--default">
@@ -509,8 +509,7 @@
 	            </div>
 	            <div class="form-group">
 	                <label for="edit_defualt">기본 배송지 여부</label>
-	                <input type="checkbox" id="edit_defualt" name="defualt" value="1">
-	                <input type="hidden" name="defualt" value="0">
+	                <input type="checkbox" id="edit_defualt" name="defualt">
 	            </div>
 	            <input type="button" value="수정" onclick="editDeliveryAddress()">
 	        </form>
@@ -772,13 +771,21 @@ function openEditDialog(delivery) {
     document.getElementById('edit_zipcode').value = delivery.zipcode;
     document.getElementById('edit_address').value = delivery.address;
     document.getElementById('edit_addressdetail').value = delivery.addressdetail;
-    document.getElementById('edit_deliveryRequest').value = delivery.req;
-    if (delivery.req === '직접 입력') {
-        document.getElementById('edit_customRequest').style.display = 'block';
-        document.getElementById('edit_customRequest').value = delivery.req;
+
+    const deliveryRequestSelect = document.getElementById('edit_deliveryRequest');
+    const customRequestTextarea = document.getElementById('edit_customRequest');
+
+    // 배송 요청사항 설정
+    if (['1', '2', '3', '4', '5'].includes(delivery.req)) {
+        deliveryRequestSelect.value = delivery.req;
+        customRequestTextarea.style.display = 'none';
+        customRequestTextarea.value = '';
     } else {
-        document.getElementById('edit_customRequest').style.display = 'none';
+        deliveryRequestSelect.value = '6';
+        customRequestTextarea.style.display = 'block';
+        customRequestTextarea.value = delivery.req;
     }
+
     document.getElementById('edit_defualt').checked = delivery.defualt === 1;
 
     document.querySelector('.box__layer-edit').style.display = 'block';
@@ -788,7 +795,6 @@ function openEditDialog(delivery) {
 // 수정 팝업 닫기
 function closeEditDialog() {
     document.querySelector('.box__layer-edit').style.display = 'none';
-    document.querySelector('.dimmed').style.display = 'none';
 }
 
 // 우편번호 찾기 (수정 팝업)
@@ -803,7 +809,6 @@ function execDaumZipcodeEdit() {
     }).open();
 }
 
-//요청사항 변경 시 라벨 텍스트 및 입력란 표시 여부 설정 (수정 팝업)
 function handleDeliveryRequestChangeEdit() {
     const deliveryRequestSelect = document.getElementById('edit_deliveryRequest');
     const customRequestTextarea = document.getElementById('edit_customRequest');
@@ -814,23 +819,35 @@ function handleDeliveryRequestChangeEdit() {
     }
 }
 
-
-//수정된 배송지 정보 제출
 function editDeliveryAddress() {
-    const formData = new FormData(document.getElementById('edit_address_form'));
-    if (formData.get('deliveryRequest') === '6') {
-        formData.set('deliveryRequest', formData.get('customRequest'));
-    } else {
-        formData.delete('customRequest');
+    const formElement = document.getElementById('edit_address_form');
+    const formData = new FormData(formElement);
+
+    // 체크박스 값을 직접 설정
+    const checkbox = document.getElementById('edit_defualt');
+    formData.set('defualt', checkbox.checked ? '1' : '0');
+
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    if (data.deliveryRequest === '6') {
+        data.deliveryRequest = data.customRequest;
     }
+    delete data.customRequest;
+
     fetch('/Pay/updateDeliveryAddress', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            document.getElementById('edit_address_form').reset();
+            formElement.reset();
             closeEditDialog();
             fetchDeliveryList();
         } else {
