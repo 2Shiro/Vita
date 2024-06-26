@@ -116,11 +116,15 @@ public class PayController {
 	        payPageList.add(basketpagevo);
 	    }
 	    
-	    // 배송지 가져오지
+	    // 기본 배송지 가져오기
+	    DeliveryVo deliveryvo = payMapper.getDeliveryDefualt(id);
+	    
+	    // 배송지 목록 가져오기
 	    List<DeliveryVo> deliveryList = payMapper.getDeliveryList(id);
 	    
 	    mv.addObject("payList", payList);
 	    mv.addObject("payPageList", payPageList);
+	    mv.addObject("deliveryvo", deliveryvo);
 	    mv.addObject("deliveryList", deliveryList);
 	    mv.setViewName("pay/pay");
 	    

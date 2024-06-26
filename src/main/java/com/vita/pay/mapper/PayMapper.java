@@ -33,6 +33,9 @@ public interface PayMapper {
 	// 구매 상태 상품 조회
 	List<BasketVo> getPayList(Long id);
 	
+	// 기본 배송지 조회
+	DeliveryVo getDeliveryDefualt(Long id);
+	
 	// 배송지 조회
 	List<DeliveryVo> getDeliveryList(Long id);
 	
@@ -50,5 +53,7 @@ public interface PayMapper {
 	
     // 배송지 삭제
     int deleteDeliveryAddress(@Param("id") int id, @Param("address_id") int address_id);
+
+	
 
 }
