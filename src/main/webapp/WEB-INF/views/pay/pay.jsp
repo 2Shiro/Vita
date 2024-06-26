@@ -386,7 +386,7 @@
 	                                    <span class="address_txt">${delivery.addressdetail}</span>
 	                                </div>
 	                                <div class="box__address-actions">
-	                                    <button class="select-btn">선택</button>
+	                                    <button class="select-btn" data-address='${delivery}'>선택</button>
 	                                </div>
 	                            </div>
 	                        </div>
@@ -732,6 +732,11 @@ function createAddressItem(delivery) {
 
     const selectButtonContainer = createElement('div', 'box__address-actions');
     const selectButton = createElement('button', 'select-btn', '선택');
+    selectButton.setAttribute('data-address', JSON.stringify(delivery));
+    selectButton.addEventListener('click', function() {
+        const delivery = JSON.parse(this.getAttribute('data-address'));
+        selectDeliveryAddress(delivery);
+    });
     selectButtonContainer.appendChild(selectButton);
     addressDetailHeader.appendChild(selectButtonContainer);
 
@@ -784,6 +789,14 @@ function addEventListenersToButtons() {
         button.addEventListener('click', function() {
             const addressId = this.getAttribute('data-address-id');
             deleteAddress(addressId);
+        });
+    });
+    
+ 	// 배송지 선택 버튼 클릭 이벤트 리스너 추가
+    document.querySelectorAll('.select-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const delivery = JSON.parse(this.getAttribute('data-address'));
+            selectDeliveryAddress(delivery);
         });
     });
 }
@@ -906,6 +919,33 @@ function deleteAddress(addressId) {
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+//선택한 배송지 정보를 메인 화면에 업데이트하는 함수
+function selectDeliveryAddress(delivery) {
+    document.querySelector('.text__title-address').textContent = delivery.name;
+    document.querySelector('.text__name').textContent = delivery.recipent;
+    document.querySelector('.text__tel').textContent = delivery.tel;
+    document.querySelector('.address_txt').textContent = delivery.address + ' ' + delivery.addressdetail;
+
+    const deliveryRequestSelect = document.getElementById('delivery-request');
+    const customRequestTextarea = document.getElementById('xo_id_shipping_request');
+    const deliveryLabel = document.getElementById('delivery-label');
+
+    if (['selected', '1', '2', '3', '4', '5'].includes(delivery.req)) {
+        deliveryRequestSelect.value = delivery.req;
+        customRequestTextarea.style.display = 'none';
+        customRequestTextarea.value = '';
+    } else {
+        deliveryRequestSelect.value = '6';
+        customRequestTextarea.style.display = 'block';
+        customRequestTextarea.value = delivery.req;
+    }
+
+    deliveryLabel.textContent = deliveryRequestSelect.options[deliveryRequestSelect.selectedIndex].text;
+
+    // 팝업창 닫기
+    closeDialog();
 }
 
 //페이지 로드 시 초기화(나중에 팝업창 html에 수정이 생기면 이것도 지우고 수정할것)
