@@ -82,9 +82,6 @@ public class PayController {
 	@RequestMapping("/PayForm")
 	public ModelAndView payform(HttpServletRequest request) {
 
-		System.out.println("-------------------------------------------------");
-		System.out.println("-------------------------------------------------");
-		
 	    Long id = getUserIdService.getId(request);
 	    
 	    ModelAndView mv = new ModelAndView();
@@ -122,8 +119,6 @@ public class PayController {
 	    // 배송지 가져오지
 	    List<DeliveryVo> deliveryList = payMapper.getDeliveryList(id);
 	    
-	    System.out.println(deliveryList);
-
 	    mv.addObject("payList", payList);
 	    mv.addObject("payPageList", payPageList);
 	    mv.addObject("deliveryList", deliveryList);
