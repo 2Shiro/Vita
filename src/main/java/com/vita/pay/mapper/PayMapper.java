@@ -14,32 +14,41 @@ import com.vita.pay.domain.ProdVo;
 @Mapper
 public interface PayMapper {
 
-   // 장바구니 목록
-   List<BasketVo> getBasketList(Long id);
-
-   // 장바구니 상품 조회
-   ProdVo getProd(int pro_id);
-   ImgsVo getImg(int pro_id);
-   MakeVo getMake(int make_id);
-
-   // 장바구니 특정 상품 정보
-   BasketVo getBasket(Long basket_id);
-   // 장바구니 상품 수량 변경
-   void updateBasketCount(BasketVo basketvo);
-
-   // 장바구니 상품 구매 상태
-   void updateState(@Param("basket_id") Long basket_id, @Param("state") int state);
-
-   // 구매 상태 상품 조회
-   List<BasketVo> getPayList(Long id);
-
-   // 배송지 조회
-   List<DeliveryVo> getDeliveryList(Long id);
-
-   // 배송지 추가
-   int addDeliveryAddress(DeliveryVo deliveryVo);
+	// 장바구니 목록
+	List<BasketVo> getBasketList(Long id);
+	
+	// 장바구니 상품 조회
+	ProdVo getProd(int pro_id);
+	ImgsVo getImg(int pro_id);
+	MakeVo getMake(int make_id);
+	
+	// 장바구니 특정 상품 정보
+	BasketVo getBasket(Long basket_id);
+	// 장바구니 상품 수량 변경
+	void updateBasketCount(BasketVo basketvo);
+	
+	// 장바구니 상품 구매 상태
+	void updateState(@Param("basket_id") Long basket_id, @Param("state") int state);
+	
+	// 구매 상태 상품 조회
+	List<BasketVo> getPayList(Long id);
+	
+	// 배송지 조회
+	List<DeliveryVo> getDeliveryList(Long id);
+	
+	// 배송지 추가시에 다른 배송지의 defualt 값을 0으로 설정하는 메서드
+	void resetAddDefaultForOtherAddresses(@Param("id") int id, @Param("address_id") Integer address_id);
+	
+	// 배송지 추가
+	int addDeliveryAddress(DeliveryVo deliveryVo);
+   
+	// 배송지 수정시에 다른 배송지의 defualt 값을 0으로 설정하는 메서드
+	void resetUpdateDefaultForOtherAddresses(@Param("id") int id, @Param("address_id") int address_id);
    
 	// 배송지 업데이트
 	int updateDeliveryAddress(DeliveryVo deliveryVo);
+	
+    // 배송지 삭제
+    int deleteDeliveryAddress(@Param("id") int id, @Param("address_id") int address_id);
 
 }

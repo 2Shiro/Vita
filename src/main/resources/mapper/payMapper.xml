@@ -111,6 +111,16 @@
 		ORDER BY ADDRESS_ID
 	</select>
 	
+	<!-- 다른 배송지의 defualt 값을 0으로 설정 -->
+	<update id="resetAddDefaultForOtherAddresses" parameterType="map">
+	    UPDATE DELIVERY
+	    SET DEFUALT = 0
+	    WHERE ID = #{id} 
+	    <if test="address_id != null">
+	        AND ADDRESS_ID != #{address_id}
+	    </if>
+	</update>
+	
 	<!-- 배송지 추가 -->
 	<insert id="addDeliveryAddress" parameterType="com.vita.pay.domain.DeliveryVo">
 	    INSERT INTO DELIVERY (
@@ -121,6 +131,13 @@
 	    )
 	</insert>
 	
+	<!-- 다른 배송지의 defualt 값을 0으로 설정 -->
+	<update id="resetUpdateDefaultForOtherAddresses" parameterType="map">
+	    UPDATE DELIVERY
+	    SET DEFUALT = 0
+	    WHERE ID = #{id} AND ADDRESS_ID != #{address_id}
+	</update>
+	
 	<!-- 배송지 업데이트 -->
 	<update id="updateDeliveryAddress" parameterType="com.vita.pay.domain.DeliveryVo">
 	    UPDATE DELIVERY
@@ -128,5 +145,11 @@
 	        ADDRESS = #{address}, ADDRESSDETAIL = #{addressdetail}, REQ = #{req}, DEFUALT = #{defualt}
 	    WHERE ADDRESS_ID = #{address_id}
 	</update>
+	
+	<!-- 배송지 삭제 -->
+	<delete id="deleteDeliveryAddress" parameterType="map">
+	    DELETE FROM DELIVERY
+	    WHERE ID = #{id} AND ADDRESS_ID = #{address_id}
+	</delete>
 
 </mapper>
