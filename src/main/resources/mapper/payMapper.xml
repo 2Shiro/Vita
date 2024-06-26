@@ -93,6 +93,24 @@
 		WHERE	ID = #{id}
 			AND	STATE = 1
 	</select>
+	
+	<!-- 기본 배송지 조회 -->
+	<select id="getDeliveryDefualt">
+		SELECT	ADDRESS_ID,
+				ID,
+				NAME,
+				RECIPENT,
+				TEL,
+				ZIPCODE,
+				ADDRESS,
+				ADDRESSDETAIL,
+				REQ,
+				DEFUALT
+		FROM	DELIVERY
+		WHERE	ID = #{id}
+			AND	DEFUALT = 1
+		ORDER BY ADDRESS_ID
+	</select>
 
 	<!-- 배송지 조회 -->
 	<select id="getDeliveryList">

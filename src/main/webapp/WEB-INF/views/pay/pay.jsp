@@ -194,33 +194,33 @@
                         <div class="box__card box__card-address box__card-address--default">
                             <div class="box__inner">
                                 <div class="box__address-title">
-                                    <h3 class="sprite__checkout--before text__title-address">집</h3>
+                                    <h3 class="sprite__checkout--before text__title-address">${deliveryvo.name}</h3>
                                 </div>
                                 <div class="box__address-cont box__address--default">
                                     <div class="address_name">
-                                        <span class="text__name">이준석</span><span class="text__tel">010-8525-3999</span>
+                                        <span class="text__name">${deliveryvo.recipent}</span><span class="text__tel">${deliveryvo.tel}</span>
                                     </div>
-                                    <div class="address_txt">부산광역시 연제구 토현로 10 (주공아파트) 117동 801호</div>
-                                    <div class="box__form-group">
-                                        <div class="box__control-select sprite__checkout--after box__form-control box__form--active">
-                                            <label for="delivery-request" class="text__label"
-                                                id="delivery-label" style="color: rgb(0, 0, 0);">배송시 요청사항을 선택해 주세요.</label>
-                                            <select id="delivery-request" class="form__select js-form__select">
-                                                <option value="0">배송시 요청사항을 선택해 주세요.</option>
-                                                <option value="1">직접 수령하겠습니다.</option>
-                                                <option value="2">배송 전 연락바랍니다.</option>
-                                                <option value="3">부재 시 경비실에 맡겨주세요.</option>
-                                                <option value="4">부재 시 문 앞에 놓아주세요.</option>
-                                                <option value="5">부재 시 택배함에 넣어주세요.</option>
-                                                <option value="6">직접 입력</option>
-                                            </select>
-                                        </div>
-                                        <div class="box__self-input box__text-area">
-                                            <textarea class="input__txt" id="xo_id_shipping_request"
-                                                name="textarea_self" maxlength="50"
-                                                placeholder="최대 50자 입력이 가능합니다."></textarea>
-                                        </div>
-                                    </div>
+                                    <div class="address_txt">${deliveryvo.address} ${deliveryvo.addressdetail}</div>
+								    <div class="box__form-group">
+								        <div class="box__control-select sprite__checkout--after box__form-control box__form--active">
+								            <label for="delivery-request" class="text__label"
+								                id="delivery-label" style="color: rgb(0, 0, 0);">배송시 요청사항을 선택해 주세요.</label>
+								            <select id="delivery-request" class="form__select js-form__select">
+								                <option value="selected" ${deliveryvo.req == 'selected' ? 'selected' : ''}>배송시 요청사항을 선택해 주세요.</option>
+								                <option value="1" ${deliveryvo.req == '1' ? 'selected' : ''}>직접 수령하겠습니다.</option>
+								                <option value="2" ${deliveryvo.req == '2' ? 'selected' : ''}>배송 전 연락바랍니다.</option>
+								                <option value="3" ${deliveryvo.req == '3' ? 'selected' : ''}>부재 시 경비실에 맡겨주세요.</option>
+								                <option value="4" ${deliveryvo.req == '4' ? 'selected' : ''}>부재 시 문 앞에 놓아주세요.</option>
+								                <option value="5" ${deliveryvo.req == '5' ? 'selected' : ''}>부재 시 택배함에 넣어주세요.</option>
+								                <option value="6" ${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? 'selected' : ''}>직접 입력</option>
+								            </select>
+								        </div>
+								        <div class="box__self-input box__text-area" ${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? 'style="display:block;"' : ''}>
+								            <textarea class="input__txt" id="xo_id_shipping_request"
+								                name="textarea_self" maxlength="50"
+								                placeholder="최대 50자 입력이 가능합니다.">${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? deliveryvo.req : ''}</textarea>
+								        </div>
+								    </div>
                                     <div class="box__button-group">
                                         <button id="xo_id_open_address_book" type="button"
                                             class="button button__modify"
@@ -348,57 +348,57 @@
             </div>
         </div>
     </div>
-    <!-- 기존 배송지 변경 팝업 -->
-    <div class="box__layer" role="dialog">
-        <div class="box__layer-header">
-            <span class="title">배송지 변경</span>
-            <button class="close-btn" onclick="closeDialog()">×</button>
-        </div>
-        <div class="box__iframe">
-            <div class="box__address-add">
-                <button type="button" id="add_address">배송지 추가</button>
-            </div>
-            <div class="box__address-list">
-                <c:if test="${not empty deliveryList}">
-                    <c:forEach var="delivery" items="${deliveryList}">
-                        <!-- 예시 배송지 데이터 -->
-                        <div class="box__address-item" id="address-item-${delivery.address_id}">
-                            <div class="box__address-header">
-                                <div class="box__address-title">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <h3 class="sprite__checkout--before text__title-address home">${delivery.name}</h3>
-                                    <c:if test="${delivery.defualt == 1}">
-                                        <span class="default-label">기본</span> <!-- 기본 배송지 표시 -->
-                                    </c:if>
-                                </div>
-                                <div class="box__address-actions">
-                                    <button class="edit-btn">수정</button>
-                                    <button class="delete-btn" data-address-id="${delivery.address_id}">삭제</button>
-                                </div>
-                            </div>
-                            <div class="box__address-cont box__address--default">
-                                <div class="address_name">
-                                    <span class="text__name">${delivery.recipent}</span> / <span class="text__tel">${delivery.tel}</span>
-                                </div>
-                                <div class="address_txt">${delivery.address}</div>
-                                <div class="box__address-header">
-                                    <div class="box__address-detail">
-                                        <span class="address_txt">${delivery.addressdetail}</span>
-                                    </div>
-                                    <div class="box__address-actions">
-                                        <button class="select-btn">선택</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </c:forEach>
-                </c:if>
-                <c:if test="${empty deliveryList}">
-                    <p>저장된 배송지가 없습니다. 배송지를 추가해주세요.</p>
-                </c:if>
-            </div>
-        </div>
-    </div>
+	<!-- 기존 배송지 변경 팝업 -->
+	<div class="box__layer" role="dialog">
+	    <div class="box__layer-header">
+	        <span class="title">배송지 변경</span>
+	        <button class="close-btn" onclick="closeDialog()">×</button>
+	    </div>
+	    <div class="box__iframe">
+	        <div class="box__address-add">
+	            <button type="button" id="add_address">배송지 추가</button>
+	        </div>
+	        <div class="box__address-list">
+	            <c:if test="${not empty deliveryList}">
+	                <c:forEach var="delivery" items="${deliveryList}">
+	                    <!-- 예시 배송지 데이터 -->
+	                    <div class="box__address-item" id="address-item-${delivery.address_id}" data-address='${delivery}'>
+	                        <div class="box__address-header">
+	                            <div class="box__address-title">
+	                                <i class="fas fa-map-marker-alt"></i>
+	                                <h3 class="sprite__checkout--before text__title-address home">${delivery.name}</h3>
+	                                <c:if test="${delivery.defualt == 1}">
+	                                    <span class="default-label">기본</span> <!-- 기본 배송지 표시 -->
+	                                </c:if>
+	                            </div>
+	                            <div class="box__address-actions">
+	                                <button class="edit-btn" data-address='${delivery}'>수정</button>
+	                                <button class="delete-btn" data-address-id="${delivery.address_id}">삭제</button>
+	                            </div>
+	                        </div>
+	                        <div class="box__address-cont box__address--default">
+	                            <div class="address_name">
+	                                <span class="text__name">${delivery.recipent}</span> / <span class="text__tel">${delivery.tel}</span>
+	                            </div>
+	                            <div class="address_txt">${delivery.address}</div>
+	                            <div class="box__address-header">
+	                                <div class="box__address-detail">
+	                                    <span class="address_txt">${delivery.addressdetail}</span>
+	                                </div>
+	                                <div class="box__address-actions">
+	                                    <button class="select-btn">선택</button>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </c:forEach>
+	            </c:if>
+	            <c:if test="${empty deliveryList}">
+	                <p>저장된 배송지가 없습니다. 배송지를 추가해주세요.</p>
+	            </c:if>
+	        </div>
+	    </div>
+	</div>
     <!-- 새로운 배송지 추가 팝업 -->
     <div class="box__layer-add" role="dialog">
         <div class="box__layer-header">
@@ -760,13 +760,8 @@ function fetchDeliveryList() {
                     addressListContainer.appendChild(addressItem);
                 });
 
-                // 삭제 버튼 이벤트 리스너 다시 추가
-                document.querySelectorAll('.delete-btn').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const addressId = this.getAttribute('data-address-id');
-                        deleteAddress(addressId);
-                    });
-                });
+                // 수정 및 삭제 버튼 이벤트 리스너 다시 추가
+                addEventListenersToButtons();
             } else {
                 addressListContainer.innerHTML = '<p>저장된 배송지가 없습니다. 배송지를 추가해주세요.</p>';
             }
@@ -774,6 +769,23 @@ function fetchDeliveryList() {
         .catch(error => {
             console.error('Error fetching delivery list:', error);
         });
+}
+
+// 버튼에 이벤트 리스너 추가
+function addEventListenersToButtons() {
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const delivery = JSON.parse(this.getAttribute('data-address'));
+            openEditDialog(delivery);
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const addressId = this.getAttribute('data-address-id');
+            deleteAddress(addressId);
+        });
+    });
 }
 
 //수정 팝업 열기
@@ -790,7 +802,7 @@ function openEditDialog(delivery) {
     const customRequestTextarea = document.getElementById('edit_customRequest');
 
     // 배송 요청사항 설정
-    if (['1', '2', '3', '4', '5'].includes(delivery.req)) {
+    if (['selected', '1', '2', '3', '4', '5'].includes(delivery.req)) {
         deliveryRequestSelect.value = delivery.req;
         customRequestTextarea.style.display = 'none';
         customRequestTextarea.value = '';
@@ -874,16 +886,6 @@ function editDeliveryAddress() {
 }
 
 // 배송지 삭제
-document.addEventListener('DOMContentLoaded', function() {
-    // 삭제 버튼 클릭 이벤트 리스너 추가
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const addressId = this.getAttribute('data-address-id');
-            deleteAddress(addressId);
-        });
-    });
-});
-
 function deleteAddress(addressId) {
     const url = '/Pay/deleteDeliveryAddress';
     const data = { address_id: addressId };
@@ -905,6 +907,11 @@ function deleteAddress(addressId) {
         console.error('Error:', error);
     });
 }
+
+//페이지 로드 시 초기화(나중에 팝업창 html에 수정이 생기면 이것도 지우고 수정할것)
+document.addEventListener('DOMContentLoaded', function() {
+    fetchDeliveryList();
+});
 </script>
 <!-- iamport.payment.js -->
 <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
