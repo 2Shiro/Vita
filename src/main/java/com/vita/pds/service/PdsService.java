@@ -32,4 +32,6 @@ public interface PdsService {
 
 	int postAddLike(Map<String, Long> params);
 
+	void addPostReport(Map<String, Object> params);
+
 }

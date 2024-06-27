@@ -38,6 +38,10 @@ public interface PdsMapper {
 
 	int countPostLike(Map<String, Long> params);
 
+	void savePostReport(Map<String, Object> params);
+
+	void updatePostState(Map<String, Object> params);
+
 	
 
 	

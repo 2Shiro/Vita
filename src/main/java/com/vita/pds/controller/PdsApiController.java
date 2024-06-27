@@ -177,4 +177,55 @@ public class PdsApiController {
 	    return ResponseEntity.ok(response);
 	}
 	
+	@PostMapping("/Pds/Api/Ben")
+	public ResponseEntity<Map<String, Object>> PostBen(HttpServletRequest request, @RequestBody Map<String, Object> requestBody ){
+		
+		System.out.println("벤까지 왔나?");
+		System.out.println("벤까지 왔나?");
+		Long postId = Long.valueOf(requestBody.get("post_id").toString());
+		System.out.println("postId" + postId);
+		int ben_number = Integer.parseInt(requestBody.get("ben_number").toString());
+		System.out.println("postId" + ben_number);
+		
+		String reason =null;		
+		switch (ben_number) {
+        case 1:
+            // Handle case 1
+            reason = "홍보 신고";
+            break;
+        case 2:
+            // Handle case 2
+            reason = "성인물 신고";
+            break;
+        case 3:
+            // Handle case 3
+            reason = requestBody.get("reason") != null ? requestBody.get("reason").toString() : "기타로 신고 값이 넘어오지 않음";
+            break;
+        default:
+            System.err.println("Invalid ben_number in request body.");
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid ben_number"));
+    }
+		
+		System.out.println("reason" + reason);
+			
+		Long id = getUserIdService.getId(request);
+		
+		
+		Map<String, Object> params = new HashMap<>();
+		
+		params.put("reason", reason);
+		params.put("post_id", postId);
+		params.put("id", id);
+		
+		pdsService.addPostReport(params);
+		
+		 
+		
+		
+		 Map<String, Object> response = new HashMap<>();  
+		    response.put("success", "success");
+		
+		return ResponseEntity.ok(response);
+	}
+	
 }
