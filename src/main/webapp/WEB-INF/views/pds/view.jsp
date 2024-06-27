@@ -238,6 +238,39 @@
   #editor_textarea{
   	
   }
+  .ben{
+  	position: relative;
+  }
+  #benBtn{
+  	
+  }
+  .ben_detail{
+  	display: none;
+    position: absolute;
+    top: 73%;
+    z-index: 80;
+    right: 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: #fff;
+    white-space: nowrap;
+    text-align: left;
+  }
+  .ben_detail.active{
+  display: block;
+  }
+.ben_detail  ul{
+    margin: 0;
+    padding: 0 0 0 15px;
+     list-style-type: disc;
+}
+.ben_detail  ul li{
+	padding: 10px 20px 0 0;
+}
+.ben_detail  ul li:last-child {
+	padding-bottom: 10px
+}
 </style>
 </head>
 <body>
@@ -305,7 +338,14 @@
           </div>
           <div class="ben">
             <button>목록으로</button>
-            <button>신고하기</button>
+            <button id="benBtn">신고하기</button>
+            <div class="ben_detail">
+            	<ul>		
+            	    <li><a href="javascript:;" data-ben="1" onclick="return false;">홍보</a></li>	
+            		<li><a href="javascript:;" data-ben="2" onclick="return false;">성인물</a></li>	
+            		<li><a href="javascript:;" data-ben="3" onclick="return false;">기타</a></li>            	 	
+            	</ul>	
+            </div>
           </div>
           <div class="comments">
             <h4>댓글 89개</h4>
@@ -592,6 +632,63 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 페이지가 처음 로드될 때 댓글 불러오기
     loadComments(1);
+ // 신고 버튼 클릭 이벤트 처리
+    const benBtn = document.getElementById('benBtn');
+    const benDetail = document.querySelector('.ben_detail');
+
+    benBtn.addEventListener('click', function(event) {
+        benDetail.classList.toggle('active');
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!benDetail.contains(event.target) && event.target !== benBtn) {
+            benDetail.classList.remove('active');
+        }
+    });
+
+ // 신고 버튼 클릭 이벤트 처리
+    document.querySelectorAll('.ben_detail ul li a').forEach(function(element) {
+        element.addEventListener('click', function(event) {
+            event.preventDefault();
+            const dataBen = this.getAttribute('data-ben');
+            
+            const reason = {
+            		ben_number: dataBen,
+            		post_id: postId,
+            		reason: ''
+            		
+            }
+            
+            if (dataBen === '3') {
+            	reason.reason = prompt('신고 사유를 입력해주세요:');
+                if (!reason.reason) {
+                    alert('신고 사유를 입력해주세요.');
+                    return;
+                }
+            } else {
+                if (!confirm('신고하시겠습니까?')) {
+                    return;
+                }
+            }
+            
+            fetch('/Pds/Api/Ben', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reason)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('신고가 접수되었습니다.');
+                benDetail.classList.remove('active');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('신고 중 오류가 발생했습니다.');
+            });
+        });
+    });
 });
 </script>
 </body>

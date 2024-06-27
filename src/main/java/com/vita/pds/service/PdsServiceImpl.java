@@ -200,6 +200,14 @@ public class PdsServiceImpl implements PdsService{
 		int result = pdsMapper.countPostLike(params);
 		return result;
 	}
+
+
+	@Override
+	public void addPostReport(Map<String, Object> params) {
+		pdsMapper.savePostReport(params);
+		pdsMapper.updatePostState(params);
+		
+	}
 	
 
 
