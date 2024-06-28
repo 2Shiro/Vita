@@ -493,7 +493,7 @@
                   <div class="post-util has-tooltip">
                     <div class="post-util-item">
                       <!-- [Dev] 북마크 - class on 추가/제거 -->
-                      <button type="button" class="btnBookmark">
+                      <button type="button" class="btnBookmark" data-post-id="${post.post_id}">
                         <i class="icon-bookmark"></i>
                       </button>
                       <div class="book-mark-layer tooltip-layer qnaSpA">
@@ -577,6 +577,8 @@
      document.getElementById(tabName).style.display = "block";
      evt.currentTarget.className += " active";
    }
+ 
+
  </script>
  
 </body>

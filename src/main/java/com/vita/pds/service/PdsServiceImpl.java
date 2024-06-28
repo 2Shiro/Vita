@@ -208,6 +208,16 @@ public class PdsServiceImpl implements PdsService{
 		pdsMapper.updatePostState(params);
 		
 	}
+
+
+	
+
+
+	@Override
+	public void addHit(HashMap<String, Object> hitMap) {
+		pdsMapper.addHit(hitMap);
+		
+	}
 	
 
 
