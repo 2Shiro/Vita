@@ -70,6 +70,6 @@ public interface PayMapper {
                    @Param("pro_id") int pro_id, 
                    @Param("pay_id") int pay_id, 
                    @Param("count") int count, 
-                   @Param("totalPrice") int totalPrice);
+                   @Param("price") int price);
 
 }

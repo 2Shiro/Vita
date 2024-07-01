@@ -194,7 +194,7 @@
 	        GOODS_ID, ID, PRO_ID, PAY_ID, COUNT, PRICE, STATE
 	    ) VALUES (
 	        (SELECT NVL(MAX(GOODS_ID), 0) + 1 FROM GOODS), 
-	        #{id}, #{pro_id}, #{pay_id}, #{count}, #{totalPrice}, 0
+	        #{id}, #{pro_id}, #{pay_id}, #{count}, #{price}, 0
 	    )
 	</insert>
 

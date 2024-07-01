@@ -213,7 +213,7 @@ public class PayApiController {
        // 결제 상품 추가
        for (Long basket_id : basketIds) {
     	   BasketVo basketvo = payMapper.getBasket(basket_id);
-           payMapper.saveGoods(id, basketvo.getPro_id(), pay_id, basketvo.getCount(), totalPrice);
+           payMapper.saveGoods(id, basketvo.getPro_id(), pay_id, basketvo.getCount(), basketvo.getPrice());
        }
 
        // 성공적으로 처리되었음을 클라이언트에 반환
