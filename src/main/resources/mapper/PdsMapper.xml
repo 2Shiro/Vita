@@ -212,6 +212,30 @@ WHERE
 		       post_id =#{post_id}
    
    </select>
+   <insert id="savePostReport">
+   		INSERT INTO report (
+		    report_id,
+		    post_id,
+		    id,
+		    reason
+		   
+		) VALUES (
+		    (SELECT NVL(MAX(report_id), 0) + 1 FROM report),
+		    #{post_id},
+		    #{id},
+		    #{reason}
+		)
+   
+   </insert>
+   <update id="updatePostState">
+	     UPDATE post
+			SET
+			    state = state + 1
+		  WHERE
+			        post_id = #{post_id}
+			   
+   </update>
+   
 </mapper>
 
 
