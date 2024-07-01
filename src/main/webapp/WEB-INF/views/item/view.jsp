@@ -223,7 +223,23 @@
   #tab_wrap{
   margin-top: 230px;
   }
-  
+  .wishlist{
+  	 background-image: url(/img/heart.png);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 100%;
+    width: 20px;
+    height: 20px;
+    color: red;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    
+  }
+  .wishlist.on{
+   background-image: url(/img/heart-fill.png);
+  }
 </style>
 </head>
 <body>
@@ -588,6 +604,43 @@
 		
 		
  document.addEventListener('DOMContentLoaded', function() {
+	// 위시리스트 버튼에 이벤트 위임
+	    document.body.addEventListener('click', function(event) {
+	        if (event.target.classList.contains('wishlist')) {
+	        	 event.preventDefault(); 
+	            const button = event.target;
+	            const isOn = button.classList.toggle('on');
+	            const url = isOn ? '/Wishlist/add' : '/Wishlist/delete';
+	            const productId = button.closest('.product').dataset.proid;
+
+	            fetch(url, {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                },
+	                body: JSON.stringify({ pro_id: productId })
+	            })
+	            .then(response => {
+	                if (!response.ok) {
+	                    throw new Error('Network response was not ok');
+	                }
+	                return response.json();
+	            })
+	            .then(data => {
+	                if (data.status === 'success') {
+	                    console.log('Operation successful');
+	                    // 여기에서 추가적인 작업을 수행할 수 있습니다.
+	                } else {
+	                    console.error('Operation failed');
+	                    button.classList.toggle('on'); // 상태 복원
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Fetch error:', error);
+	                button.classList.toggle('on'); // 상태 복원
+	            });
+	        }
+	    });
 	 sendSearchLikeVo(searchLikeVo);
 	 
 	 document.querySelectorAll('.tab').forEach(tab => {
@@ -744,11 +797,13 @@
 
          data.products.forEach((product, index) => {
              const nutrientStr = product.nutrient.map(nutrient => `<p class="type">#\${nutrient}</p>`).join('');
+             const wishClass = product.wish_id ? 'wishlist on' : 'wishlist';
              const productHtml = `
-                 <a href="#" class="product">
+                 <a href="#" class="product" data-proId="\${product.pro_id}">
                      <div class="ranking_list">
                          <div class="ranking">\${index + 1}위</div>
                      </div>
+                     <button class="\${wishClass}" data-product-id="\${product.pro_id}"></button>
                      <img src="/img/\${product.img}.jpg" alt="Product \${index + 1}">
                      <div class="product_util">
                          <div class="txt1">\${product.make_name}</div>

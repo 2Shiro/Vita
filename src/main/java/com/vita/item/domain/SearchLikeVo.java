@@ -15,6 +15,8 @@ public class SearchLikeVo {
 	String searchIcon;
 	
 	Integer intprice;
+	
+	Long id;
 			
 
 }

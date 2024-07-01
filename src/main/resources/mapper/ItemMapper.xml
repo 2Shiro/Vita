@@ -14,7 +14,8 @@
         P.PRICE,
         I.img,
         SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
-        AVG(R.rating) AS average_rating
+        AVG(R.rating) AS average_rating,
+        W.wish_id
     FROM 
         PRODUCT P
     JOIN 
@@ -35,6 +36,8 @@
             pro_id) S ON P.pro_id = S.pro_id
     LEFT JOIN 
         review R ON P.pro_id = R.pro_id
+    LEFT JOIN
+    wishlist W ON P.pro_id = W.pro_id AND W.id = #{id}
     <where>
        
         <if test="ingredient != null">
@@ -59,8 +62,8 @@
         F.TYPE,
         P.EXPLAIN,
         P.PRICE,
-        I.img
-  
+        I.img,
+  		W.wish_id
     
     </select>
     
@@ -77,7 +80,8 @@
         P.PRICE,
         I.img,
         SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
-        AVG(R.rating) AS average_rating
+        AVG(R.rating) AS average_rating,
+        W.wish_id
     FROM 
         PRODUCT P
     JOIN 
@@ -98,6 +102,8 @@
             pro_id) S ON P.pro_id = S.pro_id
     LEFT JOIN 
         review R ON P.pro_id = R.pro_id
+    LEFT JOIN
+    wishlist W ON P.pro_id = W.pro_id AND W.id = #{id}
     <where>
        
         <if test="ingredient != null">
@@ -122,7 +128,8 @@
         F.TYPE,
         P.EXPLAIN,
         P.PRICE,
-        I.img
+        I.img,
+        W.wish_id
   ORDER BY 
     total_sell ASC
     
@@ -139,7 +146,8 @@
         P.PRICE,
         I.img,
         SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
-        AVG(R.rating) AS average_rating
+        AVG(R.rating) AS average_rating,
+        W.wish_id
     FROM 
         PRODUCT P
     JOIN 
@@ -160,6 +168,8 @@
             pro_id) S ON P.pro_id = S.pro_id
     LEFT JOIN 
         review R ON P.pro_id = R.pro_id
+    LEFT JOIN
+    wishlist W ON P.pro_id = W.pro_id AND W.id = #{id}
     <where>
        
         <if test="ingredient != null">
@@ -184,7 +194,8 @@
         F.TYPE,
         P.EXPLAIN,
         P.PRICE,
-        I.img
+        I.img,
+        W.wish_id
   ORDER BY 
     P.PRICE ASC
     
