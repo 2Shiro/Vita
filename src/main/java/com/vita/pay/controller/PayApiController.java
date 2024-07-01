@@ -86,6 +86,21 @@ public class PayApiController {
 
    }
    
+   @PostMapping("/removeBasketItem")
+   public ResponseEntity<Map<String, Object>> removeBasketItem(@RequestBody Map<String, Long> params, HttpServletRequest request) {
+       Long id = getUserIdService.getId(request);
+       Long basketId = params.get("basketId");
+       Map<String, Object> response = new HashMap<>();
+       try {
+           payMapper.removeBasketItem(basketId, id.intValue());
+           response.put("success", true);
+       } catch (Exception e) {
+           response.put("success", false);
+           response.put("message", e.getMessage());
+       }
+       return ResponseEntity.ok(response);
+   }
+   
    @PostMapping("/addDeliveryAddress")
    public ResponseEntity<Map<String, Object>> addDeliveryAddress(@RequestParam Map<String, String> params, HttpServletRequest request) {
        Long id = getUserIdService.getId(request);
