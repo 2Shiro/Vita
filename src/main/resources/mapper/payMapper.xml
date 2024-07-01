@@ -79,6 +79,13 @@
 		WHERE	BASKET_ID = #{basket_id}
 
 	</update>
+	
+	<!-- 장바구니 항목 삭제 -->
+	<delete id="removeBasketItem" parameterType="map">
+	    DELETE FROM BASKET
+	    WHERE BASKET_ID = #{basket_id}
+	    AND ID = #{id}
+	</delete>
 
 	<!-- 구매상태 상품 가져오기 -->
 	<select id="getPayList">
