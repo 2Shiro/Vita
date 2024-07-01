@@ -1,8 +1,10 @@
 package com.vita.pay.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vita.controller.GetUserIdService;
 import com.vita.oauth.jwt.JWTUtil;
+import com.vita.pay.domain.BasketVo;
 import com.vita.pay.domain.DeliveryVo;
+import com.vita.pay.domain.PayVo;
 import com.vita.pay.mapper.PayMapper;
 import com.vita.pay.service.BasketService;
 
@@ -165,6 +169,7 @@ public class PayApiController {
    @PostMapping("/deleteDeliveryAddress")
    public ResponseEntity<Map<String, Object>> deleteDeliveryAddress(@RequestBody Map<String, String> params, HttpServletRequest request) {
        Long id = getUserIdService.getId(request);
+       
        int address_id = Integer.parseInt(params.get("address_id"));
        
        System.out.println("Request received to delete address with ID: " + address_id); // 로그 추가
@@ -175,6 +180,44 @@ public class PayApiController {
        response.put("success", rowsAffected > 0);
 
        return ResponseEntity.ok(response);
+   }
+   
+   @PostMapping("/Pay")
+   public ResponseEntity<?> completePayment(@RequestBody Map<String, Object> paymentResult, HttpServletRequest request) {
+       Long id = getUserIdService.getId(request);
+
+       // paymentResult에서 필요한 데이터 추출
+       String impUid = (String) paymentResult.get("imp_uid");
+       String merchantUid = (String) paymentResult.get("merchant_uid");
+       int buyerId = id.intValue();
+       int addressId = Integer.parseInt((String) paymentResult.get("buyer_addr"));
+
+       Map<String, Object> customData = (Map<String, Object>) paymentResult.get("custom_data");
+       List<String> basketIdsStr = (List<String>) customData.get("basket_ids");
+       String deliveryRequest = (String) customData.get("delivery_request");
+       String payMethod = (String) customData.get("pay_method");
+       int totalPrice = Integer.parseInt((String) customData.get("total_price"));
+
+       // basketIds 리스트에서 각 항목을 long으로 변환
+       List<Long> basketIds = basketIdsStr.stream()
+               .map(Long::parseLong)
+               .collect(Collectors.toList());
+
+       // 결제 정보 추가
+       payMapper.savePay(buyerId, merchantUid, totalPrice, payMethod, deliveryRequest, addressId);
+
+       // 최근 결제 정보 불러오기
+       PayVo recentPay = payMapper.getRecentPay();
+       int pay_id = recentPay.getPay_id();
+       
+       // 결제 상품 추가
+       for (Long basket_id : basketIds) {
+    	   BasketVo basketvo = payMapper.getBasket(basket_id);
+           payMapper.saveGoods(id, basketvo.getPro_id(), pay_id, basketvo.getCount(), basketvo.getPrice());
+       }
+
+       // 성공적으로 처리되었음을 클라이언트에 반환
+       return ResponseEntity.ok().body(Collections.singletonMap("success", true));
    }
 
 }
