@@ -413,10 +413,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('장바구니 항목이 제거되었습니다.');
                     location.reload(); // 페이지를 새로고침하여 업데이트된 장바구니를 반영
-                } else {
-                    alert('장바구니 항목 제거에 실패했습니다.');
                 }
             })
             .catch(error => {
