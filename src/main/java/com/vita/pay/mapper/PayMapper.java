@@ -9,6 +9,7 @@ import com.vita.pay.domain.BasketVo;
 import com.vita.pay.domain.DeliveryVo;
 import com.vita.pay.domain.ImgsVo;
 import com.vita.pay.domain.MakeVo;
+import com.vita.pay.domain.PayVo;
 import com.vita.pay.domain.ProdVo;
 
 @Mapper
@@ -54,6 +55,21 @@ public interface PayMapper {
     // 배송지 삭제
     int deleteDeliveryAddress(@Param("id") int id, @Param("address_id") int address_id);
 
-	
+    // 결제 정보 저장
+    void savePay(@Param("buyerId") int buyerId, 
+            @Param("merchantUid") String merchantUid, 
+            @Param("totalPrice") int totalPrice, 
+            @Param("payMethod") String payMethod, 
+            @Param("deliveryRequest") String deliveryRequest, 
+            @Param("address_id") int address_id);
+
+	PayVo getRecentPay();
+
+    // 결제 상품 저장
+    void saveGoods(@Param("id") Long id, 
+                   @Param("pro_id") int pro_id, 
+                   @Param("pay_id") int pay_id, 
+                   @Param("count") int count, 
+                   @Param("totalPrice") int totalPrice);
 
 }

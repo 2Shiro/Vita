@@ -170,4 +170,32 @@
 	    WHERE ID = #{id} AND ADDRESS_ID = #{address_id}
 	</delete>
 
+	<!-- 결제 정보 추가 -->
+	<insert id="savePay">
+	    INSERT INTO PAY (
+	        PAY_ID, ID, IDENTITY, SUM, WAY, REQ, ADDRESS_ID
+	    ) VALUES (
+	        (SELECT NVL(MAX(PAY_ID), 0) + 1 FROM PAY), 
+	        #{buyerId}, #{merchantUid}, #{totalPrice}, #{payMethod}, #{deliveryRequest}, #{address_id}
+	    )
+	</insert>
+	
+	<!-- 최근 결제 정보 가져오기 -->
+    <select id="getRecentPay" resultType="com.vita.pay.domain.PayVo">
+        SELECT PAY_ID, ID, IDENTITY, SUM, WAY, REQ, ADDRESS_ID
+        FROM PAY
+        ORDER BY PAY_ID DESC
+        FETCH FIRST ROW ONLY
+    </select>
+    
+    <!-- 결제 상품 추가 -->
+	<insert id="saveGoods">
+	    INSERT INTO GOODS (
+	        GOODS_ID, ID, PRO_ID, PAY_ID, COUNT, PRICE, STATE
+	    ) VALUES (
+	        (SELECT NVL(MAX(GOODS_ID), 0) + 1 FROM GOODS), 
+	        #{id}, #{pro_id}, #{pay_id}, #{count}, #{totalPrice}, 0
+	    )
+	</insert>
+
 </mapper>

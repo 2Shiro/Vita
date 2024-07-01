@@ -170,8 +170,7 @@
 																</div>
 																<div class="box__price">
 																	<span class="text__value text__num price"
-																		data-price="${prodPrice}"
-																		id="prodPrice_${status.index}"></span> <span
+																		data-price="${basketPageList.price}"></span> <span
 																		class="text__unit">원 / </span><span
 																		class="text__amount"> <span
 																		class="button-group"> <input type="number"
@@ -183,6 +182,13 @@
 																				data-index="${status.index}">-</button>
 																	</span>
 																	</span>
+																	
+																</div>
+																<div class="box__price">
+																	<span>수량에 따른 상품 금액 : </span>
+																	<span class="text__value text__num price"
+																		data-price="${prodPrice}"
+																		id="prodPrice_${status.index}"></span>
 																</div>
 																<input type="checkbox" class="checkbox__goods"
 																	style="width: 36px; height: 36px;"
@@ -231,7 +237,7 @@
 													</button>
 												</div>
 												<ul class="box__sub-option">
-													<li class="list-sub-option"><span class="text__title">G마켓할인</span><span
+													<li class="list-sub-option"><span class="text__title">쿠폰 할인</span><span
 														class="text__num">0<span class="text__unit">원</span></span></li>
 												</ul></li>
 										</ul>
