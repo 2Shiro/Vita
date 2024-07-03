@@ -11,22 +11,29 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vita.controller.GetUserIdService;
 import com.vita.domain.AllProductsDto;
 import com.vita.domain.HomeNutrientsDto;
 import com.vita.item.domain.SearchLikeVo;
 import com.vita.item.mapper.ItemMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 public class ItemApiController {
 	
 	@Autowired
+	private GetUserIdService getUserIdService;
+	@Autowired
 	private ItemMapper itemMapper;
 	
 	@PostMapping("/Item/Popularity")
-	public ResponseEntity<Map<String, Object>> handlePopularity(@RequestBody SearchLikeVo searchLikeVo) {
+	public ResponseEntity<Map<String, Object>> handlePopularity(@RequestBody SearchLikeVo searchLikeVo, HttpServletRequest request) {
 		
 		System.out.println("비동기처리로 오나?");
         // searchLikeVo 객체를 사용한 비즈니스 로직 처리
+		Long id = getUserIdService.getId(request);
+		searchLikeVo.setId(id);
         System.out.println("처음온 serach 값:" +searchLikeVo);
         if (searchLikeVo.getCategory().equals("전체")) {
         	searchLikeVo.setCategory(null);

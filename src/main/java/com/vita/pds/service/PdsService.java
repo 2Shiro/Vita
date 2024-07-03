@@ -34,4 +34,6 @@ public interface PdsService {
 
 	void addPostReport(Map<String, Object> params);
 
+	void addHit(HashMap<String, Object> hitMap);
+
 }

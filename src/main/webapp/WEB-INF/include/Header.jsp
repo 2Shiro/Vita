@@ -45,7 +45,7 @@
               <a href="./program/level_system">나에게 맞는 영양제</a>
               <div class="gnb-2dep">
                 <ul>
-                  <li><a href="./program/level_system"><span>비교하기</span></a></li>
+                  <li><a href="/Compare/View"><span>비교하기</span></a></li>
 				 <li><a href="/Pay/Basket"><span>장바구니</span></a></li>
 				 <li><a href="/Pay/PayForm"><span>결제</span></a></li>
 				 <li><a href="/Pay/Success"><span>결제완료</span></a></li>
