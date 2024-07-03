@@ -41,8 +41,7 @@ public class BasketService {
         int totalPrice = 0;
         for (BasketVo basketItem : basketList) {
             if (basketItem.getState() == 1) { // 체크된 상태의 상품만 계산
-                ProdVo prod = payMapper.getProd(basketItem.getPro_id());
-                totalPrice += prod.getPrice() * basketItem.getCount() + basketItem.getDelivery_charge();
+                totalPrice += basketItem.getPrice() * basketItem.getCount() + basketItem.getDelivery_charge();
             }
         }
         return totalPrice;
