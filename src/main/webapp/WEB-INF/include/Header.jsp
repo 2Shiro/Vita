@@ -49,6 +49,7 @@
 				 <li><a href="/Pay/Basket"><span>장바구니</span></a></li>
 				 <li><a href="/Pay/PayForm"><span>결제</span></a></li>
 				 <li><a href="/Pay/Success"><span>결제완료</span></a></li>
+				 <li><a href="/Mypage"><span>내정보</span></a></li>
                 </ul>
               </div>
             </li>
