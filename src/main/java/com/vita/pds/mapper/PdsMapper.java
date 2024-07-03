@@ -42,6 +42,8 @@ public interface PdsMapper {
 
 	void updatePostState(Map<String, Object> params);
 
+	void addHit(HashMap<String, Object> hitMap);
+
 	
 
 	

@@ -236,6 +236,21 @@ WHERE
 			   
    </update>
    
+   <insert id="addHit">
+   	INSERT INTO hit (
+	    hit_id,
+	    id,
+	    post_id
+	    
+	) VALUES (
+	    (SELECT NVL(MAX(hit_id), 0) + 1 FROM hit),
+	    #{id},
+	    #{post_id}
+	    
+	)
+   
+   </insert>
+   
 </mapper>
 
 

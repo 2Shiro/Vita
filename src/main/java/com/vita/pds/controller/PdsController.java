@@ -155,15 +155,18 @@ public class PdsController {
 	
 	
 	@GetMapping("/Pds/View")
-	public ModelAndView PdsVeiw(@RequestParam("post_id") Long post_id, @RequestParam("nowpage") int nowPage) {
+	public ModelAndView PdsVeiw(HttpServletRequest request, @RequestParam("post_id") Long post_id, @RequestParam("nowpage") int nowPage) {
 		System.out.println("/Pds/View로 왔나?");
 		System.out.println("postId : " + post_id);
 		System.out.println("nowPage : " + nowPage);
 		
 		boolean myPostView = false;
-		
+	    Long id = getUserIdService.getId(request);
+		HashMap<String, Object> hitMap = new HashMap<>();
+		hitMap.put("post_id", post_id);
+		hitMap.put("id", id);
+		pdsService.addHit(hitMap);
 		PostViewVo postVo = pdsService.findPost(post_id);
-		
 		
 		
 		
