@@ -18,5 +18,4 @@ public interface UsersMapper {
 	// 구매 고유번호 조회
 	PayVo getIdentity(int pay_id);
 
-
 }
