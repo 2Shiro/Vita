@@ -78,7 +78,7 @@
 }
 
 /* 팝업 레이어 스타일 */
-.box__layer, .box__layer-add, .box__layer-edit {
+.box__layer, .box__layer-add, .box__layer-edit, .box__layer-refund {
 	display: none;
 	position: fixed;
 	top: 50%;
@@ -95,7 +95,7 @@
 	z-index: 1000;
 }
 
-.box__layer-add, .box__layer-edit {
+.box__layer-add, .box__layer-edit, .box__layer-refund {
 	z-index: 1100;
 }
 
@@ -129,7 +129,7 @@
 	font-size: 18px;
 }
 
-.form-group input, .form-group button {
+.form-group input, .form-group button, .form-group textarea {
 	padding: 10px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
@@ -173,6 +173,25 @@ input[type="button"] {
 input[type="button"]:hover {
 	background-color: #0056b3;
 }
+
+/* 환불버튼 */
+.refund-button {
+    border: 2px solid red;
+    border-radius: 5px;
+    background-color: white;
+    color: red;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.refund-button:hover {
+    background-color: red;
+    color: white;
+}
+
+.form-group textarea {
+    width: 70%;
+    height: 150px; /* 높이를 늘림 */
+}
 </style>
 </head>
 <body>
@@ -185,8 +204,7 @@ input[type="button"]:hover {
 			<div class="box__contents">
 				<div class="section__left">
 					<div class="section__checkout-info section__delivery-info">
-						<div
-							class="box__card box__card-address box__card-address--default">
+						<div class="box__card box__card-address box__card-address--default">
 							<div class="box__inner">
 								<div class="text__title">
 									기본 배송지 <span class="text__count"></span>
@@ -197,97 +215,91 @@ input[type="button"]:hover {
 								</div>
 								<div class="box__address-cont box__address--default">
 									<div class="address_name">
-										<span class="text__name">${deliveryvo.recipent}</span><span
-											class="text__tel">${deliveryvo.tel}</span>
+										<span class="text__name">${deliveryvo.recipent}</span><span class="text__tel">${deliveryvo.tel}</span>
 									</div>
-									<div class="address_txt">${deliveryvo.address}
-										${deliveryvo.addressdetail}</div>
+									<div class="address_txt">${deliveryvo.address} ${deliveryvo.addressdetail}</div>
 									<!-- 배송 요청사항 선택 및 입력란 -->
 									<div class="box__form-group">
-									    <div class="box__control-select sprite__checkout--after box__form-control box__form--active">
-									        <label for="delivery-request" class="text__label" id="delivery-label" style="color: rgb(0, 0, 0);">
-									            배송시 요청사항을 선택해 주세요.
-									        </label>
-									        <select id="delivery-request" class="form__select js-form__select" disabled>
-									            <option value="selected" ${deliveryvo.req == 'selected' ? 'selected' : ''}>배송시 요청사항을 선택해 주세요.</option>
-									            <option value="1" ${deliveryvo.req == '1' ? 'selected' : ''}>직접 수령하겠습니다.</option>
-									            <option value="2" ${deliveryvo.req == '2' ? 'selected' : ''}>배송 전 연락바랍니다.</option>
-									            <option value="3" ${deliveryvo.req == '3' ? 'selected' : ''}>부재 시 경비실에 맡겨주세요.</option>
-									            <option value="4" ${deliveryvo.req == '4' ? 'selected' : ''}>부재 시 문 앞에 놓아주세요.</option>
-									            <option value="5" ${deliveryvo.req == '5' ? 'selected' : ''}>부재 시 택배함에 넣어주세요.</option>
-									            <option value="6" ${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? 'selected' : ''}>
-									                직접 입력
-									            </option>
-									        </select>
-									    </div>
-									    <div class="box__self-input box__text-area" ${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? 'style="display:block;"' : ''}>
-									        <textarea readonly class="input__txt" id="xo_id_shipping_request" name="textarea_self" maxlength="50" placeholder="최대 50자 입력이 가능합니다.">
-									            ${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? deliveryvo.req : ''}
-									        </textarea>
-									    </div>
+										<div class="box__control-select sprite__checkout--after box__form-control box__form--active">
+											<label for="delivery-request" class="text__label" id="delivery-label" style="color: rgb(0, 0, 0);">
+												배송시 요청사항을 선택해 주세요.
+											</label>
+											<select id="delivery-request" class="form__select js-form__select" disabled>
+												<option value="selected" ${deliveryvo.req == 'selected' ? 'selected' : ''}>배송시 요청사항을 선택해 주세요.</option>
+												<option value="1" ${deliveryvo.req == '1' ? 'selected' : ''}>직접 수령하겠습니다.</option>
+												<option value="2" ${deliveryvo.req == '2' ? 'selected' : ''}>배송 전 연락바랍니다.</option>
+												<option value="3" ${deliveryvo.req == '3' ? 'selected' : ''}>부재 시 경비실에 맡겨주세요.</option>
+												<option value="4" ${deliveryvo.req == '4' ? 'selected' : ''}>부재 시 문 앞에 놓아주세요.</option>
+												<option value="5" ${deliveryvo.req == '5' ? 'selected' : ''}>부재 시 택배함에 넣어주세요.</option>
+												<option value="6" ${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? 'selected' : ''}>직접 입력</option>
+											</select>
+										</div>
+										<div class="box__self-input box__text-area" ${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? 'style="display:block;"' : ''}>
+											<textarea readonly class="input__txt" id="xo_id_shipping_request" name="textarea_self" maxlength="50" placeholder="최대 50자 입력이 가능합니다.">${!(deliveryvo.req == 'selected' || deliveryvo.req == '1' || deliveryvo.req == '2' || deliveryvo.req == '3' || deliveryvo.req == '4' || deliveryvo.req == '5') ? deliveryvo.req : ''}</textarea>
+										</div>
 									</div>
 									<div class="box__button-group">
-										<button id="xo_id_open_address_book" type="button"
-											class="button button__modify"
-											data-montelena-acode="200007086">배송지 변경</button>
+										<button id="xo_id_open_address_book" type="button" class="button button__modify" data-montelena-acode="200007086">배송지 변경</button>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<section class="section__checkout-info section__paycase-info">
-					    <div class="section__checkout-info section__order-info">
-					        <div class="box__card box__order-info">
-					            <c:forEach var="pay" items="${payList}" varStatus="status">
-					            	<br>
-					                <div class="box__inner">
-						            	<div class="text__title">
-						                	주문상품 <span class="text__count"></span>
-						            	</div>
-					                    <input type="hidden" id="pay_id" name="pay_id" value="${pay.pay_id}">
+						<div class="section__checkout-info section__order-info">
+							<div class="box__card box__order-info">
+								<c:forEach var="pay" items="${payList}" varStatus="status">
+									<br>
+									<div class="box__inner">
+										<div class="text__title" style="display: flex; justify-content: space-between; align-items: center;">
+											주문상품
+											<!-- 환불신청 버튼 추가 -->
+											<button type="button" class="refund-button" data-pay-id="${pay.pay_id}">환불신청</button>
+										</div>
+										<input type="hidden" id="pay_id" name="pay_id" value="${pay.pay_id}">
 										<div id="identity" name="identity" style="font-size: 18px;">결제번호 : ${pay.identity}</div>
 										<div id="sum" name="sum" style="font-size: 18px;">결제금액 : ${pay.sum}원</div>
 										<div id="way" name="way" style="font-size: 18px;">결제수단 : ${pay.way}</div>
 										<div id="req" name="req" style="font-size: 18px;">요청사항 : ${pay.req}</div>
-					                    <hr>
-					                    <c:forEach var="payResult" items="${payResultList}" varStatus="status">
-					                        <c:if test="${pay.identity == payResult.identity}">
-					                            <input type="hidden" id="goods_id_${status.index}" value="${payResult.goods_id}">
-					                            <input type="hidden" id="userId" name="userId" value="${id}">
-					                            <input type="hidden" id="identity" name="identity" value="${payResult.identity}">
-					                            <div class="box__goods js-goods-space" data-index="${status.index}">
-					                                <ul class="list__goods-view">
-					                                    <li class="list-item"><br>
-					                                        <div class="box__goods-info">
-					                                            <div class="box__thmb">
-					                                                <a class="link__goods" href="https://${payResult.url}" target="_blank">
-					                                                    <img src="/img/${payResult.img}.jpg" width="86" height="86" alt="제품사진" class="image__goods">
-					                                                </a>
-					                                            </div>
-					                                            <div class="box__info">
-					                                                <div class="box__goods-name">
-					                                                    <a href="https://${payResult.url}" class="text__goods-name" target="_blank">${payResult.name}</a>
-					                                                </div>
-					                                                <div class="box__price">
-					                                                    <span class="text__value text__num price" data-price="${payResult.price}"></span>
-					                                                    <span class="text__unit">원 / </span>
-					                                                    <span class="text__amount">
-					                                                        <span class="button-group">
-					                                                            <span type="text__value text__num" class="item-count" id="itemCount_${status.index}">${payResult.count}개</span>
-					                                                        </span>
-					                                                    </span>
-					                                                </div>
-					                                            </div>
-					                                        </div>
-					                                    </li>
-					                                </ul>
-					                            </div>
-					                        </c:if>
-					                    </c:forEach>
-					                </div>
-					            </c:forEach>
-					        </div>
-					    </div>
+										<hr>
+										<c:forEach var="payResult" items="${payResultList}" varStatus="status">
+											<c:if test="${pay.identity == payResult.identity}">
+												<input type="hidden" id="goods_id_${status.index}" value="${payResult.goods_id}">
+												<input type="hidden" id="userId" name="userId" value="${id}">
+												<input type="hidden" id="identity" name="identity" value="${payResult.identity}">
+												<div class="box__goods js-goods-space" data-index="${status.index}">
+													<ul class="list__goods-view">
+														<li class="list-item"><br>
+															<div class="box__goods-info">
+																<div class="box__thmb">
+																	<a class="link__goods" href="https://${payResult.url}" target="_blank">
+																		<img src="/img/${payResult.img}.jpg" width="86" height="86" alt="제품사진" class="image__goods">
+																	</a>
+																</div>
+																<div class="box__info">
+																	<div class="box__goods-name">
+																		<a href="https://${payResult.url}" class="text__goods-name" target="_blank">${payResult.name}</a>
+																	</div>
+																	<div class="box__price">
+																		<span class="text__value text__num price" data-price="${payResult.price}"></span>
+																		<span class="text__unit">원 / </span>
+																		<span class="text__amount">
+																			<span class="button-group">
+																				<span type="text__value text__num" class="item-count" id="itemCount_${status.index}">${payResult.count}개</span>
+																			</span>
+																		</span>
+																	</div>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</div>
+											</c:if>
+										</c:forEach>
+									</div>
+								</c:forEach>
+							</div>
+						</div>
 					</section>
 				</div>
 				<div class="section__right">
@@ -404,7 +416,7 @@ input[type="button"]:hover {
 						<option value="1">직접 수령하겠습니다.</option>
 						<option value="2">배송 전 연락바랍니다.</option>
 						<option value="3">부재 시 경비실에 맡겨주세요.</option>
-						<option value="4">부재 시 문 앞에 놓아주세요.</option>
+							<option value="4">부재 시 문 앞에 놓아주세요.</option>
 						<option value="5">부재 시 택배함에 넣어주세요.</option>
 						<option value="6">직접 입력</option>
 					</select>
@@ -483,6 +495,24 @@ input[type="button"]:hover {
 		</div>
 	</div>
 	<div class="dimmed"></div>
+	<!-- 환불 팝업 -->
+	<div class="box__layer-refund" role="dialog">
+		<div class="box__layer-header">
+			<span class="title">환불 신청</span>
+			<button class="close-btn" onclick="closeRefundPopup()">×</button>
+		</div>
+		<div class="box__iframe">
+			<!-- 환불사유 폼 -->
+			<form id="refund_form">
+				<input type="hidden" id="refund_pay_id" name="pay_id">
+				<div class="form-group">
+					<label for="refund_reason">환불 사유</label>
+					<textarea id="refund_reason" name="refund_reason" maxlength="50" placeholder="50자 내로 환불사유를 입력하세요."></textarea>
+				</div>
+				<input type="button" value="환불신청" onclick="refundPay()">
+			</form>
+		</div>
+	</div>
 </body>
 <!-- 스크립트 로드 -->
 <script src="/js/header.js"></script>
@@ -507,26 +537,6 @@ localStorage.setItem("user_id", userIdCookie);
 console.log("Access token saved: " + localStorage.getItem("access_token"));
 console.log("Refresh token saved: " + localStorage.getItem("refresh_token"));
 console.log("User ID saved: " + localStorage.getItem("user_id"));
-</script>
-<script>
-// 요청사항 변경 시 라벨 텍스트 및 입력란 표시 여부 설정
-document.getElementById('delivery-request').addEventListener('change', function () {
-    var selfInputDiv = document.querySelector('.box__self-input');
-    var deliveryLabel = document.getElementById('delivery-label');
-    var selectedText = this.options[this.selectedIndex].text;
-
-    deliveryLabel.textContent = selectedText;
-});
-
-// 초기 로드 시 선택된 옵션에 따라 라벨 텍스트 및 입력란 표시 여부 설정
-document.addEventListener('DOMContentLoaded', function () {
-    var deliveryRequest = document.getElementById('delivery-request');
-    var selfInputDiv = document.querySelector('.box__self-input');
-    var deliveryLabel = document.getElementById('delivery-label');
-    var selectedText = deliveryRequest.options[deliveryRequest.selectedIndex].text;
-
-    deliveryLabel.textContent = selectedText;
-});
 </script>
 <script>
 // 3자리 수마다 콤마 추가
@@ -890,9 +900,78 @@ function selectDeliveryAddress(delivery) {
     closeDialog();
 }
 
-//페이지 로드 시 초기화(나중에 팝업창 html에 수정이 생기면 이것도 지우고 수정할것)
+//페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     fetchDeliveryList();
 });
+
+//환불 스크립트
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.refund-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const payId = this.dataset.payId;
+            openRefundPopup(payId);
+        });
+    });
+});
+
+function openRefundPopup(payId) {
+    document.getElementById('refund_pay_id').value = payId;
+    document.querySelector('.box__layer-refund').style.display = 'block';
+    document.querySelector('.dimmed').style.display = 'block';
+}
+
+function closeRefundPopup() {
+    document.querySelector('.box__layer-refund').style.display = 'none';
+    document.querySelector('.dimmed').style.display = 'none';
+}
+
+function refundPay() {
+    const payId = document.getElementById('refund_pay_id').value;
+    const refundReason = document.getElementById('refund_reason').value;
+
+    if (!refundReason) {
+        alert('환불 사유를 입력해주세요.');
+        return;
+    }
+
+    const data = {
+        pay_id: payId,
+        refund_reason: refundReason
+    };
+
+    console.log('Sending data:', JSON.stringify(data)); // 요청 데이터를 콘솔에 출력하여 확인
+
+    fetch('/Refund', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(result => {
+        alert('환불 요청이 접수되었습니다. 결제 ID: ' + payId + '\n환불 사유: ' + refundReason);
+        // 환불신청 버튼을 환불신청완료로 변경하고 비활성화
+        const refundButton = document.querySelector('button[data-pay-id="' + payId + '"]');
+        if (refundButton) {
+            refundButton.textContent = '환불신청완료';
+            refundButton.disabled = true;
+            refundButton.onclick = null;
+            refundButton.style.cursor = 'default';
+            refundButton.style.backgroundColor = 'gray'; // 버튼 비활성화 시 스타일 변경
+        }
+        closeRefundPopup();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('환불 요청 처리 중 오류가 발생했습니다.');
+    });
+}
 </script>
 </html>

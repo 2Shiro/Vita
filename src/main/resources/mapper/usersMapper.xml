@@ -40,21 +40,16 @@
 		WHERE	PAY_ID = #{pay_id}
 	</select>
 	
+    <insert id="requestRefund">
+        INSERT INTO REFUND (
+            REFUND_ID,
+            PAY_ID,
+            REASON,
+            STATE
+        ) VALUES (
+            (SELECT NVL(MAX(REFUND_ID), 0) + 1 FROM REFUND), 
+            #{payId}, #{refundReason}, 0
+        )
+    </insert>
+	
 </mapper>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
