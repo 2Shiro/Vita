@@ -17,6 +17,6 @@ public class PayVo {
     private String req;
     private int address_id;
     private String created;
-    private boolean refundRequested; // 환불 요청 여부 필드 추가
+    private boolean refundRequested; // 환불 요청 여부 필드
 	
 }
