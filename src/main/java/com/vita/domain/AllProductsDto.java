@@ -20,6 +20,8 @@ public class AllProductsDto {
 	Integer total_sell;
 	Double average_rating;
 	Integer wish_id;
+    Long basket_id;
+	
 	
 	String string_average_arting;
 	String[] nutrient;

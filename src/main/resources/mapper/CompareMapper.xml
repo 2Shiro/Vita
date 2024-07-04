@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.compare.mapper.CompareMapper">  
+  
+    <select id="findIWishtems">
+     SELECT
+        P.PRO_ID,
+        P.NAME,
+        M.NAME AS MAKE_NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img,
+        SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
+        AVG(R.rating) AS average_rating,
+        W.wish_id
+    FROM 
+        PRODUCT P
+    JOIN 
+        MAKE M ON P.MAKE_ID = M.MAKE_ID
+    JOIN 
+        FORM F ON P.form_id = F.form_id
+    JOIN 
+        IMGS I ON P.pro_id = I.pro_id
+    LEFT JOIN
+        (SELECT 
+            pro_id,
+            SUM(count) AS total_sell
+         FROM 
+            stock
+         WHERE 
+            state = 0
+         GROUP BY 
+            pro_id) S ON P.pro_id = S.pro_id
+    LEFT JOIN 
+        review R ON P.pro_id = R.pro_id
+    JOIN
+    wishlist W ON P.pro_id = W.pro_id AND W.id =#{id}
+    GROUP BY
+        P.PRO_ID,
+        P.NAME,
+        M.NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img,
+  		W.wish_id
+    
+    </select>
+    
+    
+    <select id="findBasketItems">
+         SELECT
+    P.PRO_ID,
+    P.NAME,
+    M.NAME AS MAKE_NAME,
+    P.ING_ID,
+    P.URL,
+    F.TYPE,
+    P.EXPLAIN,
+    P.PRICE,
+    I.img,
+    SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
+    AVG(R.rating) AS average_rating,
+    W.wish_id,
+    B.basket_id
+FROM 
+    PRODUCT P
+JOIN 
+    MAKE M ON P.MAKE_ID = M.MAKE_ID
+JOIN 
+    FORM F ON P.form_id = F.form_id
+JOIN 
+    IMGS I ON P.pro_id = I.pro_id
+LEFT JOIN
+    (SELECT 
+        pro_id,
+        SUM(count) AS total_sell
+     FROM 
+        stock
+     WHERE 
+        state = 0
+     GROUP BY 
+        pro_id) S ON P.pro_id = S.pro_id
+LEFT JOIN 
+    review R ON P.pro_id = R.pro_id
+LEFT JOIN
+    wishlist W ON P.pro_id = W.pro_id AND W.id = #{id}
+JOIN
+    basket B ON P.pro_id = B.pro_id AND B.id = #{id}
+GROUP BY
+    P.PRO_ID,
+    P.NAME,
+    M.NAME,
+    P.ING_ID,
+    P.URL,
+    F.TYPE,
+    P.EXPLAIN,
+    P.PRICE,
+    I.img,
+    W.wish_id,
+    B.basket_id
+    </select>
+    
+    
+    <select id="findCompareProducts">
+    SELECT
+    P.PRO_ID,
+    P.NAME,
+    M.NAME AS MAKE_NAME,
+    P.EXPLAIN,
+    P.PRICE,
+    I.img,
+    SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
+    V.total,
+    V.iftkn_atnt_matr_cn AS caution,
+    V.ntk_mthd AS take,
+    V.pog_daycnt AS expiration,
+    V.prdt_shap_cd_nm AS form,
+    V.rawmtrl_nm AS functional,
+    V.stdr_stnd AS includnu
+FROM 
+    PRODUCT P
+JOIN 
+    MAKE M ON P.MAKE_ID = M.MAKE_ID
+JOIN 
+    IMGS I ON P.pro_id = I.pro_id
+LEFT JOIN
+    (SELECT 
+        pro_id,
+        SUM(count) AS total_sell
+     FROM 
+        stock
+     WHERE 
+        state = 0
+     GROUP BY 
+        pro_id) S ON P.pro_id = S.pro_id
+JOIN 
+    vitamin V ON P.pro_id = V.id
+WHERE 
+    P.pro_id IN (#{param1},#{param2})
+GROUP BY
+    P.PRO_ID,
+    P.NAME,
+    M.NAME,
+    P.EXPLAIN,
+    P.PRICE,
+    I.img,
+    V.total,
+    V.iftkn_atnt_matr_cn,
+    V.ntk_mthd,
+    V.pog_daycnt,
+    V.prdt_shap_cd_nm,
+    V.rawmtrl_nm,
+    V.stdr_stnd
+ORDER BY 
+    P.PRO_ID
+    
+    
+    </select>
+   	<select id="findCompareNutrients">
+   	 SELECT
+    COALESCE(N1.nut_id, N2.nut_id) AS nut_id,
+    COALESCE(N1.pro_id, N2.pro_id) AS pro_id,
+    I.name,
+    N1.capacity AS capacity1,
+    N2.capacity AS capacity2,
+    I.man_rda,
+    I.girl_rda,
+    I.unit
+FROM
+    (SELECT * FROM nutrient WHERE pro_id = #{param1}) N1
+FULL OUTER JOIN
+    (SELECT * FROM nutrient WHERE pro_id = #{param2}) N2
+ON N1.ing_id = N2.ing_id
+JOIN ingredient I
+ON COALESCE(N1.ing_id, N2.ing_id) = I.ing_id
+ORDER BY
+    CASE
+        WHEN N1.ing_id IS NOT NULL AND N2.ing_id IS NOT NULL THEN 1
+        WHEN N1.ing_id IS NOT NULL THEN 2
+        WHEN N2.ing_id IS NOT NULL THEN 3
+    END,
+    CASE 
+        WHEN I.name = '비타민 A' THEN 1
+        WHEN I.name = '비타민 B1' THEN 2
+        WHEN I.name = '비타민 B2' THEN 3
+        WHEN I.name = '비타민 B6' THEN 4
+        WHEN I.name = '비타민 B12' THEN 5
+        WHEN I.name = '비타민 C' THEN 6
+        WHEN I.name = '비타민 D' THEN 7
+        WHEN I.name = '비타민 E' THEN 8
+        ELSE 9
+    END,
+    I.name
+   	
+   	</select>
+   
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
