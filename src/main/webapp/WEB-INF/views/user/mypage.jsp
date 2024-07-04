@@ -248,56 +248,62 @@ input[type="button"]:hover {
 					<section class="section__checkout-info section__paycase-info">
 						<div class="section__checkout-info section__order-info">
 							<div class="box__card box__order-info">
-								<c:forEach var="pay" items="${payList}" varStatus="status">
-									<br>
-									<div class="box__inner">
-										<div class="text__title" style="display: flex; justify-content: space-between; align-items: center;">
-											주문상품
-											<!-- 환불신청 버튼 추가 -->
-											<button type="button" class="refund-button" data-pay-id="${pay.pay_id}">환불신청</button>
-										</div>
-										<input type="hidden" id="pay_id" name="pay_id" value="${pay.pay_id}">
-										<div id="identity" name="identity" style="font-size: 18px;">결제번호 : ${pay.identity}</div>
-										<div id="sum" name="sum" style="font-size: 18px;">결제금액 : ${pay.sum}원</div>
-										<div id="way" name="way" style="font-size: 18px;">결제수단 : ${pay.way}</div>
-										<div id="req" name="req" style="font-size: 18px;">요청사항 : ${pay.req}</div>
-										<hr>
-										<c:forEach var="payResult" items="${payResultList}" varStatus="status">
-											<c:if test="${pay.identity == payResult.identity}">
-												<input type="hidden" id="goods_id_${status.index}" value="${payResult.goods_id}">
-												<input type="hidden" id="userId" name="userId" value="${id}">
-												<input type="hidden" id="identity" name="identity" value="${payResult.identity}">
-												<div class="box__goods js-goods-space" data-index="${status.index}">
-													<ul class="list__goods-view">
-														<li class="list-item"><br>
-															<div class="box__goods-info">
-																<div class="box__thmb">
-																	<a class="link__goods" href="https://${payResult.url}" target="_blank">
-																		<img src="/img/${payResult.img}.jpg" width="86" height="86" alt="제품사진" class="image__goods">
-																	</a>
-																</div>
-																<div class="box__info">
-																	<div class="box__goods-name">
-																		<a href="https://${payResult.url}" class="text__goods-name" target="_blank">${payResult.name}</a>
-																	</div>
-																	<div class="box__price">
-																		<span class="text__value text__num price" data-price="${payResult.price}"></span>
-																		<span class="text__unit">원 / </span>
-																		<span class="text__amount">
-																			<span class="button-group">
-																				<span type="text__value text__num" class="item-count" id="itemCount_${status.index}">${payResult.count}개</span>
-																			</span>
-																		</span>
-																	</div>
-																</div>
-															</div>
-														</li>
-													</ul>
-												</div>
-											</c:if>
-										</c:forEach>
-									</div>
-								</c:forEach>
+<c:forEach var="pay" items="${payList}" varStatus="status">
+    <br>
+    <div class="box__inner">
+        <div class="text__title" style="display: flex; justify-content: space-between; align-items: center;">
+            주문상품
+            <c:choose>
+                <c:when test="${pay.refundRequested}">
+                    <button type="button" class="refund-button" disabled style="cursor: default; background-color: gray;">환불신청완료</button>
+                </c:when>
+                <c:otherwise>
+                    <button type="button" class="refund-button" data-pay-id="${pay.pay_id}">환불신청</button>
+                </c:otherwise>
+            </c:choose>
+        </div>
+        <input type="hidden" id="pay_id" name="pay_id" value="${pay.pay_id}">
+        <div id="identity" name="identity" style="font-size: 18px;">결제번호 : ${pay.identity}</div>
+        <div id="sum" name="sum" style="font-size: 18px;">결제금액 : ${pay.sum}원</div>
+        <div id="way" name="way" style="font-size: 18px;">결제수단 : ${pay.way}</div>
+        <div id="req" name="req" style="font-size: 18px;">요청사항 : ${pay.req}</div>
+        <hr>
+        <c:forEach var="payResult" items="${payResultList}" varStatus="status">
+            <c:if test="${pay.identity == payResult.identity}">
+                <input type="hidden" id="goods_id_${status.index}" value="${payResult.goods_id}">
+                <input type="hidden" id="userId" name="userId" value="${id}">
+                <input type="hidden" id="identity" name="identity" value="${payResult.identity}">
+                <div class="box__goods js-goods-space" data-index="${status.index}">
+                    <ul class="list__goods-view">
+                        <li class="list-item"><br>
+                            <div class="box__goods-info">
+                                <div class="box__thmb">
+                                    <a class="link__goods" href="https://${payResult.url}" target="_blank">
+                                        <img src="/img/${payResult.img}.jpg" width="86" height="86" alt="제품사진" class="image__goods">
+                                    </a>
+                                </div>
+                                <div class="box__info">
+                                    <div class="box__goods-name">
+                                        <a href="https://${payResult.url}" class="text__goods-name" target="_blank">${payResult.name}</a>
+                                    </div>
+                                    <div class="box__price">
+                                        <span class="text__value text__num price" data-price="${payResult.price}"></span>
+                                        <span class="text__unit">원 / </span>
+                                        <span class="text__amount">
+                                            <span class="button-group">
+                                                <span type="text__value text__num" class="item-count" id="itemCount_${status.index}">${payResult.count}개</span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </c:if>
+        </c:forEach>
+    </div>
+</c:forEach>
 							</div>
 						</div>
 					</section>

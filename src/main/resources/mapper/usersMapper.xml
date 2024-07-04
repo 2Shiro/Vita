@@ -2,54 +2,60 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vita.user.mapper.UsersMapper">  
   
-	<select id="getGoodsList">
-		SELECT	GOODS_ID,
-				ID,
-				PRO_ID,
-				PAY_ID,
-				COUNT,
-				PRICE,
-				STATE
-		FROM	GOODS
-		WHERE	ID = #{id}
-	</select>
-	
-	<select id="getPay">
-		SELECT	PAY_ID,
-				ID,
-				IDENTITY,
-				SUM,
-				WAY,
-				REQ,
-				ADDRESS_ID,
-				CREATED
-		FROM	PAY
-		WHERE	ID = #{id}
-	</select>
+    <select id="getGoodsList">
+        SELECT  GOODS_ID,
+                ID,
+                PRO_ID,
+                PAY_ID,
+                COUNT,
+                PRICE,
+                STATE
+        FROM    GOODS
+        WHERE   ID = #{id}
+    </select>
+    
+    <select id="getPay">
+        SELECT  PAY_ID,
+                ID,
+                IDENTITY,
+                SUM,
+                WAY,
+                REQ,
+                ADDRESS_ID,
+                CREATED
+        FROM    PAY
+        WHERE   ID = #{id}
+    </select>
    
-	<select id="getIdentity">
-		SELECT	PAY_ID,
-				ID,
-				IDENTITY,
-				SUM,
-				WAY,
-				REQ,
-				ADDRESS_ID,
-				CREATED
-		FROM	PAY
-		WHERE	PAY_ID = #{pay_id}
-	</select>
-	
+    <select id="getIdentity">
+        SELECT  PAY_ID,
+                ID,
+                IDENTITY,
+                SUM,
+                WAY,
+                REQ,
+                ADDRESS_ID,
+                CREATED
+        FROM    PAY
+        WHERE   PAY_ID = #{pay_id}
+    </select>
+    
     <insert id="requestRefund">
         INSERT INTO REFUND (
             REFUND_ID,
             PAY_ID,
             REASON,
-            STATE
+            STATE,
+            CREATED
         ) VALUES (
             (SELECT NVL(MAX(REFUND_ID), 0) + 1 FROM REFUND), 
-            #{payId}, #{refundReason}, 0
+            #{payId}, #{refundReason}, 0, SYSDATE
         )
     </insert>
-	
+    
+    <select id="isRefundRequested" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+        FROM   REFUND
+        WHERE  PAY_ID = #{payId}
+    </select>
 </mapper>

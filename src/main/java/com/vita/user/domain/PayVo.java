@@ -9,13 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PayVo {
 	
-	private int pay_id;
-	private int id;
-	private String identity;
-	private int sum;
-	private String way;
-	private String req;
-	private int address_id;
-	private String created;
+    private int pay_id;
+    private int id;
+    private String identity;
+    private int sum;
+    private String way;
+    private String req;
+    private int address_id;
+    private String created;
+    private boolean refundRequested; // 환불 요청 여부 필드
 	
 }
