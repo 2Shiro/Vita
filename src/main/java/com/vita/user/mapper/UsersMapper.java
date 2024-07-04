@@ -3,6 +3,7 @@ package com.vita.user.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.vita.user.domain.GoodsVo;
 import com.vita.user.domain.PayVo;
@@ -17,5 +18,8 @@ public interface UsersMapper {
 
 	// 구매 고유번호 조회
 	PayVo getIdentity(int pay_id);
+
+    // 환불신청
+    void requestRefund(@Param("payId") int payId, @Param("refundReason") String refundReason) throws Exception;
 
 }
