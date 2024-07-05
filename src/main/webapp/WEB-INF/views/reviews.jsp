@@ -17,6 +17,9 @@
 	crossorigin="anonymous"></script>
 <link href="/css/header.css" rel="stylesheet" />
 <style>
+ul, li{
+	list-style: none;
+}
     body {
         font-family: Arial, sans-serif;
 /*         background-color: #f4f4f4; */
@@ -401,16 +404,17 @@ td>img {
 	
 }
 .bestReview {
-	width : 95%;
+	width : 100%;
 	height : 150px;
 	border-collapse: collapse;
 	border : none;
 	border-radius: 10px;
   border-style: hidden;
 /*   box-shadow: 0 0 0 1px #000; */
-  margin : 5%;
+
   padding : 10px;
   background-color : oldlace;
+  margin-bottom: 30px;
 }
   tr {
 		  margin : 10%;

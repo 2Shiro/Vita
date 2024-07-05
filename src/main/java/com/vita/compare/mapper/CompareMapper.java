@@ -19,5 +19,9 @@ public interface CompareMapper {
 
 	List<CompareNutrientDto> findCompareNutrients(Long productId1, Long productId2);
 
+	List<AllProductsDto> findRecentItems(List<Long> proIdList);
+
+	
+
 
 }

@@ -19,6 +19,9 @@
 	crossorigin="anonymous"></script>
 <link href="/css/header.css" rel="stylesheet" />
 <style>
+ul, li{
+ list-style: none;
+}
 #header {
 	position: fixed;
 	top: 0;
@@ -559,7 +562,7 @@ td>img {
 
 /* QnA List */
 .qnacontainer table {
-	width: 1030px;
+	width: 100%;
 	border-collapse: collapse;
 	border: 1px solid #ddd; 
 	tr { width : 1030px; }
@@ -2056,7 +2059,7 @@ td>img {
 	        .then(response => {
 	            if (response.ok) {
 	                alert("질문 등록이 완료되었습니다.");
-	                window.close();
+	                imagePopup('close');
 	            } else {
 	                alert("질문 등록에 실패했습니다.");
 	            }

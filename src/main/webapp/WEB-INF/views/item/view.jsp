@@ -687,7 +687,7 @@
              const nutrientStr = product.nutrient.map(nutrient => `<p class="type">#\${nutrient}</p>`).join('');
              const wishClass = product.wish_id ? 'wishlist on' : 'wishlist';
              const productHtml = `
-                 <a href="#" class="product" data-proId="\${product.pro_id}">
+                 <a href="/Detail?pro_id=\${product.pro_id}&nowpage=1" class="product" data-proId="\${product.pro_id}">
                      <div class="ranking_list">
                          <div class="ranking">\${index + 1}위</div>
                      </div>
