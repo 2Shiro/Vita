@@ -9,244 +9,35 @@
 <link href="/css/start.css" rel="stylesheet" />
 <link href="/css/header.css" rel="stylesheet" />
 <link href="/css/item_tab.css" rel="stylesheet" />
-
+<link href="/css/aside.css" rel="stylesheet" /> 
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 <style>
-#main {
-    width: 100%;
-    height: auto;
-
-  }
-.tabs {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
-  .tab {
-    cursor: pointer;
-    width: calc(100% / 5);
-    height: 50px;
-    line-height: 42px;
-    text-align: center;
-    font-weight: 700;
-    color: #101219;
-    font-size: 20px;
-    border-bottom: 2px solid #E6E9ED;
-    box-sizing: border-box;
-
-  }
-
-  .tab.active {
-    border-bottom: 3px solid #ff7f00;
-  }
-
-  .container {
-    display: none;
-    flex-wrap: wrap;
-    /* justify-content: space-between;*/
-    padding: 10px;
-  }
-
-  .container.active {
-    display: flex;
-  }
-
-  .inner {
-    max-width: 1240px;
-    margin: 0 auto;
-    min-height: 300px;
-  }
-
-  .product {
-    position: relative;
-    background-color: #fff;
-    box-sizing: border-box;
-    margin: 10px;
-    width: calc(25% - 20px);
-    /* 4 items per row with margin */
-    height: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1090;  
     align-items: center;
-    text-decoration: none;
-    color: black;
-    padding: 10px;
-
-    border: 1px solid #E6E9ED;
-    box-shadow: 0px 2px 10px rgba(70, 56, 147, 0.1);
-    border-radius: 20px;
-
-  }
-
-  .product .ranking_list {
-
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 50;
-
-  }
-
-  .product .ranking_list .ranking {
-    width: 40px;
-    height: 40px;
-    display: inline-block;
-    height: 25px;
-    line-height: 25px;
-    color: #9BA1AA;
-    font-weight: 700;
-    font-size: 1.2rem;
-  }
-
-  .product img {
-    height: 44%;
-    width: auto;
-    object-fit: contain;
-
-  }
-
-
-
-
-
-  .product .product_util {
-    width: 100%;
-
-
-  }
-
-  .product .product_util div {
-    margin-bottom: 5px;
-    text-align: left;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, .4);
+    display: none;
+}
+.overlay.show {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
-    max-height: 44px;
-    line-height: 34px;
-    overflow: hidden;
-    padding-left: 4px;
-  }
+}
 
-  .product .txt1 {
-    font-weight: 500;
-    display: block;
-    font-size: 14px;
-    color: #9BA1AA;
-    text-align: left;
-
-    margin: 30px 0px 0px 0px;
-  }
-
-  .product .txt2 {
-    margin-top: -7px;
-  }
-  .product .txt2 {
-    font-weight: 700;
-    color: #101219;
-    display: block !important;
-    font-size: 18px;
-    text-align: left;
-    line-height: 27px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .product .product_util div p {
-    color: #3b65ff;
-    background-color: #f0f5ff;
-    height: 30px;
-    font-size: 12px;
-    letter-spacing: 0px;
-    line-height: 30px;
-    width: auto;
-    padding: 0 12px;
-    border-radius: 99px
-  }
-
-  .product .review .star-point {
-    float: left;
-    font-weight: 700;
-    font-size: 17px;
-    color: #535968;
-    text-align: left;
-    line-height: 20px;
-    background: url(/img/star-icon.webp) left 2px no-repeat;
-    background-size: 16px 15px;
-    padding-left: 20px;
-    height: 20px;
-  }
-
-  .product .review .txt3 {
-    float: left;
-    font-weight: 500;
-    line-height: 19px;
-    height: 20px;
-    color: #9BA1AA;
-    font-size: 16px;
-    margin: 0px 0px 0px 10px;
-  }
-
-  .product .product_util .type_list {
-    margin: 0;
-    margin-top: 10px;
-    padding: 0;
-
-  }
-
-  @media (max-width: 1200px) {
-    .product {
-      width: calc(33.33% - 20px);
-      /* 3 items per row */
-    }
-  }
-
-  @media (max-width: 800px) {
-    .product {
-      width: calc(50% - 20px);
-      /* 2 items per row */
-    }
-  }
-
-  @media (max-width: 500px) {
-    .product {
-      width: 100%;
-      /* 1 item per row */
-      max-width: 340px;
-      /* max width 340px */
-    }
-  }
-  
-  
-  /* 여기서 부터 시작 */
-  #tab_wrap{
-  margin-top: 230px;
-  }
-  .wishlist{
-  	 background-image: url(/img/heart.png);
-    background-repeat: no-repeat;
-    background-position: 50%;
-    background-size: 100%;
-    width: 20px;
-    height: 20px;
-    color: red;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    cursor: pointer;
-    
-  }
-  .wishlist.on{
-   background-image: url(/img/heart-fill.png);
-  }
 </style>
 </head>
 <body>
- 
+<div class="overlay" id="overlay">
+	 <%@include file="/WEB-INF/include/Aside.jsp"%> 
+</div>
+
  <div id="wrap" class="active-start">
    <%@include file="/WEB-INF/include/Header.jsp"%>
+   
    <main id="main" class="landing">
       
       
@@ -571,7 +362,7 @@
  </div>
    
  <script src="/js/header.js"></script>
- 
+ <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <!--   <script src="/js/jwtRequest.js"></script> JWT 요청 스크립트 추가 -->
  <script>
  var searchLikeVo ={
@@ -605,6 +396,95 @@
 		
 		
  document.addEventListener('DOMContentLoaded', function() {
+	 //------------모달------------------
+	
+    // 별점 채우기
+    document.querySelectorAll('.recoAvg').forEach(starScoreElement => {
+        const avgstar = parseFloat(starScoreElement.getAttribute('data-reco-rating'));
+        const fullStars = Math.floor(avgstar);
+        const partialStar = avgstar - fullStars;
+        const percentage = Math.round(partialStar * 100);
+
+        const stars = starScoreElement.nextElementSibling.querySelectorAll('.recoStar');
+        stars.forEach((recoStar, index) => {
+            if (index < fullStars) {
+                recoStar.classList.add('full');
+            } else if (index === fullStars) {
+                recoStar.innerHTML = '<div class="fill" style="width: ' + percentage + '%;"></div>';
+            }
+        });
+    });
+
+    const overlay = document.getElementById('overlay');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modal = document.getElementById('myModal');
+
+    // 동적으로 생성된 cart-button에 대한 이벤트 위임
+    document.body.addEventListener('click', function(event) {
+        if (event.target.classList.contains('cart-button')) {
+            event.preventDefault();
+            overlay.classList.add('show');
+            
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10); // 10ms 딜레이를 줘서 트랜지션이 잘 작동하도록 함
+        }
+    });
+
+    closeModalBtn.addEventListener('click', function() {
+    	 modal.classList.remove('show');
+         setTimeout(() => {
+             overlay.classList.remove('show');
+         }, 400); // 모달 트랜지션 시간이 끝난 후 오버레이를 제거
+    });
+
+    document.getElementById('continueShoppingBtn').addEventListener('click', function() {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            overlay.classList.remove('show');
+        }, 400); // 모달 트랜지션 시간이 끝난 후 오버레이를 제거
+    });
+
+    document.getElementById('viewCartBtn').addEventListener('click', function() {
+        alert('장바구니 보기를 클릭했습니다.');
+    });
+
+    // 오버레이를 클릭하면 모달 닫기
+    overlay.addEventListener('click', function(event) {
+        if (event.target === overlay) {
+        	 modal.classList.remove('show');
+             setTimeout(() => {
+                 overlay.classList.remove('show');
+             }, 400); // 모달 트랜지션 시간이 끝난 후 오버레이를 제거
+        }
+    });
+
+    // 모달 내부 클릭 시 모달 닫히지 않도록 방지
+    modal.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+
+    // Swiper 초기화
+    var swiper1 = new Swiper('.swiper1', {
+        slidesPerView: 2,
+        spaceBetween: 10,
+        navigation: {
+            nextEl: '.swiper1 .custom-swiper-button-next',
+            prevEl: '.swiper1 .custom-swiper-button-prev',
+        },
+    });
+
+    var swiper2 = new Swiper('.swiper2', {
+        slidesPerView: 2,
+        spaceBetween: 10,
+        navigation: {
+            nextEl: '.swiper2 .custom-swiper-button-next',
+            prevEl: '.swiper2 .custom-swiper-button-prev',
+        },
+    });
+	
+	 
+	 //---------모달 ---------------
 	// 위시리스트 버튼에 이벤트 위임
 	    document.body.addEventListener('click', function(event) {
 	        if (event.target.classList.contains('wishlist')) {
@@ -640,6 +520,13 @@
 	                console.error('Fetch error:', error);
 	                button.classList.toggle('on'); // 상태 복원
 	            });
+	        }
+	    });
+	 // 버튼 호버 이벤트
+	    document.body.addEventListener('click', function(event) {
+	        if (event.target.classList.contains('cart-button')) {
+	            event.preventDefault();
+	            console.log('확인');
 	        }
 	    });
 	 sendSearchLikeVo(searchLikeVo);
@@ -817,6 +704,7 @@
                              \${nutrientStr}
                          </div>
                      </div>
+                     <button class="cart-button">장바구니에 추가</button>  
                  </a>
              `;
              allProductsEl.innerHTML += productHtml;
