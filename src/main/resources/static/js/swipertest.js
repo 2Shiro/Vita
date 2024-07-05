@@ -24,7 +24,7 @@ const cartSwiper = new Swiper('.cart-products', {
   },
 });
 
-const bookmarkSwiper = new Swiper('.bookmark-products', {
+const wishSwiper = new Swiper('.wish-products', {
   slidesPerView: 4,
   spaceBetween: 10,
   pagination: {
