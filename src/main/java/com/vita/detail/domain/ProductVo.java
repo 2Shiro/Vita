@@ -1,5 +1,7 @@
 package com.vita.detail.domain;
 
+import com.fasterxml.jackson.databind.node.IntNode;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductVo {
 	
+	private Long id;
 	private int pro_id;
 	private String name;
 	private String img;
@@ -36,5 +39,33 @@ public class ProductVo {
 	
 	// 재고
 	private int count;
+	
+	// 리뷰 평점
+	private double avg_rating;
+	
+	// 리뷰 개수
+	private int review_count;
+	
+	// QnA
+	private int qna_id;
+	private int q_type;
+	private String question;
+	private String q_created;
+	private String secret;
+	private String answer;
+	private String a_created;	
+	private int status;
+	private int qna_count;
+	
+	private String email;
+	private String nickname;
+	
+	// Seller
+	private int    make_id;
+	private String tel;
+	private int    zipcode;
+	private String address;
+	private String addressdetail;
+	
 
 }
