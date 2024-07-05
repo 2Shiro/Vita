@@ -7,14 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockVo {
-	private int stock_id;
-	private int pro_id;
-	private int admin_id;
+public class RefundVo {
+	private int refund_id;
+	private int pay_id;
 	private int count;
+	private String reason;
+	private String created;
 	private int state;
-	private String additional;
-	private String pro_name;
-	private String admin_name;
-	
 }

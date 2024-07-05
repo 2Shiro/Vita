@@ -11,17 +11,17 @@ import com.vita.pay.mapper.PayMapper;
 
 @Service
 public class BasketService {
-    
+
     @Autowired
     private PayMapper payMapper;
-    
+
     // 장바구니 아이템의 수량을 업데이트하는 메서드
     public void updateItemCount(Long basket_id, int count) throws ItemNotFoundException {
         BasketVo basketvo = payMapper.getBasket(basket_id);
         if (basketvo == null) {
             throw new ItemNotFoundException("해당 장바구니 아이템을 찾을 수 없습니다.");
         }
-        
+
         basketvo.setCount(count);
         payMapper.updateBasketCount(basketvo);
     }
@@ -40,8 +40,9 @@ public class BasketService {
         List<BasketVo> basketList = payMapper.getBasketList(id);
         int totalPrice = 0;
         for (BasketVo basketItem : basketList) {
-            ProdVo prod = payMapper.getProd(basketItem.getPro_id());
-            totalPrice += prod.getPrice() * basketItem.getCount();
+            if (basketItem.getState() == 1) { // 체크된 상태의 상품만 계산
+                totalPrice += basketItem.getPrice() * basketItem.getCount() + basketItem.getDelivery_charge();
+            }
         }
         return totalPrice;
     }
@@ -52,5 +53,5 @@ public class BasketService {
             super(message);
         }
     }
-    
+
 }

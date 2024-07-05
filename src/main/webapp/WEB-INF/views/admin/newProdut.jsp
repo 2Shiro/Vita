@@ -179,7 +179,8 @@
     <a href="/MakeList">제조사</a>
     <a href="/Ingredient">성분</a>
     <a href="/FormList">제형</a>
-    <a href="#">영양분</a>
+    <a href="/NutrientList">영양분</a>
+    <a href="/Inquiry">문의 글</a>
     <a href="/AdminLogout">로그아웃</a>
 </div>
     <div id="myModal" class="modal">

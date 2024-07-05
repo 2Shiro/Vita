@@ -1,4 +1,4 @@
-package com.vita.pay.domain;
+package com.vita.user.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,20 +7,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BasketPageVo {
+public class PayResultVo {
 	
-	private int basket_id;
+	private int goods_id;
 	private int pro_id;
+	private String identity;
 	private int img_id;
-	private int make_id;
-	
 	private String img;
 	private String url;
-	private String pname;
-	private String mname;
+	private String name;
 	private int price;
 	private int count;
-	private int delivery_charge;
 	private int state;
 	
 }
