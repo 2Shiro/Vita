@@ -48,6 +48,10 @@ public class CompareController {
 	      System.out.println(proIdList);
 	      System.out.println(proIdList);
 	      System.out.println(proIdList);
+	      for (Long long1 : proIdList) {
+	    	  System.out.println("2222");
+			System.out.println(long1);
+		}
 	     
 		//최근본 공고 쿠키
 		List<AllProductsDto> recenItems = compareService.findRecentItems(proIdList);

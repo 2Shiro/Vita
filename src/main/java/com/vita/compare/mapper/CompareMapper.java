@@ -3,6 +3,7 @@ package com.vita.compare.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.vita.compare.domain.CompareNutrientDto;
 import com.vita.compare.domain.CompareProductDto;
@@ -19,7 +20,7 @@ public interface CompareMapper {
 
 	List<CompareNutrientDto> findCompareNutrients(Long productId1, Long productId2);
 
-	List<AllProductsDto> findRecentItems(List<Long> proIdList);
+	List<AllProductsDto> findRecentItems(@Param("proIdList") List<Long> proIdList);
 
 	
 
