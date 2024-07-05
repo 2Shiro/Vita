@@ -9,26 +9,26 @@
 	<ul class="pagination">
 		<c:if test="${nowpage > 1}">
 			<li class="page-item"><a class="page-link" id="paging"
-				href="/reviews?nowpage=1&pro_id=${pro_id}" aria-label="Previous">
+				href="/QnA?nowpage=1&pro_id=${pro_id}" aria-label="Previous">
 					<span aria-hidden="true">&laquo;</span>
 			</a></li>
 			<li class="page-item"><a class="page-link" id="paging"
-				href="/reviews?nowpage=${nowpage - 1}&pro_id=${pro_id}" aria-label="Previous">
+				href="/QnA?nowpage=${nowpage - 1}&pro_id=${pro_id}" aria-label="Previous">
 					<span aria-hidden="true">&lt;</span>
 			</a></li>
 		</c:if>
 		<c:forEach var="pagenum" begin="${startnum}" end="${endnum}" step="1">
 			<li class="page-item"><a class="page-link" id="paging"
-				href="/reviews?nowpage=${ pagenum }&pro_id=${pro_id}"> ${ pagenum }
+				href="/QnA?nowpage=${ pagenum }&pro_id=${pro_id}"> ${ pagenum }
 			</a></li>
 		</c:forEach>
 		<c:if test="${pagingVo.pagination.existNextPage}">
 			<li class="page-item"><a class="page-link" id="paging"
-				href="/reviews?nowpage=${ nowpage + 1 }&pro_id=${pro_id}"
+				href="/QnA?nowpage=${ nowpage + 1 }&pro_id=${pro_id}"
 					aria-label="Next"> <span aria-hidden="true">&gt;</span>
 			</a></li>
 			<li class="page-item"><a class="page-link" id="paging"
-				href="/reviews?nowpage=${ totalpagecount }&pro_id=${pro_id}"
+				href="/QnA?nowpage=${ totalpagecount }&pro_id=${pro_id}"
 				aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 			</a></li>
 		</c:if>
