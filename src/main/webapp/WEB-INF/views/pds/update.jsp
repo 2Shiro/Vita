@@ -72,7 +72,44 @@
     border-color: #d7d8d9;
     color: #666;
   }
-  
+  .scrapList li:first-child {
+    border-top: 1px solid #e6eaf1;
+}
+ .scrapList li .item {
+    display: block;
+    padding: 13px 10px 12px;
+    background-color: #fff;
+}
+ .scrapList li .info {
+    display: block;
+    height: 15px;
+    line-height: 14px;
+}
+.scrapList li .info .day.today {
+    color: #fff;
+    background-color: #ffa257;
+    padding: 0 2px;
+}
+.scrapList li .info .day {
+    font-size: 11px;
+    letter-spacing: 0px;
+    color: #666;
+}
+.scrapList li .co {
+    font-weight: bold;
+    margin-top: 4px;
+}
+.scrapList li .co, .scrapList li .tx {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    letter-spacing: 0px;
+    color: #333;
+    padding-bottom: 1px;
+}
 </style>
 </head>
 <body>
@@ -147,18 +184,40 @@
         </div>
       </div>
       <div class="right-sidebar">
-        <h2>내가 본 상품</h2>
-        <ul>
-          <li>상품 1</li>
-          <li>상품 2</li>
-          <li>상품 3</li>
-        </ul>
-        <h2>내가 본 글</h2>
-        <ul>
-          <li>글 제목 1</li>
-          <li>글 제목 2</li>
-          <li>글 제목 3</li>
-        </ul>
+        <div id="side_area">
+		   <div id="sideScrap">
+		     <strong class="titTotal"><a href="#" class="link">추천 상품</a></strong>
+		     <ul class="scrapList">  
+		      <c:forEach var="item" items="${recommendList}">		           
+		          <li class="on">
+		             <a href="#" class="item">
+		               <span class="info">              
+		                     <em class="day today">${item.name }</em>         
+		               </span>
+		               <span class="co">
+		                 <img src="/img/${item.img}.jpg" >
+		               </span>
+		             </a>
+		           </li>   
+		         </c:forEach>  	
+		     </ul>
+		     <strong class="titTotal"><a href="#" class="link">장바구니 상품</a></strong>
+		     <ul class="scrapList">  
+		      <c:forEach var="item" items="${basketList}">		           
+		          <li class="on">
+		             <a href="#" class="item">
+		               <span class="info">              
+		                     <em class="day today">${item.name }</em>         
+		               </span>
+		               <span class="co">
+		                 <img src="/img/${item.img}.jpg" >
+		               </span>
+		             </a>
+		           </li>   
+		         </c:forEach>  	
+		     </ul>
+		   </div><!-- sideScrap -->   
+		 </div>
       </div>
     </div>
      

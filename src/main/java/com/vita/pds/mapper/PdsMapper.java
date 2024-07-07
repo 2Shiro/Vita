@@ -55,6 +55,8 @@ public interface PdsMapper {
 
 	void updatePost(PostVo postVo);
 
+	void deletedPost(Long post_id);
+
 	
 
 	

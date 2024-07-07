@@ -47,6 +47,8 @@ public interface PdsService {
 
 	void updatePost(HashMap<String, Object> map);
 
+	void deletePost(Long post_id);
+
 	
 
 	

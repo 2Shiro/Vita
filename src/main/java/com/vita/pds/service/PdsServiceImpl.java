@@ -26,6 +26,16 @@ public class PdsServiceImpl implements PdsService{
 	@Autowired
 	private PdsMapper pdsMapper;
 
+	
+
+
+	@Override
+	public void deletePost(Long post_id) {
+		pdsMapper.deletedPost(post_id);
+		
+	}
+
+
 	@Override
 	public void savePost(HashMap<String, Object> map) {
 		System.out.println("savePost까지 왔나 ?");

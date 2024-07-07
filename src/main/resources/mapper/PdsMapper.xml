@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vita.pds.mapper.PdsMapper">  
+  	<delete id="deletedPost">
+  	   DELETE FROM post
+              WHERE
+                post_id = #{post_id}
+  	</delete>
   
     <insert id="SavePost">
     INSERT INTO post (

@@ -30,8 +30,10 @@ import com.vita.controller.GetUserIdService;
 import com.vita.paging.domain.PagingResponse;
 import com.vita.pds.domain.CommentsVo;
 import com.vita.pds.domain.PostListVo;
+import com.vita.pds.domain.PostRecommendVo;
 import com.vita.pds.domain.PostViewVo;
 import com.vita.pds.domain.PostVo;
+import com.vita.pds.mapper.PdsSideMapper;
 import com.vita.pds.service.PdsService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,14 +51,19 @@ public class PdsController {
 	@Autowired
 	private PdsService pdsService;
 	
+	@Autowired
+	private PdsSideMapper pdsSideMapper;
 	
 	
 	@GetMapping("/Pds/Write")
-	public ModelAndView PdsWriteForm() {
-		
-		
+	public ModelAndView PdsWriteForm(HttpServletRequest request) {
+		Long id = getUserIdService.getId(request);
+		List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+		List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/write");
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);  
 		
 		return mv;
 	}
@@ -109,12 +116,17 @@ public class PdsController {
         
         System.out.println("222222222222222");
         
+        List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/list");
 		mv.addObject("response", response);
 		mv.addObject("searchVo", searchVo);
 		mv.addObject("count", count);
 		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);  
 		return mv;
 	
 	
@@ -165,22 +177,36 @@ public class PdsController {
         System.out.println(response.getPagination().getEndPage());
         
         System.out.println("222222222222222");
-        
+        List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/mylist");
 		mv.addObject("response", response);
 		mv.addObject("searchVo", searchVo);
 		mv.addObject("count", count);
 		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList); 
 		return mv;
 	
 	
+	}
+	@GetMapping("/Pds/Delete")
+	public ModelAndView PdsDelete(HttpServletRequest request,@RequestParam("post_id") Long post_id) {
+		System.out.println("딜리트로옴");
+		Long id = getUserIdService.getId(request);
+		pdsService.deletePost(post_id);
+		return new ModelAndView("redirect:/Pds/List?nowpage=1");
 	}
 	@GetMapping("/Pds/Update")
 	public ModelAndView PdsUpdate(HttpServletRequest request,@RequestParam("post_id") Long post_id) {
 		System.out.println("일로오나?");
 	    Long id = getUserIdService.getId(request);
-		 
+	    List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	   
+	    
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/update");
 		PostViewVo postVo = pdsService.findPost(post_id);
@@ -194,7 +220,8 @@ public class PdsController {
 	                .toArray(String[]::new));
 		}
 		
-		 
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);  
 		mv.addObject("postVo", postVo);
 		mv.addObject("contentMarks", contentMarks);
 		return mv;
@@ -207,8 +234,12 @@ public class PdsController {
 		System.out.println("postId : " + post_id);
 		System.out.println("nowPage : " + nowPage);
 		
+		
 		boolean myPostView = false;
 	    Long id = getUserIdService.getId(request);
+	    
+	    
+	    
 		HashMap<String, Object> hitMap = new HashMap<>();
 		hitMap.put("post_id", post_id);
 		hitMap.put("id", id);
@@ -257,6 +288,9 @@ public class PdsController {
 		System.out.println(response.getList());
 		System.out.println("---------------------");
 				
+		List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	   
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("response",response);
 		mv.addObject("nowpage", nowPage);
@@ -267,6 +301,8 @@ public class PdsController {
 		System.out.println("totalPageCount : " +  pagination.getTotalPageCount());
 		mv.setViewName("pds/view");
 		mv.addObject("contentMarks", contentMarks);
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);
 		return mv;
 	}
 	

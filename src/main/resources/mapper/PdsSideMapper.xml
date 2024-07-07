@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.pds.mapper.PdsSideMapper">  
+  
+   <select id="findRecommendPost">
+   	SELECT 
+	    P.pro_id,
+	    P.name,
+	    I.img
+	FROM 
+	    product P
+	LEFT JOIN 
+	    IMGS I ON P.pro_id = I.pro_id
+	WHERE
+	   ROWNUM  <![CDATA[<=]]> 3
+   </select>
+   <select id="findbasketPost">
+   	 SELECT 
+    P.pro_id,
+    P.name,
+    I.img
+FROM 
+    product P
+LEFT JOIN 
+    IMGS I ON P.pro_id = I.pro_id
+JOIN
+    basket B ON P.pro_id = B.pro_id
+WHERE 
+    B.id = #{id} AND ROWNUM <![CDATA[<=]]>3
+GROUP BY 
+    P.pro_id, P.name, I.img
+	
+   </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

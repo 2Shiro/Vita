@@ -239,29 +239,39 @@
      </div>
      <div class="right-sidebar">
        <div id="side_area">
-   <div id="sideScrap">
-     <strong class="titTotal"><a href="#" class="link">스크랩 내용</a></strong>
-     <ul class="scrapList">  
-           <li class="on">
-             <a href="/Detail/Detail?po_id=11" class="item">
-               <span class="info">              
-                     <em class="day today">곧 마감</em>         
-               </span>
-               <span class="co">ddd</span>
-             </a>
-           </li>
-          <li class="on">
-             <a href="/Detail/Detail?po_id=11" class="item">
-               <span class="info">              
-                     <em class="day today">곧 마감</em>         
-               </span>
-               <span class="co">ddd</span>
-             </a>
-           </li>   	
-     </ul>
-   </div><!-- sideScrap -->
-   
- </div>
+		   <div id="sideScrap">
+		     <strong class="titTotal"><a href="#" class="link">추천 상품</a></strong>
+		     <ul class="scrapList">  
+		      <c:forEach var="item" items="${recommendList}">		           
+		          <li class="on">
+		             <a href="#" class="item">
+		               <span class="info">              
+		                     <em class="day today">${item.name }</em>         
+		               </span>
+		               <span class="co">
+		                 <img src="/img/${item.img}.jpg" >
+		               </span>
+		             </a>
+		           </li>   
+		         </c:forEach>  	
+		     </ul>
+		     <strong class="titTotal"><a href="#" class="link">장바구니 상품</a></strong>
+		     <ul class="scrapList">  
+		      <c:forEach var="item" items="${basketList}">		           
+		          <li class="on">
+		             <a href="#" class="item">
+		               <span class="info">              
+		                     <em class="day today">${item.name }</em>         
+		               </span>
+		               <span class="co">
+		                 <img src="/img/${item.img}.jpg" >
+		               </span>
+		             </a>
+		           </li>   
+		         </c:forEach>  	
+		     </ul>
+		   </div><!-- sideScrap -->   
+		 </div>
      </div>
    </div>
   </main>
