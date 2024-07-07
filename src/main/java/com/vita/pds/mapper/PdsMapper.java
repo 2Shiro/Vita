@@ -21,8 +21,11 @@ public interface PdsMapper {
 	List<CommentsVo> FindComments(HashMap<String, Object> params);
 
 	int FindListPost();
+	
+	int FindListMyPost(Long id);
 
 	List<PostListVo> FindAllPostList(HashMap<String, Object> params);
+	List<PostListVo> FindAllMyPostList(HashMap<String, Object> params);
 
 	void saveComment(CommentsVo commentsVo);
 
@@ -43,6 +46,18 @@ public interface PdsMapper {
 	void updatePostState(Map<String, Object> params);
 
 	void addHit(HashMap<String, Object> hitMap);
+
+	List<PostListVo> FindPopulList(HashMap<String, Object> params);
+
+	List<PostListVo> FindPostLikeList(HashMap<String, Object> params);
+
+	List<PostListVo> PostReviewList(HashMap<String, Object> params);
+
+	void updatePost(PostVo postVo);
+
+	
+
+	
 
 	
 

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -116,7 +118,7 @@
       </div>
       <div class="main-content">
         <div class="container mt-5">
-          <h2>게시판 글쓰기</h2>
+          <h2>게시판 수정하기</h2>
           <form id="postForm" method="POST" action="/submit-post">
             <div class="form-group">
               <label for="title">제목</label>
@@ -124,14 +126,17 @@
             </div>
             <div class="form-group">
               <label for="content">내용</label>
-              <textarea class="form-control" id="content" name="content" rows="10" placeholder="내용을 입력하세요"></textarea>
+              <textarea class="form-control" id="content" name="content" rows="10" placeholder="내용을 입력하세요">
+              	${postVo.content}
+              
+              </textarea>
             </div>
             <div class="form-group">
               <label for="file">파일 첨부</label>
               <input type="file" class="form-control-file" id="file">
             </div>
             <div class="tag-input">
-              <input type="text" id="devTags" placeholder="태그입력 (#으로 구분해주세요.)" value="">
+              <input type="text" id="devTags"  value="${contentMarks }">
             </div>
             <div class="btnCommWrap">
               <button type="submit" class="btnQuestion devQnaWriteButton">등록하기</button>
@@ -192,18 +197,19 @@
         var formData = new FormData(this);
         formData.append('content', $('#content').summernote('code'));
         formData.append('tags', document.querySelector('#devTags').value);
-        fetch('/Pds/Submit/Write', {
+        formData.append('postId', ${postVo.post_id});
+        fetch('/Pds/Submit/Update', {
           method: 'POST',
           body: formData
         })
           .then(response => response.json())
           .then(data => {
-            if (data.ok) {
-              alert('글이 성공적으로 제출되었습니다.');
-              window.location.href = '/Pds/List?nowpage=1';
-            } else {
-              alert('글 띠용?.');
-            }
+        	  if (data.ok) {
+                  alert('글이 성공적으로 제출되었습니다.');
+                  window.location.href = '/Pds/List?nowpage=1';
+                } else {
+                  alert('글 띠용?.');
+                }
           })
           .catch(error => {
             console.error('Error:', error);

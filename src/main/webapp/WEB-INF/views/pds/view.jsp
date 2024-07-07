@@ -336,6 +336,13 @@
             <span>${postVo.like_count}</span>
             <button>싫어요</button>
           </div>
+          
+          
+          <div class="post_update">
+                <a href="/Pds/Update?post_id=${postVo.post_id}" id="updateButton" data-post-id="${postVo.id }">Update Post</button>
+            </div>
+            
+            
           <div class="ben">
             <button>목록으로</button>
             <button id="benBtn">신고하기</button>
@@ -423,7 +430,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     let postId = ${post_id};
     let totalPageCount = 1; // 초기 페이지 수 설정, 실제 값으로 업데이트 필요
-
+    console.log("없데이트 되나?");
+    /*  업데이트 로직 */
+   
+        
+   
+    /* -------------------------------- */
     // 페이지 링크 클릭 이벤트 위임
     document.querySelector('.pagination').addEventListener('click', function(event) {
         if (event.target.classList.contains('page-link')) {

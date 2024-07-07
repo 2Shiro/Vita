@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.nimbusds.oauth2.sdk.http.HTTPRequest;
 import com.vita.controller.GetUserIdService;
@@ -32,6 +34,45 @@ public class PdsApiController {
 	@Autowired
 	private PdsService pdsService;
 
+	@PostMapping("/Pds/Submit/Update")
+	public  ResponseEntity<Map<String, Object>> UpdateWrite(
+			HttpServletRequest request,
+			@RequestParam   HashMap<String, Object> map,  // 일반데이터	
+			@RequestParam(value="upfile", required = false) 
+		    //  required=false  입력하지 않을 수 있다
+		    MultipartFile[]     uploadFiles     // 파일처리
+			){
+		// 넘어온 정보
+				System.out.println("");
+				System.out.println("map:"   + map); 
+				System.out.println("files:" + uploadFiles); 
+				
+				//map:{title=안녕하세요, content=<p>하염 만나서 반갑스니다<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktZXllIiB2aWV3Qm94PSIwIDAgMTYgMTYiPgogIDxwYXRoIGQ9Ik0xNiA4cy0zLTUuNS04LTUuNVMwIDggMCA4czMgNS41IDggNS41UzE2IDggMTYgOE0xLjE3MyA4YTEzIDEzIDAgMCAxIDEuNjYtMi4wNDNDNC4xMiA0LjY2OCA1Ljg4IDMuNSA4IDMuNXMzLjg3OSAxLjE2OCA1LjE2OCAyLjQ1N0ExMyAxMyAwIDAgMSAxNC44MjggOHEtLjA4Ni4xMy0uMTk1LjI4OGMtLjMzNS40OC0uODMgMS4xMi0xLjQ2NSAxLjc1NUMxMS44NzkgMTEuMzMyIDEwLjExOSAxMi41IDggMTIuNXMtMy44NzktMS4xNjgtNS4xNjgtMi40NTdBMTMgMTMgMCAwIDEgMS4xNzIgOHoiLz4KICA8cGF0aCBkPSJNOCA1LjVhMi41IDIuNSAwIDEgMCAwIDUgMi41IDIuNSAwIDAgMCAwLTVNNC41IDhhMy41IDMuNSAwIDEgMSA3IDAgMy41IDMuNSAwIDAgMS03IDAiLz4KPC9zdmc+" data-filename="image name" style="width: 732px;"></p>}
+				//files:null
+				 // content에서 Base64 이미지 데이터 추출 및 파일 저장
+		        String content = (String) map.get("content");
+		        System.out.println("");
+		        System.out.println("content값만 가져온거");
+		        System.out.println(content);
+		        
+		        Long id = getUserIdService.getId(request); // id 가져오기
+		        System.out.println("유저 아이디 가져오기 : " + id);
+		        map.put("id", id);
+		        
+		        pdsService.updatePost(map);
+		      
+		
+		        Map<String, Object> response = new HashMap<>();
+		        response.put("ok", true);
+		        response.put("url", "/Pds/List?nowpage=1");
+		
+	
+		
+		       return ResponseEntity.ok(response);
+	}
+	
+		
+	
 	@PostMapping("/Pds/Api/Review")
 	public PagingResponse<CommentsVo>  AddCommentApi(HttpServletRequest request, @RequestBody HashMap<String, Object> requestBody){
 		
@@ -226,6 +267,42 @@ public class PdsApiController {
 		    response.put("success", "success");
 		
 		return ResponseEntity.ok(response);
+	}
+	@PostMapping("/Pds/Submit/Write")
+	public  ResponseEntity<Map<String, Object>> SubmitWrite(
+			HttpServletRequest request,
+			@RequestParam   HashMap<String, Object> map,  // 일반데이터	
+			@RequestParam(value="upfile", required = false) 
+		    //  required=false  입력하지 않을 수 있다
+		    MultipartFile[]     uploadFiles     // 파일처리
+			){
+		// 넘어온 정보
+				System.out.println("");
+				System.out.println("map:"   + map); 
+				System.out.println("files:" + uploadFiles); 
+				
+				//map:{title=안녕하세요, content=<p>하염 만나서 반갑스니다<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktZXllIiB2aWV3Qm94PSIwIDAgMTYgMTYiPgogIDxwYXRoIGQ9Ik0xNiA4cy0zLTUuNS04LTUuNVMwIDggMCA4czMgNS41IDggNS41UzE2IDggMTYgOE0xLjE3MyA4YTEzIDEzIDAgMCAxIDEuNjYtMi4wNDNDNC4xMiA0LjY2OCA1Ljg4IDMuNSA4IDMuNXMzLjg3OSAxLjE2OCA1LjE2OCAyLjQ1N0ExMyAxMyAwIDAgMSAxNC44MjggOHEtLjA4Ni4xMy0uMTk1LjI4OGMtLjMzNS40OC0uODMgMS4xMi0xLjQ2NSAxLjc1NUMxMS44NzkgMTEuMzMyIDEwLjExOSAxMi41IDggMTIuNXMtMy44NzktMS4xNjgtNS4xNjgtMi40NTdBMTMgMTMgMCAwIDEgMS4xNzIgOHoiLz4KICA8cGF0aCBkPSJNOCA1LjVhMi41IDIuNSAwIDEgMCAwIDUgMi41IDIuNSAwIDAgMCAwLTVNNC41IDhhMy41IDMuNSAwIDEgMSA3IDAgMy41IDMuNSAwIDAgMS03IDAiLz4KPC9zdmc+" data-filename="image name" style="width: 732px;"></p>}
+				//files:null
+				 // content에서 Base64 이미지 데이터 추출 및 파일 저장
+		        String content = (String) map.get("content");
+		        System.out.println("");
+		        System.out.println("content값만 가져온거");
+		        System.out.println(content);
+		        
+		        Long id = getUserIdService.getId(request); // id 가져오기
+		        System.out.println("유저 아이디 가져오기 : " + id);
+		        map.put("id", id);
+		        
+		        pdsService.savePost(map);
+		      
+		
+		        Map<String, Object> response = new HashMap<>();
+		        response.put("ok", true);
+		        response.put("url", "/Pds/List?nowpage=1");
+		
+	
+		
+		       return ResponseEntity.ok(response);
 	}
 	
 }

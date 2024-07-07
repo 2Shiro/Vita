@@ -98,17 +98,16 @@
          <li>
            <h4>북마크</h4>
            <ul>
-           <c:forEach var="post" items="${response.list}"> 
-           	<c:choose>
+             <c:forEach var="post" items="${response.list}"> 
+           	     <c:choose>
 		                  <c:when test="${post.bookmark_count == true}">		                         
 		                         <li><a href="#">${post.title }</a></li>
 		                  </c:when>
 		                  <c:otherwise>				              
 		                          
 		                 </c:otherwise>
-		              </c:choose>
+		          </c:choose>
            </c:forEach>
-             
            </ul>
          </li>
          <p class="line"></p>
@@ -123,8 +122,8 @@
      </div>
      <div class="main-content">
        <div class="tabs">
-         <button class="tablink active" onclick="openTab(event, 'entire-tab')">전체</button>
-         <button class="tablink" onclick="location.href='/Pds/List/MyList?nowpage=1'">나의 글</button>
+         <button class="tablink" onclick="location.href='/Pds/List?nowpage=1'">전체</button>
+         <button class="tablink active" onclick="openTab(event, 'my-tab')">나의 글</button>
          <button class="tablink" onclick="openTab(event, 'book-tab')">북마크</button>
        </div>
        <div class="headerWrap">
