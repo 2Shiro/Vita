@@ -77,6 +77,4 @@ public interface PayMapper {
     // 구매 상품재고 변경
 	void outStock(@Param("pro_id") int pro_id, @Param("count") int count);
 
-	
-
 }
