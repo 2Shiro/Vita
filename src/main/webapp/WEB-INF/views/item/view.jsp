@@ -91,11 +91,12 @@
                                 <li><button class="dev-button-all active" data-dumy="all">전체</button></li>
                                 <li><button class="dev-button-item" data-dumy="비타민 A">비타민A</button></li>
                                 <li><button class="dev-button-item" data-dumy="비타민 B">비타민B</button></li>
-                                <li><button class="dev-button-item" data-dumy="비타민 C">비타민C</button></li>
-                                <li><button class="dev-button-item" data-dumy="밀크씨슬">밀크씨슬</button></li>
+                                <li><button class="dev-button-item" data-dumy="비타민D">비타민D</button></li>
+                                <li><button class="dev-button-item" data-dumy="멀티비타민">멀티비타민</button></li>
                                 <li><button class="dev-button-item" data-dumy="비오틴">비오틴</button></li>
                                 <li><button class="dev-button-item" data-dumy="오메가3">오메가3</button></li>
-                                <li><button class="dev-button-item" data-dumy="칼슘">칼슘</button></li>
+                                <li><button class="dev-button-item" data-dumy="아연">아연</button></li>
+                                <li><button class="dev-button-item" data-dumy="마그네슘">마그네슘</button></li>
                             </ul>
                             <div class="button-box">
                                 <button class="search-reset">초기화</button>
