@@ -204,5 +204,14 @@
 	        #{id}, #{pro_id}, #{pay_id}, #{count}, #{price}, 0
 	    )
 	</insert>
+	<!-- 결제 상품 재고 변경 -->
+	<insert id="outStock">
+	    INSERT INTO STOCK (
+	        STOCK_ID, PRO_ID, ADMIN_ID, COUNT, STATE
+	    ) VALUES (
+	        (SELECT NVL(MAX(STOCK_ID), 0) + 1 FROM STOCK), 
+	        #{pro_id}, 1, -#{count}, 0
+	    )
+	</insert>
 
 </mapper>
