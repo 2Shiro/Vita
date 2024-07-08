@@ -22,7 +22,7 @@ public class AllProductsDto {
 	Integer wish_id;
     Long basket_id;
 	
-	
+	String string_price;
 	String string_average_arting;
 	String[] nutrient;
 	int rating;

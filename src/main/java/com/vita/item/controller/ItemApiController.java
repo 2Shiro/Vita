@@ -1,8 +1,10 @@
 package com.vita.item.controller;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +84,10 @@ public class ItemApiController {
           
             }
             product.setNutrient(nutrients.toArray(new String[0]));
+            
+            // 가격 포맷팅
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
+            product.setString_price(numberFormat.format(product.getPrice()));
             
             //총팔린거 저장
             if (product.getTotal_sell() != null) {

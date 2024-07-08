@@ -238,25 +238,38 @@ width: 170px;
   </div><!-- container -->
       <div class="slide-wrap">
     <h4>최근본상품</h4>
-    <div class="swiper-container recent-products">
+    <div class="swiper-container wish-products">
       <div class="swiper-wrapper">
+      <c:forEach var="item" items="${recenItems}">
         <div class="swiper-slide">
-          <div class="product" data-product-name="비타민 A" data-product-id="1">
-            <img src="/img/product01.jpg" alt="Product 1">
+          <div class="product" data-product-name="${ item.name } " data-product-id="${item.pro_id}">
+            <c:choose>
+                    <c:when test="${item.wish_id != null}">
+                        <button class="wishlist on" data-product-id="${item.pro_id}"></button>
+                    </c:when>
+                    <c:otherwise>
+                        <button class="wishlist" data-product-id="${item.pro_id}"></button>
+                    </c:otherwise>
+            </c:choose>
+            <img src="/img/${item.img}.jpg" alt="Product 4">
             <div class="product_util">
-              <div class="txt1">회사 1</div>
-              <div class="txt2">비타민 A</div>
+              <div class="txt1">${ item.make_name }</div>
+              <div class="txt2">${ item.name }</div>
               <div class="review">
-                <span class="star-point">4.72</span>
-                <span class="txt3">(1,104개)</span>
+                <span class="star-point">${item.string_average_arting }</span>
+                <span class="txt3">${item.total_sell}</span>
               </div>
               <div class="type_list">
-                <p class="type">#비타민A</p>
+              <c:forEach var="nutrient" items="${item.nutrient}">
+                <p class="type">#${nutrient}</p>
+                </c:forEach>
               </div>
             </div>
           </div>
         </div>
-            
+       </c:forEach>
+       
+       
         <!-- 필요한 경우 추가 슬라이드 -->
       </div>
       <div class="swiper-pagination"></div>
@@ -523,7 +536,11 @@ width: 170px;
   <script>
   document.addEventListener('DOMContentLoaded', function () {
 	  const optionsName = {
-              recent: ['비타민 A', '비타민 B', '비타민 C'],
+              recent: [
+            	  <c:forEach var="item" items="${recenItems}" varStatus="status">
+                  '${item.name}'<c:if test="${!status.last}">, </c:if>
+                  </c:forEach>
+              ],
               cart: [
                   <c:forEach var="item" items="${basketItems}" varStatus="status">
                       '${item.name}'<c:if test="${!status.last}">, </c:if>
@@ -538,7 +555,11 @@ width: 170px;
 	  console.log(optionsName);
 	  
 	  const optionsId = {
-              recent: ['1', '2', '3'],
+              recent: [
+            	  <c:forEach var="item" items="${recenItems}" varStatus="status">
+                  '${status.index + 1}'<c:if test="${!status.last}">, </c:if>
+                 </c:forEach>
+              ],
               cart: [
                   <c:forEach var="item" items="${basketItems}" varStatus="status">
                       '${status.index + 1}'<c:if test="${!status.last}">, </c:if>

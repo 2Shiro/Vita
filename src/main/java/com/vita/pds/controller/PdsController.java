@@ -2,6 +2,7 @@ package com.vita.pds.controller;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,9 +29,12 @@ import com.vita.paging.domain.Pagination;
 import com.vita.controller.GetUserIdService;
 import com.vita.paging.domain.PagingResponse;
 import com.vita.pds.domain.CommentsVo;
+import com.vita.pds.domain.PostHitVo;
 import com.vita.pds.domain.PostListVo;
+import com.vita.pds.domain.PostRecommendVo;
 import com.vita.pds.domain.PostViewVo;
 import com.vita.pds.domain.PostVo;
+import com.vita.pds.mapper.PdsSideMapper;
 import com.vita.pds.service.PdsService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,53 +52,31 @@ public class PdsController {
 	@Autowired
 	private PdsService pdsService;
 	
+	@Autowired
+	private PdsSideMapper pdsSideMapper;
 	
 	
 	@GetMapping("/Pds/Write")
-	public ModelAndView PdsWriteForm() {
+	public ModelAndView PdsWriteForm(HttpServletRequest request) {
+		Long id = getUserIdService.getId(request);
+		int myPostCount = pdsService.findAllMyPost(id);
+		List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+		List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+		List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+		
 		
 		
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/write");
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);  
+		mv.addObject("myPostCount", myPostCount);  
+		mv.addObject("hitList", hitList);  
 		
 		return mv;
 	}
 	
-	@PostMapping("/Pds/Submit/Write")
-	public ModelAndView SubmitWrite(
-			HttpServletRequest request,
-			@RequestParam   HashMap<String, Object> map,  // 일반데이터	
-			@RequestParam(value="upfile", required = false) 
-		    //  required=false  입력하지 않을 수 있다
-		    MultipartFile[]     uploadFiles     // 파일처리
-			){
-		// 넘어온 정보
-				System.out.println("");
-				System.out.println("map:"   + map); 
-				System.out.println("files:" + uploadFiles); 
-				
-				//map:{title=안녕하세요, content=<p>하염 만나서 반갑스니다<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktZXllIiB2aWV3Qm94PSIwIDAgMTYgMTYiPgogIDxwYXRoIGQ9Ik0xNiA4cy0zLTUuNS04LTUuNVMwIDggMCA4czMgNS41IDggNS41UzE2IDggMTYgOE0xLjE3MyA4YTEzIDEzIDAgMCAxIDEuNjYtMi4wNDNDNC4xMiA0LjY2OCA1Ljg4IDMuNSA4IDMuNXMzLjg3OSAxLjE2OCA1LjE2OCAyLjQ1N0ExMyAxMyAwIDAgMSAxNC44MjggOHEtLjA4Ni4xMy0uMTk1LjI4OGMtLjMzNS40OC0uODMgMS4xMi0xLjQ2NSAxLjc1NUMxMS44NzkgMTEuMzMyIDEwLjExOSAxMi41IDggMTIuNXMtMy44NzktMS4xNjgtNS4xNjgtMi40NTdBMTMgMTMgMCAwIDEgMS4xNzIgOHoiLz4KICA8cGF0aCBkPSJNOCA1LjVhMi41IDIuNSAwIDEgMCAwIDUgMi41IDIuNSAwIDAgMCAwLTVNNC41IDhhMy41IDMuNSAwIDEgMSA3IDAgMy41IDMuNSAwIDAgMS03IDAiLz4KPC9zdmc+" data-filename="image name" style="width: 732px;"></p>}
-				//files:null
-				 // content에서 Base64 이미지 데이터 추출 및 파일 저장
-		        String content = (String) map.get("content");
-		        System.out.println("");
-		        System.out.println("content값만 가져온거");
-		        System.out.println(content);
-		        
-		        Long id = getUserIdService.getId(request); // id 가져오기
-		        System.out.println("유저 아이디 가져오기 : " + id);
-		        map.put("id", id);
-		        
-		        pdsService.savePost(map);
-		      
-		
-		ModelAndView mv = new ModelAndView();
-		
-		
-		mv.setViewName("pds/view");
-		
-		return mv;
-	}
+	
 	
 	
 	
@@ -105,10 +87,9 @@ public class PdsController {
 		Long id = getUserIdService.getId(request);
 		
 		
-		
+		int myPostCount = pdsService.findAllMyPost(id);
 		int count = pdsService.findAllPost();
-		System.out.println("count 갯수 : " + count);
-		System.out.println("count 갯수 : " + count);
+		
 		
 		PagingResponse<PostListVo> response = null;
 		if( count<1 ) {
@@ -142,16 +123,124 @@ public class PdsController {
         
         System.out.println("222222222222222");
         
+        List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+	    
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/list");
 		mv.addObject("response", response);
 		mv.addObject("searchVo", searchVo);
+		mv.addObject("count", count);
+		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);  
+		mv.addObject("hitList", hitList);  
 		return mv;
 	
 	
 	}
+	@GetMapping("/Pds/List/MyList")
+	public ModelAndView PdsListMyList(HttpServletRequest request, @RequestParam("nowpage") int nowPage) {
+		System.out.println("마이뷰로옴");
+		System.out.println("마이뷰로옴");
+		System.out.println("마이뷰로옴");
+		Long id = getUserIdService.getId(request);
+		
+		int myPostCount = pdsService.findAllMyPost(id);
+		
+		int count = pdsService.findAllMyPost(id);
+		System.out.println("count 갯수 : " + count);
+		System.out.println("count 갯수 : " + count);
+		
+		PagingResponse<PostListVo> response = null;
+		if( count<1 ) {
+			response = new PagingResponse<>(Collections.emptyList(), null); //초기화
+		}
+		// 페이징을 위한 초기설정값
+		SearchVo searchVo = new SearchVo();
+		searchVo.setPage(nowPage); // 페이지번호 처음 1 고정	
+		searchVo.setPageSize(10); //화면 하단에 출력할 페이징 사이즈
+		
+		Pagination pagination = new Pagination(count, searchVo); // Offset값을 만들기위해
+		searchVo.setPagination(pagination);//몇개를 보여줄지 이두개가  OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY; 이값
+		
+		int    offset   = pagination.getLimitStart();
+		int    pageSize = searchVo.getRecordSize();
+		
+		HashMap<String, Object> params = new HashMap<>();
+        params.put("offset", offset);
+        System.out.println("offset" + offset);
+        params.put("pageSize", pageSize);
+        System.out.println("pageSize" + pageSize);
+        params.put("id", id);
+        
+        List<PostListVo> list = pdsService.PostMyList(params); 
+        
+      
+        
+        System.out.println(list);
+        System.out.println("-------------");
+        response = new PagingResponse<>(list, pagination);
+        System.out.println(response.getPagination().getStartPage());
+        System.out.println(response.getPagination().getEndPage());
+        
+        System.out.println("222222222222222");
+        List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+	    
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("pds/mylist");
+		mv.addObject("response", response);
+		mv.addObject("searchVo", searchVo);
+		mv.addObject("count", count);
+		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList); 
+		mv.addObject("hitList", hitList); 
+		return mv;
 	
 	
+	}
+	@GetMapping("/Pds/Delete")
+	public ModelAndView PdsDelete(HttpServletRequest request,@RequestParam("post_id") Long post_id) {
+		System.out.println("딜리트로옴");
+		Long id = getUserIdService.getId(request);
+		pdsService.deletePost(post_id);
+		return new ModelAndView("redirect:/Pds/List?nowpage=1");
+	}
+	@GetMapping("/Pds/Update")
+	public ModelAndView PdsUpdate(HttpServletRequest request,@RequestParam("post_id") Long post_id) {
+		System.out.println("일로오나?");
+	    Long id = getUserIdService.getId(request);
+	    int myPostCount = pdsService.findAllMyPost(id);
+	    List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+	   
+	    
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("pds/update");
+		PostViewVo postVo = pdsService.findPost(post_id);
+		postVo.removeHash();
+		System.out.println("---------------------");
+		System.out.println(postVo);
+		String contentMarks = null;
+		if(postVo.getContent_mark() != null) {
+			 contentMarks = String.join(" ", Arrays.stream(postVo.getContent_mark())
+	                .map(mark -> "#" + mark)
+	                .toArray(String[]::new));
+		}
+		
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);  
+		mv.addObject("postVo", postVo);
+		mv.addObject("contentMarks", contentMarks);
+		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("hitList", hitList);
+		return mv;
+	}
 	
 	
 	@GetMapping("/Pds/View")
@@ -160,13 +249,24 @@ public class PdsController {
 		System.out.println("postId : " + post_id);
 		System.out.println("nowPage : " + nowPage);
 		
+		
 		boolean myPostView = false;
 	    Long id = getUserIdService.getId(request);
+	    int myPostCount = pdsService.findAllMyPost(id);
+	    
+	    
 		HashMap<String, Object> hitMap = new HashMap<>();
 		hitMap.put("post_id", post_id);
 		hitMap.put("id", id);
 		pdsService.addHit(hitMap);
 		PostViewVo postVo = pdsService.findPost(post_id);
+		postVo.removeHash();
+		String contentMarks = null;
+		if(postVo.getContent_mark() != null) {
+			 contentMarks = String.join(" ", Arrays.stream(postVo.getContent_mark())
+	                .map(mark -> "#" + mark)
+	                .toArray(String[]::new));
+		}
 		
 		
 		
@@ -203,6 +303,10 @@ public class PdsController {
 		System.out.println(response.getList());
 		System.out.println("---------------------");
 				
+		List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+	   
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("response",response);
 		mv.addObject("nowpage", nowPage);
@@ -212,7 +316,11 @@ public class PdsController {
 		mv.addObject("totalPageCount", pagination.getTotalPageCount());
 		System.out.println("totalPageCount : " +  pagination.getTotalPageCount());
 		mv.setViewName("pds/view");
-		
+		mv.addObject("contentMarks", contentMarks);
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);
+		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("hitList", hitList);
 		return mv;
 	}
 	

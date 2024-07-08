@@ -2,6 +2,59 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vita.compare.mapper.CompareMapper">  
   
+	<select id="findRecentItems">
+ SELECT
+            P.PRO_ID,
+            P.NAME,
+            M.NAME AS MAKE_NAME,
+            P.ING_ID,
+            P.URL,
+            F.TYPE,
+            P.EXPLAIN,
+            P.PRICE,
+            I.img,
+            COALESCE(SUM(S.total_sell), 0) AS total_sell,
+            AVG(R.rating) AS average_rating,
+            W.wish_id
+        FROM 
+            PRODUCT P
+        JOIN 
+            MAKE M ON P.MAKE_ID = M.MAKE_ID
+        JOIN 
+            FORM F ON P.form_id = F.form_id
+        JOIN 
+            IMGS I ON P.pro_id = I.pro_id
+        LEFT JOIN
+            (SELECT 
+                pro_id,
+                SUM(count) AS total_sell
+             FROM 
+                stock
+             WHERE 
+                state = 0
+             GROUP BY 
+                pro_id) S ON P.pro_id = S.pro_id
+        LEFT JOIN 
+            review R ON P.pro_id = R.pro_id
+        LEFT JOIN
+            wishlist W ON P.pro_id = W.pro_id
+        WHERE P.PRO_ID IN
+        <foreach item="proId" collection="proIdList" open="(" separator="," close=")">
+            #{proId}
+        </foreach>
+        GROUP BY
+            P.PRO_ID,
+            P.NAME,
+            M.NAME,
+            P.ING_ID,
+            P.URL,
+            F.TYPE,
+            P.EXPLAIN,
+            P.PRICE,
+            I.img,
+            W.wish_id
+	</select>  
+  
     <select id="findIWishtems">
      SELECT
         P.PRO_ID,
@@ -54,56 +107,77 @@
     
     
     <select id="findBasketItems">
-         SELECT
-    P.PRO_ID,
-    P.NAME,
-    M.NAME AS MAKE_NAME,
-    P.ING_ID,
-    P.URL,
-    F.TYPE,
-    P.EXPLAIN,
-    P.PRICE,
-    I.img,
-    SUM(CASE WHEN S.total_sell IS NULL THEN 0 ELSE S.total_sell END) AS total_sell,
-    AVG(R.rating) AS average_rating,
-    W.wish_id,
-    B.basket_id
-FROM 
-    PRODUCT P
-JOIN 
-    MAKE M ON P.MAKE_ID = M.MAKE_ID
-JOIN 
-    FORM F ON P.form_id = F.form_id
-JOIN 
-    IMGS I ON P.pro_id = I.pro_id
-LEFT JOIN
-    (SELECT 
-        pro_id,
-        SUM(count) AS total_sell
-     FROM 
-        stock
-     WHERE 
-        state = 0
-     GROUP BY 
-        pro_id) S ON P.pro_id = S.pro_id
-LEFT JOIN 
-    review R ON P.pro_id = R.pro_id
-LEFT JOIN
-    wishlist W ON P.pro_id = W.pro_id AND W.id = #{id}
-JOIN
-    basket B ON P.pro_id = B.pro_id AND B.id = #{id}
-GROUP BY
-    P.PRO_ID,
-    P.NAME,
-    M.NAME,
-    P.ING_ID,
-    P.URL,
-    F.TYPE,
-    P.EXPLAIN,
-    P.PRICE,
-    I.img,
-    W.wish_id,
-    B.basket_id
+     WITH ProductDetails AS (
+    SELECT
+        P.PRO_ID,
+        P.NAME,
+        M.NAME AS MAKE_NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img,
+        COALESCE(SUM(S.total_sell), 0) AS total_sell,
+        AVG(R.rating) AS average_rating,
+        W.wish_id,
+        B.basket_id,
+        ROW_NUMBER() OVER (PARTITION BY P.PRO_ID ORDER BY P.PRO_ID) AS row_num
+    FROM 
+        PRODUCT P
+    JOIN 
+        MAKE M ON P.MAKE_ID = M.MAKE_ID
+    JOIN 
+        FORM F ON P.form_id = F.form_id
+    JOIN 
+        IMGS I ON P.pro_id = I.pro_id
+    LEFT JOIN
+        (SELECT 
+            pro_id,
+            SUM(count) AS total_sell
+         FROM 
+            stock
+         WHERE 
+            state = 0
+         GROUP BY 
+            pro_id) S ON P.pro_id = S.pro_id
+    LEFT JOIN 
+        review R ON P.pro_id = R.pro_id
+    LEFT JOIN
+        wishlist W ON P.pro_id = W.pro_id AND W.id = #{id}
+    JOIN
+        basket B ON P.pro_id = B.pro_id AND B.id = #{id}
+    GROUP BY
+        P.PRO_ID,
+        P.NAME,
+        M.NAME,
+        P.ING_ID,
+        P.URL,
+        F.TYPE,
+        P.EXPLAIN,
+        P.PRICE,
+        I.img,
+        W.wish_id,
+        B.basket_id
+)
+SELECT
+    PRO_ID,
+    NAME,
+    MAKE_NAME,
+    ING_ID,
+    URL,
+    TYPE,
+    EXPLAIN,
+    PRICE,
+    img,
+    total_sell,
+    average_rating,
+    wish_id,
+    basket_id
+FROM
+    ProductDetails
+WHERE
+    row_num = 1
     </select>
     
     
