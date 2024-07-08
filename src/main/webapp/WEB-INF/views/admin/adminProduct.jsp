@@ -156,15 +156,18 @@
 </div>
 
 <div class="navbar">
-    <a href="/AdminHome">홈</a>
-    <a href="/AdminList">직원 리스트</a>
-    <a href="/AdminProduct">상품등록</a>
-    <a href="/AdminUserList">사용자 관리</a>
-    <a href="/MakeList">제조사</a>
-    <a href="/Ingredient">성분</a>
-    <a href="/FormList">제형</a>
-    <a href="/NutrientList">영양분</a>
-    <a href="/AdminLogout">로그아웃</a>
+	<a href="/AdminHome">홈</a>
+	<a href="/AdminList">직원 리스트</a>
+	<a href="/AdminProduct">상품등록</a>
+	<a href="/AdminUserList">사용자 관리</a>
+	<a href="/RefundList">환불 관리</a>
+	<a href="/MakeList">제조사</a>
+	<a href="/Ingredient">성분</a>
+	<a href="/FormList">제형</a>
+	<a href="/NutrientList">영양분</a>
+	<a href="/Inquiry">문의 글</a>
+	<a href="/ReportList">신고</a>
+	<a href="/AdminLogout">로그아웃</a>
 </div>
 
 <div class="container">
@@ -190,11 +193,12 @@
                         <th>주의사항</th>
                         <th>가격</th>
                         <th>재고</th>
+                        <th>등록직원</th>
                     </tr>
                 </thead>
                 <tbody>
                     <c:forEach items="${productList}" var="pro">
-                        <tr>
+                        <tr data-pro_id="${pro.pro_id}">
                             <td>${pro.pro_id}</td>
                             <td>${pro.name}</td>
                             <td>${pro.make_name}</td>
@@ -205,6 +209,7 @@
                             <td>${pro.caution}</td>
                             <td>${pro.price}</td>
                             <td>${pro.count}</td>
+                            <td>${pro.admin_name}</td>
                         </tr>
 
                     </c:forEach>
@@ -357,6 +362,13 @@
             </table>
         </div>
     </div>
+	<div id="infoModal" class="modal">
+	    <div class="modal-content">
+	        <span class="close">&times;</span>
+	        <div id="makeModalContent1"></div>
+	    </div>
+	</div>
+	    
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
@@ -442,42 +454,6 @@ $(document).ready(function() {
 	        error: function(error) {
 	            console.error('Error:', error);
 	            alert('물품 추가 중 오류가 발생했습니다. 메시지: ' + error.responseText);
-	        }
-	    });
-	});
-
-	
-
-	$(".post-listings tbody").on("click", "tr", function() {
-	    var pro_id = $(this).find('td:first').text(); // 첫 번째 열의 텍스트를 pro_id로 사용
-	    console.dir(pro_id);
-	
-	    $.ajax({
-	        type: "GET",
-	        url: "/GetProductDetails",
-	        data: { id: pro_id },
-	        success: function(response) {
-	            if (response && response.pro) {
-	                var product = response.pro;
-	                $("#pro_id").val(product.pro_id);
-	                $("#name").val(product.name);
-	                $("#make_id").val(product.make_id);
-	                $("#img").val(product.img);
-	                $("#ing_id").val(product.ingId);
-	                $("#url").val(product.url);
-	                $("#form_id").val(product.formId);
-	                $("#explain").val(product.explain);
-	                $("#caution").val(product.caution);
-	                $("#count").val(product.count);
-	                $("#price").val(product.price);
-	                modal.css("display", "block");
-	            } else {
-	                alert('제품 정보를 가져오는 중 오류가 발생했습니다. 유효한 데이터를 받지 못했습니다.');
-	            }
-	        },
-	        error: function(error) {
-	            console.error('Error:', error);
-	            alert('제품 정보를 가져오는 중 오류가 발생했습니다. 메시지: ' + error.responseText);
 	        }
 	    });
 	});
@@ -818,7 +794,229 @@ $(document).ready(function() {
     });
 });
 </script>
+<script>
+$(document).ready(function() {
+    // 모달 요소와 닫기 버튼을 선택합니다.
+    var modal = $('#infoModal');
+    var span = $('.close');
 
+    // 테이블의 td 요소에 클릭 이벤트를 추가합니다.
+    $('.post-listings td').click(function() {
+        var cellContent = $(this).text();
+        $('#modalContent').text(cellContent);
+        modal.show();
+    });
+
+    // 닫기 버튼 클릭 시 모달을 닫습니다.
+    span.click(function() {
+        modal.hide();
+    });
+
+    // 모달 외부를 클릭할 때 모달을 닫습니다.
+    $(window).click(function(event) {
+        if ($(event.target).is(modal)) {
+            modal.hide();
+        }
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    // 모달 요소와 닫기 버튼을 선택합니다.
+    var modal = $('#infoModal');
+    var span = $('.close');
+
+    // 테이블의 td 요소에 클릭 이벤트를 추가합니다.
+    $('.post-listings td').click(function() {
+        var cellContent = $(this).text();
+        $('#modalContent').text(cellContent);
+        modal.show();
+    });
+
+    // 닫기 버튼 클릭 시 모달을 닫습니다.
+    span.click(function() {
+        modal.hide();
+    });
+
+    // 모달 외부를 클릭할 때 모달을 닫습니다.
+    $(window).click(function(event) {
+        if ($(event.target).is(modal)) {
+            modal.hide();
+        }
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var rows = document.querySelectorAll("table.post-listings tbody tr");
+    var modal = document.getElementById("infoModal");
+    var modalContent = document.getElementById("makeModalContent1");
+
+    rows.forEach(function(row) {
+        row.addEventListener("click", function() {
+            var pro_id = this.dataset.pro_id;  
+            console.log("Clicked pro_id: ", pro_id);
+            fetchMakeList(pro_id);
+            modal.style.display = "block";
+        });
+
+        row.addEventListener("mouseover", function() {
+            this.style.cursor = 'pointer';
+            this.style.backgroundColor = '#f1f1f1';
+        });
+
+        row.addEventListener("mouseout", function() {
+            this.style.backgroundColor = '';
+        });
+    });
+
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function() {
+        modal.style.display = "none";
+        location.reload();
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            location.reload();
+        }
+    };
+
+    function fetchMakeList(pro_id) {
+        fetch('/GetModalProList', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pro_id: pro_id }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("makeList: ", data);
+            displayMakeList(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('데이터를 가져오는 중 오류가 발생했습니다.');
+        });
+    }
+
+    function displayMakeList(makeList) {
+    	makeModalContent1.innerHTML = '<h2>제조사 정보</h2>';
+        makeList.forEach(function(pro) {
+            var makeInfo = document.createElement('div');
+            makeInfo.classList.add('make-info');
+            makeInfo.innerHTML = `
+                <label for="pro_id">제품번호</label>
+                <input type="text" id="pro_id" name="pro_id" value="\${pro.pro_id}" readonly> <br>
+                <label for="name">제품 이름</label>
+                <input type="text" id="name" name="name" value="\${pro.name}" required><br>
+                <label for="make_name">제조사</label>
+                <input type="text" id="make_name" name="make_name" value="\${pro.make_name}" required><br>
+                <label for="ing_name">성분 이름</label>
+                <input type="text" id="ing_name" name="ing_name" value="\${pro.ing_name}" required><br>
+                <label for="url">제품주소</label>
+                <input type="text" id="url" name="url" value="\${pro.url}" required><br>
+                <label for="type">제형(가루,알약,액체)</label>
+                <input type="text" id="type" name="type" value="\${pro.type}" required><br>
+                <label for="explain">약설명서</label>
+                <input type="text" id="explain" name="explain" value="\${pro.explain}" required><br>
+                <label for="caution">주의사항</label>
+                <input type="text" id="caution" name="caution" value="\${pro.caution}" required><br>
+                <label for="price">가격</label>
+                <input type="text" id="price" name="price" value="\${pro.price}" required><br>
+                <label for="count">재고</label>
+                <input type="number" id="count" name="count" value="\${pro.count}" required><br>
+                <label for="admin_name">등록직원</label>
+                <input type="text" id="admin_name" name="admin_name" value="\${pro.admin_name}" required><br>
+                <button class="edit-btn" data-make-id="\${pro.pro_id}">수정</button>
+            `;
+            modalContent.appendChild(makeInfo);
+
+            // 수정 버튼 클릭 이벤트 추가
+            makeInfo.querySelector('.edit-btn').addEventListener('click', function() {
+                var updatedMake = {
+                	pro_id: Number(pro.pro_id),
+                    name: makeInfo.querySelector('#name').value,
+                    make_name: makeInfo.querySelector('#make_name').value,
+                    ing_name: makeInfo.querySelector('#ing_name').value,
+                    url: makeInfo.querySelector('#url').value,
+                    type: makeInfo.querySelector('#type').value,
+                    explain: makeInfo.querySelector('#explain').value,
+                    caution: makeInfo.querySelector('#caution').value,
+                    price: makeInfo.querySelector('#price').value,
+                    count: makeInfo.querySelector('#count').value,
+                    admin_name: makeInfo.querySelector('#admin_name').value	
+                };
+                updateMake(updatedMake);
+            });
+
+        });
+    }
+
+    function updateMake(pro) {
+        fetch('/UpdatePro', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pro),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || '알 수 없는 오류가 발생했습니다.');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Updated make: ", data);
+            alert('수정이 완료되었습니다.');
+            modal.style.display = "none";
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('수정 중 오류가 발생했습니다: ' + error.message);
+        });
+    }
+});
+</script>
+<script>
+$(document).ready(function() {
+    // 모달 요소와 닫기 버튼을 선택합니다.
+    var modal = $('#infoModal');
+    var span = $('.close');
+
+    // 테이블의 td 요소에 클릭 이벤트를 추가합니다.
+    $('.post-listings td').click(function() {
+        var cellContent = $(this).text();
+        $('#modalContent').text(cellContent);
+        modal.show();
+    });
+
+    // 닫기 버튼 클릭 시 모달을 닫습니다.
+    span.click(function() {
+        modal.hide();
+    });
+
+    // 모달 외부를 클릭할 때 모달을 닫습니다.
+    $(window).click(function(event) {
+        if ($(event.target).is(modal)) {
+            modal.hide();
+        }
+    });
+});
+</script>
 
 </body>
 </html>

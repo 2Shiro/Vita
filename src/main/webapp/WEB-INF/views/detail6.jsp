@@ -478,12 +478,14 @@ td>img {
 	width: 760px;
 	justify-content: center;
 	z-index:1000000;
-	.tbl > tr {
+	.tbl {
+		width : 650px;
+   tr {
 		margin: 10px;
 		width: 100%;
 		}
 	}
-
+}
 #form {
 	background-color: white;
 	padding: 20px;
@@ -1256,31 +1258,26 @@ td>img {
 									<div class="tblwrap">
 										<table class="tbl">
 											<colgroup>
-												<col style="width: 15%">
-												<col style="width: 85%">
+												<col style="width: 15%;">
+												<col style="width: 85%;">
 											</colgroup>
 											<tbody>
 												<tr>
 													<th scope="row" class="first alignL">문의 유형</th>
 													<td class="alignL">
 														<div class="select_wrap">
-															<label for="type1"><input type="radio"
-																name="q_type" id="type1" value="1">상품</label> <label
-																for="type2"><input type="radio" name="q_type"
-																id="type2" value="2">배송</label> <label for="type3"><input
-																type="radio" name="q_type" id="type3" value="3">반품/취소</label>
-															<label for="type4"><input type="radio"
-																name="q_type" id="type4" value="4">교환/변경</label> <label
-																for="type5"><input type="radio" name="q_type"
-																id="type5" value="5">기타</label>
+															<label for="type1">
+															<input type="radio" name="q_type" id="type1" value="1">상품</label> 
+															<label for="type2"><input type="radio" name="q_type" id="type2" value="2">배송</label> 
+															<label for="type3"><input type="radio" name="q_type" id="type3" value="3">반품/취소</label>
+															<label for="type4"><input type="radio" name="q_type" id="type4" value="4">교환/변경</label> 
+															<label for="type5"><input type="radio" name="q_type" id="type5" value="5">기타</label>
 														</div>
 													</td>
 												</tr>
-												<tr>
-													<th scope="row" class="first alignL"><label
-														for="brdInfoCont">내용</label></th>
-													<td class="alignL"><textarea name="question"
-															id="question" rows="10" cols="80"
+												<tr style="width: 500px;">
+													<th scope="row" class="first alignL"><label for="brdInfoCont">내용</label></th>
+													<td class="alignL"><textarea name="question" id="question" rows="10" cols="80" style="width:100%;"
 															placeholder="문의 유형을 선택해주시고 궁금하신 내용을 적어주세요.&#13;&#10;*개인정보가 포함된 글은 비밀글로 등록됩니다."></textarea>
 													</td>
 												</tr>
@@ -1288,12 +1285,10 @@ td>img {
 										</table>
 									</div>
 									<div class="form-check">
-										<input class="form-check-input" type="checkbox" value=""
-											name="serect" id="serect"> <label
-											class="form-check-label" for="serect"> 비밀글로 문의하기 </label>
+										<input class="form-check-input" type="checkbox" value=""name="serect" id="serect"> 
+										<labelclass="form-check-label" for="serect"> 비밀글로 문의하기 </label>
 									</div>
-									<p class="text_secret" id="paraSecretYn" style="display: none">비밀글로
-										등록됩니다.</p>
+									<p class="text_secret" id="paraSecretYn" style="display: none">비밀글로 등록됩니다.</p>
 									<div class="notice_box">
 										<h2 class="tit">문의 시 유의사항</h2>
 										<ul>
@@ -1557,7 +1552,6 @@ td>img {
 		    let minus = document.querySelector(".minus");
 		    let result = document.querySelector("#result");
 		    let price = parseInt(document.querySelector('#pro_price').value);
-//		    let price = parseInt(document.querySelector("#pro_price").textContent);  // 가격을 숫자로 변환
 		    let totalcost = document.querySelector(".totalcost");
 		    let maxCount = parseInt(document.querySelector('#prod_count').value);
 		    let hiddenPriceInput = document.querySelector("#price");

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,228 +9,35 @@
 <link href="/css/start.css" rel="stylesheet" />
 <link href="/css/header.css" rel="stylesheet" />
 <link href="/css/item_tab.css" rel="stylesheet" />
-
+<link href="/css/aside.css" rel="stylesheet" /> 
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 <style>
-#main {
-    width: 100%;
-    height: auto;
-
-  }
-.tabs {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
-  .tab {
-    cursor: pointer;
-    width: calc(100% / 5);
-    height: 50px;
-    line-height: 42px;
-    text-align: center;
-    font-weight: 700;
-    color: #101219;
-    font-size: 20px;
-    border-bottom: 2px solid #E6E9ED;
-    box-sizing: border-box;
-
-  }
-
-  .tab.active {
-    border-bottom: 3px solid #ff7f00;
-  }
-
-  .container {
-    display: none;
-    flex-wrap: wrap;
-    /* justify-content: space-between;*/
-    padding: 10px;
-  }
-
-  .container.active {
-    display: flex;
-  }
-
-  .inner {
-    max-width: 1240px;
-    margin: 0 auto;
-    min-height: 300px;
-  }
-
-  .product {
-    position: relative;
-    background-color: #fff;
-    box-sizing: border-box;
-    margin: 10px;
-    width: calc(25% - 20px);
-    /* 4 items per row with margin */
-    height: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1090;  
     align-items: center;
-    text-decoration: none;
-    color: black;
-    padding: 10px;
-
-    border: 1px solid #E6E9ED;
-    box-shadow: 0px 2px 10px rgba(70, 56, 147, 0.1);
-    border-radius: 20px;
-
-  }
-
-  .product .ranking_list {
-
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 50;
-
-  }
-
-  .product .ranking_list .ranking {
-    width: 40px;
-    height: 40px;
-    display: inline-block;
-    height: 25px;
-    line-height: 25px;
-    color: #9BA1AA;
-    font-weight: 700;
-    font-size: 1.2rem;
-  }
-
-  .product img {
-    height: 44%;
-    width: auto;
-    object-fit: contain;
-
-  }
-
-
-
-
-
-  .product .product_util {
-    width: 100%;
-
-
-  }
-
-  .product .product_util div {
-    margin-bottom: 5px;
-    text-align: left;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, .4);
+    display: none;
+}
+.overlay.show {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 8px;
-    max-height: 44px;
-    line-height: 34px;
-    overflow: hidden;
-    padding-left: 4px;
-  }
+}
 
-  .product .txt1 {
-    font-weight: 500;
-    display: block;
-    font-size: 14px;
-    color: #9BA1AA;
-    text-align: left;
-
-    margin: 30px 0px 0px 0px;
-  }
-
-  .product .txt2 {
-    margin-top: -7px;
-  }
-  .product .txt2 {
-    font-weight: 700;
-    color: #101219;
-    display: block !important;
-    font-size: 18px;
-    text-align: left;
-    line-height: 27px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .product .product_util div p {
-    color: #3b65ff;
-    background-color: #f0f5ff;
-    height: 30px;
-    font-size: 12px;
-    letter-spacing: 0px;
-    line-height: 30px;
-    width: auto;
-    padding: 0 12px;
-    border-radius: 99px
-  }
-
-  .product .review .star-point {
-    float: left;
-    font-weight: 700;
-    font-size: 17px;
-    color: #535968;
-    text-align: left;
-    line-height: 20px;
-    background: url(/img/star-icon.webp) left 2px no-repeat;
-    background-size: 16px 15px;
-    padding-left: 20px;
-    height: 20px;
-  }
-
-  .product .review .txt3 {
-    float: left;
-    font-weight: 500;
-    line-height: 19px;
-    height: 20px;
-    color: #9BA1AA;
-    font-size: 16px;
-    margin: 0px 0px 0px 10px;
-  }
-
-  .product .product_util .type_list {
-    margin: 0;
-    margin-top: 10px;
-    padding: 0;
-
-  }
-
-  @media (max-width: 1200px) {
-    .product {
-      width: calc(33.33% - 20px);
-      /* 3 items per row */
-    }
-  }
-
-  @media (max-width: 800px) {
-    .product {
-      width: calc(50% - 20px);
-      /* 2 items per row */
-    }
-  }
-
-  @media (max-width: 500px) {
-    .product {
-      width: 100%;
-      /* 1 item per row */
-      max-width: 340px;
-      /* max width 340px */
-    }
-  }
-  
-  
-  /* 여기서 부터 시작 */
-  #tab_wrap{
-  margin-top: 230px;
-  }
-  
 </style>
 </head>
 <body>
- 
+<div class="overlay" id="overlay">
+	 <%@include file="/WEB-INF/include/Aside.jsp"%> 
+</div>
+
  <div id="wrap" class="active-start">
    <%@include file="/WEB-INF/include/Header.jsp"%>
+   
    <main id="main" class="landing">
       
       
@@ -283,11 +91,12 @@
                                 <li><button class="dev-button-all active" data-dumy="all">전체</button></li>
                                 <li><button class="dev-button-item" data-dumy="비타민 A">비타민A</button></li>
                                 <li><button class="dev-button-item" data-dumy="비타민 B">비타민B</button></li>
-                                <li><button class="dev-button-item" data-dumy="비타민 C">비타민C</button></li>
-                                <li><button class="dev-button-item" data-dumy="밀크씨슬">밀크씨슬</button></li>
+                                <li><button class="dev-button-item" data-dumy="비타민D">비타민D</button></li>
+                                <li><button class="dev-button-item" data-dumy="멀티비타민">멀티비타민</button></li>
                                 <li><button class="dev-button-item" data-dumy="비오틴">비오틴</button></li>
                                 <li><button class="dev-button-item" data-dumy="오메가3">오메가3</button></li>
-                                <li><button class="dev-button-item" data-dumy="칼슘">칼슘</button></li>
+                                <li><button class="dev-button-item" data-dumy="아연">아연</button></li>
+                                <li><button class="dev-button-item" data-dumy="마그네슘">마그네슘</button></li>
                             </ul>
                             <div class="button-box">
                                 <button class="search-reset">초기화</button>
@@ -554,7 +363,7 @@
  </div>
    
  <script src="/js/header.js"></script>
- 
+ <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <!--   <script src="/js/jwtRequest.js"></script> JWT 요청 스크립트 추가 -->
  <script>
  var searchLikeVo ={
@@ -588,6 +397,156 @@
 		
 		
  document.addEventListener('DOMContentLoaded', function() {
+	 //------------모달------------------
+	
+    // 별점 채우기
+    document.querySelectorAll('.recoAvg').forEach(starScoreElement => {
+        const avgstar = parseFloat(starScoreElement.getAttribute('data-reco-rating'));
+        const fullStars = Math.floor(avgstar);
+        const partialStar = avgstar - fullStars;
+        const percentage = Math.round(partialStar * 100);
+
+        const stars = starScoreElement.nextElementSibling.querySelectorAll('.recoStar');
+        stars.forEach((recoStar, index) => {
+            if (index < fullStars) {
+                recoStar.classList.add('full');
+            } else if (index === fullStars) {
+                recoStar.innerHTML = '<div class="fill" style="width: ' + percentage + '%;"></div>';
+            }
+        });
+    });
+
+    const overlay = document.getElementById('overlay');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modal = document.getElementById('myModal');
+
+    // 동적으로 생성된 cart-button에 대한 이벤트 위임
+    document.body.addEventListener('click', function(event) {
+        if (event.target.classList.contains('cart-button')) {
+            event.preventDefault();
+            
+            // 상품 정보를 가져오기 위해 DOM 요소로부터 데이터를 추출합니다.
+            const productElement = event.target.closest('.product');
+            const proId = productElement.dataset.proid;
+            const price = parseInt(productElement.querySelector('.product-price .price').dataset.productPrice, 10);
+            const count = 1;
+            
+            console.log("proId" +proId);
+            console.log("price" +price);
+            console.log("count" +count);
+            // Fetch API를 사용하여 서버로 데이터 전송
+            fetch('/Basket/Api/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pro_id: proId, count: count, price: price })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('서버 응답:', data);
+                const basketVo = data.basketVo;
+                const combineList = data.combineList;
+                const similarList = data.similarList;
+                
+                // 모달 업데이트
+                updateModal(basketVo, combineList, similarList);
+             
+                // 응답 데이터를 사용하여 필요한 작업 수행
+                overlay.classList.add('show');
+                // 필요한 경우 모달을 추가로 표시
+                setTimeout(() => {
+                    modal.classList.add('show');
+                    initSwipers(); // 모달이 열릴 때 Swiper 초기화
+                }, 10);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    });
+
+    closeModalBtn.addEventListener('click', function() {
+    	 modal.classList.remove('show');
+         setTimeout(() => {
+             overlay.classList.remove('show');
+         }, 400); // 모달 트랜지션 시간이 끝난 후 오버레이를 제거
+    });
+
+    document.getElementById('continueShoppingBtn').addEventListener('click', function() {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            overlay.classList.remove('show');
+        }, 400); // 모달 트랜지션 시간이 끝난 후 오버레이를 제거
+    });
+
+    document.getElementById('viewCartBtn').addEventListener('click', function() {
+        alert('장바구니 보기를 클릭했습니다.');
+    });
+
+    // 오버레이를 클릭하면 모달 닫기
+    overlay.addEventListener('click', function(event) {
+        if (event.target === overlay) {
+        	 modal.classList.remove('show');
+             setTimeout(() => {
+                 overlay.classList.remove('show');
+             }, 400); // 모달 트랜지션 시간이 끝난 후 오버레이를 제거
+        }
+    });
+
+    // 모달 내부 클릭 시 모달 닫히지 않도록 방지
+    modal.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+
+   
+	
+	 
+	 //---------모달 ---------------
+	// 위시리스트 버튼에 이벤트 위임
+	    document.body.addEventListener('click', function(event) {
+	        if (event.target.classList.contains('wishlist')) {
+	        	 event.preventDefault(); 
+	            const button = event.target;
+	            const isOn = button.classList.toggle('on');
+	            const url = isOn ? '/Wishlist/add' : '/Wishlist/delete';
+	            const productId = button.closest('.product').dataset.proid;
+
+	            fetch(url, {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                },
+	                body: JSON.stringify({ pro_id: productId })
+	            })
+	            .then(response => {
+	                if (!response.ok) {
+	                    throw new Error('Network response was not ok');
+	                }
+	                return response.json();
+	            })
+	            .then(data => {
+	                if (data.status === 'success') {
+	                    console.log('Operation successful');
+	                    // 여기에서 추가적인 작업을 수행할 수 있습니다.
+	                } else {
+	                    console.error('Operation failed');
+	                    button.classList.toggle('on'); // 상태 복원
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Fetch error:', error);
+	                button.classList.toggle('on'); // 상태 복원
+	            });
+	        }
+	    });
+	 // 버튼 호버 이벤트
+	    document.body.addEventListener('click', function(event) {
+	        if (event.target.classList.contains('cart-button')) {
+	            event.preventDefault();
+	            console.log('확인');
+	        }
+	    });
 	 sendSearchLikeVo(searchLikeVo);
 	 
 	 document.querySelectorAll('.tab').forEach(tab => {
@@ -744,11 +703,13 @@
 
          data.products.forEach((product, index) => {
              const nutrientStr = product.nutrient.map(nutrient => `<p class="type">#\${nutrient}</p>`).join('');
+             const wishClass = product.wish_id ? 'wishlist on' : 'wishlist';
              const productHtml = `
-                 <a href="#" class="product">
+                 <a href="/Detail?pro_id=\${product.pro_id}&nowpage=1" class="product" data-proId="\${product.pro_id}">
                      <div class="ranking_list">
                          <div class="ranking">\${index + 1}위</div>
                      </div>
+                     <button class="\${wishClass}" data-product-id="\${product.pro_id}"></button>
                      <img src="/img/\${product.img}.jpg" alt="Product \${index + 1}">
                      <div class="product_util">
                          <div class="txt1">\${product.make_name}</div>
@@ -757,10 +718,14 @@
                              <span class="star-point">\${product.string_average_arting}</span>
                              <span class="txt3">(\${product.total_sell}개)</span>
                          </div>
+                         <div class="product-price">
+                         	<span class="price" data-product-price="\${product.price}">\${product.string_price}원</span>
+                         </div>
                          <div class="type_list">
                              \${nutrientStr}
                          </div>
                      </div>
+                     <button class="cart-button">장바구니에 추가</button>  
                  </a>
              `;
              allProductsEl.innerHTML += productHtml;
@@ -770,6 +735,126 @@
          console.error('Error fetching products:', error);
      });
  }
+ 
+ /* 모달 업데이트 구문  */
+ function updateModal(basketVo, combineList, similarList) {
+    document.querySelector('.product-image img').src = `/img/\${basketVo.img}.jpg`;
+    document.querySelector('.product-name').innerText = basketVo.name;
+    document.querySelector('.subtotal-items strong font').innerText = ` (\${basketVo.total_items}개 항목)`;
+    document.querySelector('.subtotal-items font font').innerText = `(총 \${basketVo.total_count}개 상품)`;
+    document.querySelector('.subtotal-price font').innerText = `\${basketVo.string_total_price}원`;
+
+    // 무료 배송 여부 업데이트
+    const enoughDiv = document.querySelector('.enough');
+    const shortDiv = document.querySelector('.short');
+
+    if (basketVo.free) {
+        // 무료 배송 가능
+        enoughDiv.style.display = 'flex';
+        shortDiv.style.display = 'none';
+    } else {
+        // 무료 배송 불가능
+        const freeShippingMessage = shortDiv.querySelector('.free-shipping b font font');
+        freeShippingMessage.innerText = `\${basketVo.string_free_delivery}원 부족합니다`;
+        shortDiv.style.display = 'flex';
+        enoughDiv.style.display = 'none';
+    }
+    // Progress bar 업데이트
+    const progressBarForeground = document.querySelector('.progress-bar-foreground');
+    const progressPercentage = (basketVo.total_price / basketVo.free_delivery) * 100;
+    progressBarForeground.style.width = `\${progressPercentage}%`;
+
+    // 함께 많이 주문하는 조합 업데이트
+    const combineListContainer = document.querySelector('.swiper1 .swiper-wrapper');
+    combineListContainer.innerHTML = '';
+    combineList.forEach(item => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        slide.innerHTML = `
+            <div class="product-item">
+                <img src="/img/\${item.img}.jpg" alt="\${item.name}">
+                <div class="product-name">\${item.name}</div>
+                <div class="item-star">
+	           		<input type ="hidden" class ="recoAvg" data-rev-rating="\${item.average_rating}">
+	                <div id="recostars" class="recoContainer">
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                </div>
+	            </div>
+                <div class="product-price">\${item.string_price}원</div>
+            </div>
+        `;
+        combineListContainer.appendChild(slide);
+    });
+
+    // 다른 고객이 함께 본 상품 업데이트
+    const similarListContainer = document.querySelector('.swiper2 .swiper-wrapper');
+    similarListContainer.innerHTML = '';
+    similarList.forEach(item => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        slide.innerHTML = `
+            <div class="product-item">
+                <img src="/img/\${item.img}.jpg" alt="\${item.name}">
+                <div class="product-name">\${item.name}</div>
+                <div class="item-star">
+               		<input type ="hidden" class ="recoAvg" data-rev-rating="\${item.average_rating}">
+	                <div id="recostars" class="recoContainer">
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                </div>
+                </div>
+                <div class="product-price">\${item.string_price}원</div>
+            </div>
+        `;
+        similarListContainer.appendChild(slide);
+    });
+
+    // 별점 업데이트
+    document.querySelectorAll('.recoAvg').forEach(starScoreElement => {
+    	console.log("별점콘솔찎히나?");
+        const avgstar = parseFloat(starScoreElement.getAttribute('data-rev-rating'));
+        console.log(avgstar);
+        const fullStars = Math.floor(avgstar);
+        const partialStar = avgstar - fullStars;
+        const percentage = Math.round(partialStar * 100);
+
+        const stars = starScoreElement.nextElementSibling.querySelectorAll('.recoStar');
+        stars.forEach((recoStar, index) => {
+            if (index < fullStars) {
+                recoStar.classList.add('full');
+            } else if (index === fullStars) {
+                recoStar.innerHTML = '<div class="fill" style="width: ' + percentage + '%;"></div>';
+            }
+        });
+    });
+}
+ function initSwipers() {
+	    // Swiper 초기화
+	    var swiper1 = new Swiper('.swiper1', {
+	        slidesPerView: 2,
+	        spaceBetween: 10,
+	        navigation: {
+	            nextEl: '.swiper1 .custom-swiper-button-next',
+	            prevEl: '.swiper1 .custom-swiper-button-prev',
+	        },
+	    });
+
+	    var swiper2 = new Swiper('.swiper2', {
+	        slidesPerView: 2,
+	        spaceBetween: 10,
+	        navigation: {
+	            nextEl: '.swiper2 .custom-swiper-button-next',
+	            prevEl: '.swiper2 .custom-swiper-button-prev',
+	        },
+	    });
+	}
  </script>
  
 </body>

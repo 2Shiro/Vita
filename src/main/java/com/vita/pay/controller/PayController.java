@@ -1,12 +1,12 @@
 package com.vita.pay.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,15 +17,16 @@ import com.vita.controller.GetUserIdService;
 import com.vita.oauth.jwt.JWTUtil;
 import com.vita.pay.domain.BasketPageVo;
 import com.vita.pay.domain.BasketVo;
+import com.vita.pay.domain.DeliveryVo;
 import com.vita.pay.domain.ImgsVo;
 import com.vita.pay.domain.MakeVo;
 import com.vita.pay.domain.ProdVo;
 import com.vita.pay.mapper.PayMapper;
-import com.vita.pay.service.BasketService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/Pay")
 public class PayController {
 	 
 	@Autowired
@@ -38,7 +39,7 @@ public class PayController {
 	private PayMapper payMapper;
 	
 	// 장바구니 화면 출력
-	@GetMapping("/Pay/Basket")
+	@GetMapping("/Basket")
 	public ModelAndView basket(HttpServletRequest request) {
 
 	   
@@ -82,12 +83,13 @@ public class PayController {
 	    return mv;
 	}
 	
-	@RequestMapping("/Pay/PayForm")
+	@RequestMapping("/PayForm")
 	public ModelAndView payform(HttpServletRequest request) {
 
 	    Long id = getUserIdService.getId(request);
 	    
 	    ModelAndView mv = new ModelAndView();
+	    
 	    // 장바구니 목록 가져오기
 	    List<BasketPageVo> payPageList = new ArrayList<>();
 	    List<BasketVo> payList = payMapper.getPayList(id);
@@ -118,14 +120,23 @@ public class PayController {
 	        payPageList.add(basketpagevo);
 	    }
 	    
+	    // 기본 배송지 가져오기
+	    DeliveryVo deliveryvo = payMapper.getDeliveryDefualt(id);
+	    
+	    // 배송지 목록 가져오기
+	    List<DeliveryVo> deliveryList = payMapper.getDeliveryList(id);
+	    
 	    mv.addObject("payList", payList);
 	    mv.addObject("payPageList", payPageList);
+	    mv.addObject("deliveryvo", deliveryvo);
+	    mv.addObject("deliveryList", deliveryList);
+	    mv.addObject("id", id);
 	    mv.setViewName("pay/pay");
 	    
 	    return mv;
 	}
 	
-	@RequestMapping("/Pay/Success")
+	@RequestMapping("/Success")
 	public String success(HttpServletRequest request) {
 		
 		Long userId = getUserIdService.getId(request);
@@ -134,3 +145,4 @@ public class PayController {
 	}
 
 }
+

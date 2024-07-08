@@ -4,20 +4,28 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.vita.admin.domain.AdminVo;
 import com.vita.admin.domain.FormVo;
 import com.vita.admin.domain.IngredientVo;
+import com.vita.admin.domain.InquiryVo;
 import com.vita.admin.domain.MakeVo;
 import com.vita.admin.domain.NutrientVo;
+import com.vita.admin.domain.PostVo;
 import com.vita.admin.domain.ProductVo;
+import com.vita.admin.domain.RefundVo;
+import com.vita.admin.domain.ReportVo;
+import com.vita.admin.domain.StockVo;
 import com.vita.admin.mapper.AdminMapper;
 import com.vita.oauth.domain.UserVo;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Controller
 public class AdminController {
@@ -30,15 +38,20 @@ public class AdminController {
 		return "admin/adminLogin";
 	}
 	@RequestMapping("/AdminHome")
-	public ModelAndView adminhome1(UserVo userVo){
-	        List<UserVo> totalUsers = adminMapper.getAllUsers(userVo);
-			ModelAndView   mv   =  new  ModelAndView();
-			System.out.println("333333333333"  + userVo);
-	        mv.addObject("totalUsers", totalUsers);
-	        mv.setViewName("admin/adminHome");
-	        return mv;
-	    }
-	
+	public ModelAndView adminhome1(UserVo userVo, ProductVo productVo, StockVo stockVo) {
+	    int totalUsers = adminMapper.getAllUsers(userVo);
+	    int totalAmount = adminMapper.getTotalAmount(productVo);
+        List<StockVo> stockList = adminMapper.LgetStockList(stockVo);
+	    NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+	    String formattedTotalAmount = numberFormat.format(totalAmount);
+
+	    ModelAndView mv = new ModelAndView();
+	    mv.addObject("totalUsers", totalUsers);
+	    mv.addObject("totalAmount", formattedTotalAmount); 
+	    mv.addObject("stockList", stockList); 
+	    mv.setViewName("admin/adminHome");
+	    return mv;
+	}
 
 	@RequestMapping("/AdminLogin")
 	public ModelAndView adminLogin(HttpServletRequest request) {
@@ -133,4 +146,21 @@ public class AdminController {
 		mv.setViewName("admin/nutrientList");
 		return mv;
 	}
+	@RequestMapping("/Inquiry")
+	public ModelAndView inquiry(InquiryVo inquiryVo){
+		List<InquiryVo> inquiryList = adminMapper.LgetinquiryList(inquiryVo);
+		ModelAndView   mv  =  new ModelAndView();
+		mv.addObject("inquiryList", inquiryList);
+		mv.setViewName("admin/inquiryList");
+		return mv;
+	}
+	@RequestMapping("/ReportList")
+	public ModelAndView reportlist(ReportVo reporttVo ){
+        List<ReportVo> reportList = adminMapper.LcgetReportList(reporttVo);
+        ModelAndView   mv  =  new ModelAndView();
+        mv.addObject("reportList", reportList);
+        mv.setViewName("admin/reportList");
+        return mv;
+	}
+	
 }

@@ -412,64 +412,6 @@
        });
    });
    </script>
-   
-  <!-- 페이징 -->
-    <script>
-        document.querySelectorAll('input[name="ratings"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                fetchReviewsByRating(this.value);
-            });
-        });
-
-        async function fetchReviewsByRating(rating) {
-            const pro_id = document.getElementById('pro_id').value;
-            const nowpage = 1; // 첫 페이지로 고정
-            const response = await fetch(`/reviewsByRating?pro_id=${pro_id}&nowpage=${nowpage}&rating=${rating}`);
-            const data = await response.json();
-            displayReviews(data.response.list);
-        }
-
-        function displayReviews(reviews) {
-            const reviewList = document.querySelector('.review-list');
-            reviewList.innerHTML = '';
-            reviews.forEach(review => {
-                const reviewCard = document.createElement('div');
-                reviewCard.className = 'review-card';
-                reviewCard.innerHTML = `
-                    <div class="review-header">
-                        <img src="/img/사람.png" alt="User Image">
-                        <div class="username">id : ${review.nick}</div>
-                        <div class="stats">${review.created}</div>
-                    </div>
-                    <div class="review-body">
-                        <div class="stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                        <div class="content">${review.content}</div>
-                    </div>
-                    <img class="image" src="img/${review.img}.jsp" alt="Product Image">
-                    <div class="review-footer">
-                        <div class="notice">
-                            <button type="button" class="like-button" data-rev-id="${review.rev_id}" data-id="">
-                                <ion-icon name="thumbs-up"></ion-icon> <span class="like-count"></span>
-                            </button>
-                            <span class="like-status"></span>
-                        </div>
-                        <div class="actions">
-                            <span class="notify-button-container">
-                                <button type="button" class="notify-button" data-rev-id="${review.rev_id}" data-id=""
-                                    class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"
-                                    style="text-align: right;">신고하기</button>
-                            </span>
-                            <button>공유하기</button>
-                        </div>
-                    </div>
-                `;
-                reviewList.appendChild(reviewCard);
-            });
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchReviewsByRating(0); // Default load all reviews
-        });
-    </script>
 
 	<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

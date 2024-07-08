@@ -59,25 +59,20 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers("/")
-                .requestMatchers("/login")
-                .requestMatchers("/redirectHome")
-                .requestMatchers("/css/**")
+        		.requestMatchers("/css/**")
                 .requestMatchers("/js/**")
                 .requestMatchers("/img/**")
-                .requestMatchers("/images/**")
+                .requestMatchers("/board/**") 
+                .requestMatchers("/")
+                .requestMatchers("/login")                              
                 .requestMatchers("/WEB-INF/**")
-                .requestMatchers("/token/retoken")
-                .requestMatchers("token/loginsuccess")
-                .requestMatchers("/token/loginsuccess")
                 .requestMatchers("/loginsuccess")
                 .requestMatchers("/favicon.ico")
                 .requestMatchers("/login/WriteForm")
                 .requestMatchers("/login/write")
-                .requestMatchers("/reissue")
-                .requestMatchers("/Detail")
-                .requestMatchers("/cart")
-                .requestMatchers("/welcome");
+                .requestMatchers("/reissue");
+                
+
     }
 
     @Bean
@@ -103,10 +98,12 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/css/**", "/js/**", "/img/**","/board/**").permitAll()
                 .requestMatchers("/", "/home.jsp", "/home").permitAll()
                 .requestMatchers("/reissue").permitAll()
                 .requestMatchers("/ffdd").permitAll()
-                .requestMatchers("/home/allproducts").permitAll()
+                .requestMatchers("/home/allproducts").permitAll()      
+                
                 .anyRequest().authenticated()
         );
 

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -100,15 +100,10 @@ body {
 
 .search-container {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: flex-start; /* 왼쪽 정렬 */
+	align-items: center; /* 버튼과 검색창 수직 가운데 정렬 */
 	margin-bottom: 10px;
-}
-
-.search-container input[type="text"] {
-	padding: 7px;
-	margin-right: 10px; /* 검색창과 버튼 사이의 간격 */
-	border: 1px solid #ccc;
-	border-radius: 4px;
+	width: 100%;
 }
 
 .search-container button {
@@ -127,6 +122,13 @@ body {
 
 .search-container button:hover {
 	background-color: #0056b3;
+}
+
+.search-container input[type="text"] {
+	padding: 7px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	margin-left: auto; /* 검색창을 오른쪽 끝으로 이동 */
 }
 
 .sales-records {
@@ -213,58 +215,217 @@ tr:nth-child(even) {
 	</div>
 
 <div class="navbar">
-    <a href="/AdminHome">홈</a>
-    <a href="/AdminList">직원 리스트</a>
-    <a href="/AdminProduct">상품등록</a>
-    <a href="/AdminUserList">사용자 관리</a>
-    <a href="/MakeList">제조사</a>
-    <a href="/Ingredient">성분</a>
-    <a href="/FormList">제형</a>
-    <a href="/NutrientList">영양분</a>
-    <a href="/AdminLogout">로그아웃</a>
+	<a href="/AdminHome">홈</a>
+	<a href="/AdminList">직원 리스트</a>
+	<a href="/AdminProduct">상품등록</a>
+	<a href="/AdminUserList">사용자 관리</a>
+	<a href="/RefundList">환불 관리</a>
+	<a href="/MakeList">제조사</a>
+	<a href="/Ingredient">성분</a>
+	<a href="/FormList">제형</a>
+	<a href="/NutrientList">영양분</a>
+	<a href="/Inquiry">문의 글</a>
+	<a href="/ReportList">신고</a>
+	<a href="/AdminLogout">로그아웃</a>
 </div>
 	<div class="container">
-		<div class="statistics">
-			<div class="stat">
-				<h3>총 유저 수</h3>
-				<p>유저수 : ${totalUsers}</p>
-			</div>
-			<div class="stat">
-				<h3>수입</h3>
-				<p>금액 : ${totalAmount}</p>
-			</div>
-		</div>
+	    <div class="statistics">
+	        <div class="stat">
+	            <h3>총 유저 수</h3>
+	            <p>유저수 : ${totalUsers}</p>
+	        </div>
+	        <div class="stat">
+	            <h3>월간 매출</h3>
+	            <p>금액 : ${totalAmount}</p>
+	        </div>
+	    </div>
 	</div>
 
 	<div class="records-container">
 		<h2>판매기록</h2>
 		<hr />
 		<div class="search-container">
+			<button id="alldayButton">전체</button>
+			<button id="monthlyButton">월간</button>
+			<button id="weeklyButton">주간</button>
+			<button id="dailyButton">일간</button>
 			<input type="text" id="searchInput" placeholder="검색...">
 			<button id="searchButton">조회</button>
-			<button id="addBtn">추가</button>
 		</div>
-		<!-- 새로운 컨테이너 div 추가 -->
 			<table>
 				<thead>
 					<tr>
 						<th>No.</th>
-						<th>이름</th>
-						<th>아이디</th>
-						<th>비밀번호</th>
+						<th>제품이름</th>
+						<th>판매자</th>
+						<th>판매수량</th>
+						<th>출고일</th>
 					</tr>
 				</thead>
-				<tbody>
-					<c:forEach items="${adminList}" var="admin">
+				<tbody id = "stockTableBody">
+					<c:forEach items="${stockList}" var="stock">
 						<tr>
-							<td>${admin.admin_id}</td>
-							<td>${admin.name}</td>
-							<td>${admin.id}</td>
-							<td>${admin.password}</td>
+							<td>${stock.stock_id}</td>
+							<td>${stock.pro_name}</td>
+							<td>${stock.admin_name}</td>
+							<td>${stock.count}</td>
+							<td>${stock.additional}</td>
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
 		</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $('#monthlyButton').click(function() {
+            $.ajax({
+                type: 'POST',
+                url: '/MonthlyButton', 
+                contentType: 'application/json',
+                data: JSON.stringify({}), 
+                success: function(response) {
+                    console.log('월간 버튼 클릭 후 서버 응답:', response);
+                    
+                    // 테이블 본문을 비움
+                    $('#stockTableBody').empty();
+                    
+                    response.forEach(function(stock, index) {
+                        var row = `<tr>
+                            <td>\${stock.stock_id}</td>
+                            <td>\${stock.pro_name}</td>
+                            <td>\${stock.admin_name}</td>
+                            <td>\${stock.count}</td>
+                            <td>\${stock.additional}</td>
+                        </tr>`;
+                        $('#stockTableBody').append(row);
+                    });
+                },
+                error: function(error) {
+                    console.error('월간 버튼 클릭 후 에러:', error);
+                }
+            });
+        });
+    </script>
+    <script>
+        $('#alldayButton').click(function() {
+            $.ajax({
+                type: 'POST',
+                url: '/AllDayButton', 
+                contentType: 'application/json',
+                data: JSON.stringify({}), 
+                success: function(response) {
+                    console.log('전체 버튼 클릭 후 서버 응답:', response);
+                    
+                    // 테이블 본문을 비움
+                    $('#stockTableBody').empty();
+                    
+                    response.forEach(function(stock, index) {
+                        var row = `<tr>
+                            <td>\${stock.stock_id}</td>
+                            <td>\${stock.pro_name}</td>
+                            <td>\${stock.admin_name}</td>
+                            <td>\${stock.count}</td>
+                            <td>\${stock.additional}</td>
+                        </tr>`;
+                        $('#stockTableBody').append(row);
+                    });
+                },
+                error: function(error) {
+                    console.error('전체 버튼 클릭 후 에러:', error);
+                }
+            });
+        });
+    </script>
+        <script>
+        $('#weeklyButton').click(function() {
+            $.ajax({
+                type: 'POST',
+                url: '/WeekButton', 
+                contentType: 'application/json',
+                data: JSON.stringify({}), 
+                success: function(response) {
+                    console.log('주간 버튼 클릭 후 서버 응답:', response);
+                    
+                    // 테이블 본문을 비움
+                    $('#stockTableBody').empty();
+                    
+                    response.forEach(function(stock, index) {
+                        var row = `<tr>
+                            <td>\${stock.stock_id}</td>
+                            <td>\${stock.pro_name}</td>
+                            <td>\${stock.admin_name}</td>
+                            <td>\${stock.count}</td>
+                            <td>\${stock.additional}</td>
+                        </tr>`;
+                        $('#stockTableBody').append(row);
+                    });
+                },
+                error: function(error) {
+                    console.error('주간 버튼 클릭 후 에러:', error);
+                }
+            });
+        });
+    </script>
+    <script>
+        $('#dailyButton').click(function() {
+            $.ajax({
+                type: 'POST',
+                url: '/DailyButton', 
+                contentType: 'application/json',
+                data: JSON.stringify({}), 
+                success: function(response) {
+                    console.log('일간 버튼 클릭 후 서버 응답:', response);
+                    
+                    // 테이블 본문을 비움
+                    $('#stockTableBody').empty();
+                    
+                    response.forEach(function(stock, index) {
+                        var row = `<tr>
+                            <td>\${stock.stock_id}</td>
+                            <td>\${stock.pro_name}</td>
+                            <td>\${stock.admin_name}</td>
+                            <td>\${stock.count}</td>
+                            <td>\${stock.additional}</td>
+                        </tr>`;
+                        $('#stockTableBody').append(row);
+                    });
+                },
+                error: function(error) {
+                    console.error('일간 버튼 클릭 후 에러:', error);
+                }
+            });
+        });
+    </script>
+	<script>
+	document.addEventListener("DOMContentLoaded", function() {
+	    var searchInput = document.getElementById("searchInput");
+	    var searchButton = document.getElementById("searchButton");
+	
+	    searchButton.addEventListener("click", function() {
+	        var searchText = searchInput.value.toLowerCase();
+	        var rows = document.querySelectorAll("#stockTableBody tr");
+	
+	        rows.forEach(function(row) {
+	            var productName = row.cells[1].textContent.toLowerCase();
+	            var sellerName = row.cells[2].textContent.toLowerCase();
+	
+	            if (productName.includes(searchText) || sellerName.includes(searchText)) {
+	                row.style.display = "";
+	            } else {
+	                row.style.display = "none";
+	            }
+	        });
+	    });
+	
+	    searchInput.addEventListener("keypress", function(e) {
+	        if (e.key === "Enter") {
+	            searchButton.click();
+	        }
+	    });
+	});
+	</script>
+
 </body>
 </html>

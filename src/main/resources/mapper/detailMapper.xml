@@ -572,7 +572,7 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 <select id="countQnaSS">
 	SELECT COUNT(*) AS QNA_COUNT 
 	FROM PROD_QNA 
-	WHERE PRO_ID = #{arg1} AND Q_TYPE =#{arg2} AND (Q.QUESTION LIKE '%' || #{arg0} || '%')
+	WHERE PRO_ID = #{arg1} AND Q_TYPE =#{arg2} AND (QUESTION LIKE '%' || #{arg0} || '%')
 </select>
 
 <!-- QnAList + paging + q_type -->
@@ -591,17 +591,17 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 
 <!-- QnAList + paging + search + q_type -->
 <select id="getQnaListPagingSearchSorted">
-	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS
+	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS,
 				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
 				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
-				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME,
+				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
 	FROM	 PROD_QNA Q
   LEFT JOIN USERS U ON Q.ID = U.ID
-  WHERE PRO_ID = #{arg3} 
+  WHERE Q.PRO_ID = #{arg3} 
 				AND ((Q.SECRET ='N' AND Q.QUESTION LIKE '%' || #{arg2} || '%')
 							OR (Q.SECRET ='Y' AND U.ID=#{arg4} AND Q.QUESTION LIKE '%' || #{arg2} || '%'))
 				AND Q.Q_TYPE =#{arg5}
-  ORDER BY Q_CREATED DESC  
+  ORDER BY Q.Q_CREATED DESC  
  	OFFSET #{ arg0 } ROWS FETCH NEXT #{arg1}
   ROWS ONLY	
 </select>

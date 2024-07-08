@@ -22,4 +22,5 @@ public class ProductVo {
 	private String make_name;
 	private String ing_name;
 	private String type;
+	private String admin_name;
 }

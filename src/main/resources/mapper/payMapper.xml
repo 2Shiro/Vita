@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.vita.pay.mapper.PayMapper"> 
+<mapper namespace="com.vita.pay.mapper.PayMapper">
 
 	<!-- 장바구니 가져오기 -->
 	<select id="getBasketList">
@@ -15,7 +15,7 @@
 		FROM	BASKET
 		WHERE	ID = #{id}
 	</select>
-	
+
 	<!-- 장바구니 상품에 대한 정보 가져오기 -->
 	<select id="getProd">
 		SELECT	PRO_ID,
@@ -31,12 +31,12 @@
 		WHERE	PRO_ID = #{pro_id}
 	</select>
 	<select id="getImg">
-				SELECT  IMG_ID,
-		        PRO_ID,
-		        IMG
-		FROM    IMGS
-		WHERE   PRO_ID = #{pro_id}
-		AND     ROWNUM = 1
+		SELECT	IMG_ID,
+				PRO_ID,
+				IMG
+		FROM	IMGS
+		WHERE	PRO_ID = #{pro_id}
+			AND	ROWNUM = 1
 	</select>
 	<select id="getMake">
 		SELECT	MAKE_ID,
@@ -48,7 +48,7 @@
 		FROM	MAKE
 		WHERE	MAKE_ID = #{make_id}
 	</select>
-	
+
 	<!-- 장바구니 특정 상품 정보 가져오기 -->
 	<select id="getBasket">
 		SELECT	BASKET_ID,
@@ -61,25 +61,32 @@
 		FROM	BASKET
 		WHERE	BASKET_ID = #{basket_id}
 	</select>
-	
+
 	<!-- 장바구니 상품 수량 변경 -->
 	<update id="updateBasketCount">
-	
-	    UPDATE BASKET
-	    SET COUNT = #{count}
-	    WHERE BASKET_ID = #{basket_id}
-	
+
+		UPDATE	BASKET
+		SET		COUNT = #{count}
+		WHERE	BASKET_ID = #{basket_id}
+
 	</update>
-	
+
 	<!-- 장바구니 구매 상태 변경 -->
 	<update id="updateState">
-	
-	    UPDATE	BASKET
-	    SET		STATE = #{state}
-	    WHERE	BASKET_ID = #{basket_id}
-	
+
+		UPDATE	BASKET
+		SET		STATE = #{state}
+		WHERE	BASKET_ID = #{basket_id}
+
 	</update>
 	
+	<!-- 장바구니 항목 삭제 -->
+	<delete id="removeBasketItem" parameterType="map">
+	    DELETE FROM BASKET
+	    WHERE BASKET_ID = #{basket_id}
+	    AND ID = #{id}
+	</delete>
+
 	<!-- 구매상태 상품 가져오기 -->
 	<select id="getPayList">
 		SELECT	BASKET_ID,
@@ -93,5 +100,118 @@
 		WHERE	ID = #{id}
 			AND	STATE = 1
 	</select>
+	
+	<!-- 기본 배송지 조회 -->
+	<select id="getDeliveryDefualt">
+		SELECT	ADDRESS_ID,
+				ID,
+				NAME,
+				RECIPENT,
+				TEL,
+				ZIPCODE,
+				ADDRESS,
+				ADDRESSDETAIL,
+				REQ,
+				DEFUALT
+		FROM	DELIVERY
+		WHERE	ID = #{id}
+			AND	DEFUALT = 1
+		ORDER BY ADDRESS_ID
+	</select>
+
+	<!-- 배송지 조회 -->
+	<select id="getDeliveryList">
+		SELECT	ADDRESS_ID,
+				ID,
+				NAME,
+				RECIPENT,
+				TEL,
+				ZIPCODE,
+				ADDRESS,
+				ADDRESSDETAIL,
+				REQ,
+				DEFUALT
+		FROM	DELIVERY
+		WHERE	ID = #{id}
+		ORDER BY ADDRESS_ID
+	</select>
+	
+	<!-- 다른 배송지의 defualt 값을 0으로 설정 -->
+	<update id="resetAddDefaultForOtherAddresses" parameterType="map">
+	    UPDATE DELIVERY
+	    SET DEFUALT = 0
+	    WHERE ID = #{id} 
+	    <if test="address_id != null">
+	        AND ADDRESS_ID != #{address_id}
+	    </if>
+	</update>
+	
+	<!-- 배송지 추가 -->
+	<insert id="addDeliveryAddress" parameterType="com.vita.pay.domain.DeliveryVo">
+	    INSERT INTO DELIVERY (
+	        ADDRESS_ID, ID, NAME, RECIPENT, TEL, ZIPCODE, ADDRESS, ADDRESSDETAIL, REQ, DEFUALT
+	    ) VALUES (
+	        (SELECT NVL(MAX(ADDRESS_ID), 0) + 1 FROM DELIVERY), 
+	        #{id}, #{name}, #{recipent}, #{tel}, #{zipcode}, #{address}, #{addressdetail}, #{req}, #{defualt}
+	    )
+	</insert>
+	
+	<!-- 다른 배송지의 defualt 값을 0으로 설정 -->
+	<update id="resetUpdateDefaultForOtherAddresses" parameterType="map">
+	    UPDATE DELIVERY
+	    SET DEFUALT = 0
+	    WHERE ID = #{id} AND ADDRESS_ID != #{address_id}
+	</update>
+	
+	<!-- 배송지 업데이트 -->
+	<update id="updateDeliveryAddress" parameterType="com.vita.pay.domain.DeliveryVo">
+	    UPDATE DELIVERY
+	    SET NAME = #{name}, RECIPENT = #{recipent}, TEL = #{tel}, ZIPCODE = #{zipcode},
+	        ADDRESS = #{address}, ADDRESSDETAIL = #{addressdetail}, REQ = #{req}, DEFUALT = #{defualt}
+	    WHERE ADDRESS_ID = #{address_id}
+	</update>
+	
+	<!-- 배송지 삭제 -->
+	<delete id="deleteDeliveryAddress" parameterType="map">
+	    DELETE FROM DELIVERY
+	    WHERE ID = #{id} AND ADDRESS_ID = #{address_id}
+	</delete>
+
+	<!-- 결제 정보 추가 -->
+	<insert id="savePay">
+	    INSERT INTO PAY (
+	        PAY_ID, ID, IDENTITY, SUM, WAY, REQ, ADDRESS_ID
+	    ) VALUES (
+	        (SELECT NVL(MAX(PAY_ID), 0) + 1 FROM PAY), 
+	        #{buyerId}, #{merchantUid}, #{totalPrice}, #{payMethod}, #{deliveryRequest}, #{address_id}
+	    )
+	</insert>
+	
+	<!-- 최근 결제 정보 가져오기 -->
+    <select id="getRecentPay" resultType="com.vita.pay.domain.PayVo">
+        SELECT PAY_ID, ID, IDENTITY, SUM, WAY, REQ, ADDRESS_ID
+        FROM PAY
+        ORDER BY PAY_ID DESC
+        FETCH FIRST ROW ONLY
+    </select>
+    
+    <!-- 결제 상품 추가 -->
+	<insert id="saveGoods">
+	    INSERT INTO GOODS (
+	        GOODS_ID, ID, PRO_ID, PAY_ID, COUNT, PRICE, STATE
+	    ) VALUES (
+	        (SELECT NVL(MAX(GOODS_ID), 0) + 1 FROM GOODS), 
+	        #{id}, #{pro_id}, #{pay_id}, #{count}, #{price}, 0
+	    )
+	</insert>
+	<!-- 결제 상품 재고 변경 -->
+	<insert id="outStock">
+	    INSERT INTO STOCK (
+	        STOCK_ID, PRO_ID, ADMIN_ID, COUNT, STATE
+	    ) VALUES (
+	        (SELECT NVL(MAX(STOCK_ID), 0) + 1 FROM STOCK), 
+	        #{pro_id}, 1, -#{count}, 0
+	    )
+	</insert>
 
 </mapper>

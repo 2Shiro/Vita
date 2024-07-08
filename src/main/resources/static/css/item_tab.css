@@ -280,3 +280,277 @@ button{
     font-weight: 500;
     color: #444;
 }
+#main {
+    width: 100%;
+    height: auto;
+
+  }
+.tabs {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    cursor: pointer;
+    width: calc(100% / 5);
+    height: 50px;
+    line-height: 42px;
+    text-align: center;
+    font-weight: 700;
+    color: #101219;
+    font-size: 20px;
+    border-bottom: 2px solid #E6E9ED;
+    box-sizing: border-box;
+
+  }
+
+  .tab.active {
+    border-bottom: 3px solid #ff7f00;
+  }
+
+  .container {
+    display: none;
+    flex-wrap: wrap;
+    /* justify-content: space-between;*/
+    padding: 10px;
+  }
+
+  .container.active {
+    display: flex;
+  }
+
+  .inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    min-height: 300px;
+  }
+
+  .product {
+    position: relative;
+    background-color: #fff;
+    box-sizing: border-box;
+    margin: 10px;
+    width: calc(25% - 20px);
+    /* 4 items per row with margin */
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    padding: 10px;
+
+    border: 1px solid #E6E9ED;
+    box-shadow: 0px 2px 10px rgba(70, 56, 147, 0.1);
+    border-radius: 20px;
+
+  }
+
+  .product .ranking_list {
+
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 50;
+
+  }
+
+  .product .ranking_list .ranking {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    height: 25px;
+    line-height: 25px;
+    color: #9BA1AA;
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+
+  .product img {
+    height: 44%;
+    width: auto;
+    object-fit: contain;
+
+  }
+
+
+
+
+
+  .product .product_util {
+    width: 100%;
+
+
+  }
+
+  .product .product_util div {
+    margin-bottom: 5px;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 34px;
+    line-height: 34px;
+    overflow: hidden;
+    padding-left: 4px;
+  }
+
+  .product .txt1 {
+    font-weight: 500;
+    display: block;
+    font-size: 14px;
+    color: #9BA1AA;
+    text-align: left;
+
+    margin: 30px 0px 0px 0px;
+  }
+
+  .product .txt2 {
+    margin-top: -7px;
+  }
+  .product .txt2 {
+    font-weight: 700;
+    color: #101219;
+    display: block !important;
+    font-size: 18px;
+    text-align: left;
+    line-height: 27px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .product .product_util div p {
+    color: #3b65ff;
+    background-color: #f0f5ff;
+    height: 30px;
+    font-size: 12px;
+    letter-spacing: 0px;
+    line-height: 30px;
+    width: auto;
+    padding: 0 12px;
+    border-radius: 99px
+  }
+
+  .product .review .star-point {
+    float: left;
+    font-weight: 700;
+    font-size: 17px;
+    color: #535968;
+    text-align: left;
+    line-height: 20px;
+    background: url(/img/star-icon.webp) left 2px no-repeat;
+    background-size: 16px 15px;
+    padding-left: 20px;
+    height: 20px;
+  }
+
+  .product .review .txt3 {
+    float: left;
+    font-weight: 500;
+    line-height: 19px;
+    height: 20px;
+    color: #9BA1AA;
+    font-size: 16px;
+    margin: 0px 0px 0px 10px;
+  }
+
+  .product .product_util .type_list {
+    margin: 0;
+    margin-top: 10px;
+    padding: 0;
+
+  }
+  .product .product_util .product-price{
+   margin-bottom: 5px;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 34px;
+    line-height: 34px;
+    overflow: hidden;
+    padding-left: 4px;
+  }
+  .product .product_util .product-price .price{
+  	font-weight: 700;
+    color: #101219;
+    display: block !important;
+    font-size: 18px;
+    text-align: left;
+    line-height: 27px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 1200px) {
+    .product {
+      width: calc(33.33% - 20px);
+      /* 3 items per row */
+    }
+  }
+
+  @media (max-width: 800px) {
+    .product {
+      width: calc(50% - 20px);
+      /* 2 items per row */
+    }
+  }
+
+  @media (max-width: 500px) {
+    .product {
+      width: 100%;
+      /* 1 item per row */
+      max-width: 340px;
+      /* max width 340px */
+    }
+  }
+  
+  
+  /* 여기서 부터 시작 */
+  #tab_wrap{
+  padding-top: 230px;
+  }
+  .wishlist{
+  	 background-image: url(/img/heart.png);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: 100%;
+    width: 20px;
+    height: 20px;
+    color: red;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    
+  }
+  .wishlist.on{
+   background-image: url(/img/heart-fill.png);
+  }
+ .product .cart-button {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 100; /* Ensure it appears above other content */
+}
+.product .cart-button:hover{
+	filter: brightness(0.8);
+}
+
+.product:hover .cart-button {
+    display: block; /* Show the button on hover */
+}

@@ -490,7 +490,7 @@ td>img {
 		         </c:when>
 		         <c:otherwise>
 		            <select id="category"  name="q_type" class="form-select" aria-label="Default select example" style="width:150px; margin-right :20px;">
-	                <option selected>문의유형</option>
+	                <option selected value="0">문의유형</option>
 	                <option value="0">------------</option>
 	                <option value="1">상품</option>
 	                <option value="2">배송</option>
@@ -500,25 +500,6 @@ td>img {
 		            </select>
 		         </c:otherwise>
 		      </c:choose>
-<%-- 					<c:choose> --%>
-<%-- 						<c:when test="${order eq 'none'}"> --%>
-<!-- 							<label for="order">정렬</label> -->
-<!-- 	            <select id="order" name="order" class="form-select" aria-label="Default select example"> -->
-<!-- 	                <option value="1">최근 작성된 답변</option> -->
-<!-- 	                <option selected value="2">최신 질문 글</option> -->
-<!-- 	                <option value="3">오래된 질문 글</option> -->
-<!-- 	            </select> -->
-<%-- 		         </c:when> --%>
-<%-- 		         <c:otherwise> --%>
-<!-- 							<label for="order">정렬</label> -->
-<!-- 	            <select id="order" name="order" class="form-select" aria-label="Default select example"> -->
-<!-- 	                <option value="0">추천순 </option> -->
-<!-- 	                <option value="1">최근 작성된 답변</option> -->
-<!-- 	                <option selected value="2">최신 질문 글</option> -->
-<!-- 	                <option value="3">오래된 질문 글</option> -->
-<!-- 	            </select> -->
-<%-- 		         </c:otherwise> --%>
-<%-- 		      </c:choose> --%>
 					<c:choose>
 						<c:when test="${keyword eq 'none'}">
 							<input class="form-control me-2" style="width: 300px;" type="search"
@@ -646,7 +627,7 @@ td>img {
 					                    </div>
 					                    <div class="form-check">
 					                        <input class="form-check-input" type="checkbox" value="" name="serect" id="modifySerect">
-					                        <label class="form-check-label" for="serect"> 비밀글로 문의하기 </label>
+					                        <label class="form-check-label" for="modifySerect"> 비밀글로 문의하기 </label>
 					                    </div>
 					                    <p class="text_secret" id="paraSecretYn" style="display: none">비밀글로 등록됩니다.</p>
 					                    <div class="notice_box">
@@ -753,79 +734,83 @@ td>img {
 	<!-- Q&A 수정하기 -->
 	<script type="text/javascript">
 	  function modify(type) {
-	      if (type === 'open') {
-	          jQuery('#modifylayer').css('display', 'block');
-	          jQuery('#overlay').css('display', 'block');
-	      } else if (type === 'close') {
-	          jQuery('#modifylayer').css('display', 'none');
-	          jQuery('#overlay').css('display', 'none');
-	      }
-	  }
+		    if (type === 'open') {
+		      document.getElementById('modifylayer').style.display = 'block';
+		      document.getElementById('overlay').style.display = 'block';
+		    } else if (type === 'close') {
+		      document.getElementById('modifylayer').style.display = 'none';
+		      document.getElementById('overlay').style.display = 'none';
+		    }
+		  }
 
-	  document.addEventListener('DOMContentLoaded', function () {
-	      document.querySelectorAll('.modifyQ').forEach(function(button){
-	          button.addEventListener('click', function() {
-	              // 버튼과 같은 행(row)을 찾음
-	              let row = button.closest('tr');
-	              // 같은 행에 있는 숨겨진 qna_id 값을 찾음
-	              let qna_id = parseInt(row.querySelector('.qna_id').value);
-	              console.dir(qna_id);
+		  document.addEventListener('DOMContentLoaded', function () {
+		    document.querySelectorAll('.modifyQ').forEach(function(button) {
+		      button.addEventListener('click', function() {
+		        // 버튼과 같은 행(row)을 찾음
+		        let row = button.closest('tr');
+		        // 같은 행에 있는 숨겨진 qna_id 값을 찾음
+		        let qna_id = parseInt(row.querySelector('.qna_id').value);
+		        console.dir(qna_id);
 
-	              // 팝업을 열기 위한 코드
-	              modify('open');
+		        // 팝업을 열기 위한 코드
+		        modify('open');
 
-	              // 팝업에 qna_id 값 설정
-	              let qna_id_input = document.getElementById('qna_id');
-	              if (qna_id_input) {
-	                  qna_id_input.value = qna_id;
-	              } else {
-	                  console.error("qna_id input element not found");
-	              }
-	          });
-	      });
+		        // 팝업에 qna_id 값 설정
+		        let qna_id_input = document.getElementById('qna_id');
+		        if (qna_id_input) {
+		          qna_id_input.value = qna_id;
+		        } else {
+		          console.error("qna_id input element not found");
+		        }
+		      });
+		    });
+		    
+		    
+		    document.getElementById('buttonClose').addEventListener('click', function() {
+		      modify('close');
+		    });
 
-	      $('#buttonClose').click(function() {
-	          modify('close');
-	      });
+		    document.getElementById('buttonSave').addEventListener('click', function() {
+		      handleSubmit();
+		    });
 
-	      $('#buttonSave').click(function() {
-	          handleSubmit();
-	      });
+		    function handleSubmit() {
+		      let q_type = document.querySelector('input[name="q_type"]:checked').value;
+		      let question = document.getElementById('modifyQuestion').value;
+		      let secret = document.getElementById('modifySerect').checked ? 'Y' : 'N';
+		      let qna_id = document.getElementById('qna_id').value;
 
-	      function handleSubmit() {
-	    	    let q_type = document.querySelector('input[name="q_type"]:checked').value;
-	          let question = document.getElementById('modifyQuestion').value;
-	          let secret = document.getElementById('modifySerect').checked ? 'Y' : 'N';
-	          let qna_id = document.getElementById('qna_id').value;
+		      if (question.includes('010') || question.includes('@')) {
+		        secret = 'Y';
+		        alert("개인정보가 포함되어 비밀글로 등록되었습니다.");
+		      }
 
-	          if (question.includes('010') || question.includes('@')) {
-	              secret = 'Y';
-	              alert("개인정보가 포함되어 비밀글로 등록되었습니다.");
-	          }
+		      console.dir("qna_id" + qna_id);
 
-	        	console.dir("qna_id"+qna_id)
-
-	          fetch('/modifyQnA', {
-	              method: 'POST',
-	              headers: {
-	                  'Content-Type': 'application/json'
-	              },
-	              body: JSON.stringify({ question, secret, qna_id })
-	          })
-	          .then(response => {
-	              if (response.ok) {
-	                  alert("질문 수정이 완료되었습니다.");
-	                  modify('close');
-	              } else {
-	                  alert("질문 수정에 실패했습니다.");
-	              }
-	          })
-	          .catch(error => {
-	              console.error('Error:', error);
-	              alert("질문 수정 중 오류가 발생했습니다.");
-	          });
-	      }
-	  });
+		      fetch('/modifyQnA', {
+		        method: 'POST',
+		        headers: {
+		          'Content-Type': 'application/json'
+		        },
+		        body: JSON.stringify({ question, secret, qna_id })
+		      })
+		      .then(response => {
+		        if (response.ok) {
+		        	console.dir("돼라")
+		          alert("질문 수정이 완료되었습니다.");
+		          modify('close');
+		        } else {
+		        	console.dir("안돼냐?")
+		          alert("질문 수정에 실패했습니다.");
+		        }
+		      })
+		      .catch(error => {
+		        console.error('Error:', error);
+		        alert("질문 수정 중 오류가 발생했습니다.");
+		      });
+		    }
+		  });
+		</script>
 	</script>
 
 

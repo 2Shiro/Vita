@@ -283,13 +283,15 @@ public class DetailApiController {
 		public Map<String, Object> modifyQnA(
 							@RequestBody HashMap<String,Object> map
 							,HttpServletRequest request ){
-			
+			System.out.println("111111");
 			Long id = getUserIdService.getId(request);
 			map.put("id", id);
-			
+			System.out.println("222222");
 			int qna_id = Integer.parseInt(String.valueOf(map.get("qna_id")));
 			map.put("qna_id", qna_id);
 			detailMapper.modifyQ(map);
+			
+			System.out.println("3333333333");
 			
 			return map;
 		}

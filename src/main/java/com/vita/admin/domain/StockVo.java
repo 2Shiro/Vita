@@ -14,4 +14,7 @@ public class StockVo {
 	private int count;
 	private int state;
 	private String additional;
+	private String pro_name;
+	private String admin_name;
+	
 }

@@ -1,8 +1,5 @@
 package com.vita.detail.domain;
 
-import java.util.List;
-import com.fasterxml.jackson.databind.node.IntNode;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

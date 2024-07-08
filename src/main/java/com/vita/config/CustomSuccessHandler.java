@@ -68,29 +68,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         addRefreshDTO(username, refresh,  refreshTokenValiditySeconds * 1000L, userId);
         
        
-        // 쿠키 설정
-         //createCookie(response, "access", access, accessTokenValiditySeconds);
          CookieUtil.createCookie(response, "refresh", refresh, refreshTokenValiditySeconds, true);
          CookieUtil.createCookie(response, "access", access, refreshTokenValiditySeconds, false);
       
-        
-        // access 토큰을 쿼리 매개변수로 포함하여 리다이렉트 URL 설정
-		/*
-		 * String redirectURL = "/token/loginsuccess?access=" +
-		 * URLEncoder.encode(access, "UTF-8"); response.sendRedirect(redirectURL);
-		 */
+  
         
         String redirectURL = "/home";
         response.sendRedirect(redirectURL);
-        // access 토큰을 쿼리 매개변수로 전달
-		/*
-		 * String redirectURL = request.getContextPath() + "/welcome?access=" +
-		 * URLEncoder.encode(access, "UTF-8");
-		 * 
-		 * // 새로운 URL로 리디렉션 response.sendRedirect(redirectURL);
-		 */
-       // response.setHeader("Authorization", "Bearer" + token);
-        //response.sendRedirect("/token/retoken");
+       
     }
 
     private void addRefreshDTO(String username, String refresh, Long expiredMs, Long userId) {
