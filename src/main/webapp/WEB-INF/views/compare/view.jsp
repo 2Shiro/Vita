@@ -44,6 +44,7 @@
   }
 .detail-row.caution ul li{
 text-align: left;
+line-height: 20px;
 }
 .center{
 width: 153px;}
@@ -184,9 +185,27 @@ width: 170px;
     	text-align: center;
     }
     #nutrient-list{
-    	margin-top: 38px
+    	margin-top: 38px;
+    	margin-bottom: 60px;
     }
-
+    #aiComparisonContent{
+    	font-size: 1.2rem;
+    	margin-bottom: 80px;
+    	
+    }
+	#aiComparisonContent p {
+		line-height: 20px
+	}
+	#aiComparisonResult h3{
+	font-size: 1.2rem
+	}
+	#aiCompareButton{
+	padding: 4px 8px;
+	font-weight: bold;
+	}
+	.detail-row.caution{
+	margin-bottom: 50px;
+	}
 </style>
 </head>
 <body>
@@ -257,7 +276,7 @@ width: 170px;
               <div class="txt2">${ item.name }</div>
               <div class="review">
                 <span class="star-point">${item.string_average_arting }</span>
-                <span class="txt3">${item.total_sell}</span>
+                <span class="txt3">${item.total_sell}개</span>
               </div>
               <div class="type_list">
               <c:forEach var="nutrient" items="${item.nutrient}">
@@ -299,7 +318,7 @@ width: 170px;
               <div class="txt2">${ item.name }</div>
               <div class="review">
                 <span class="star-point">${item.string_average_arting }</span>
-                <span class="txt3">${item.total_sell}</span>
+                <span class="txt3">${item.total_sell}개</span>
               </div>
               <div class="type_list">
               <c:forEach var="nutrient" items="${item.nutrient}">
@@ -341,7 +360,7 @@ width: 170px;
               <div class="txt2">${ item.name }</div>
               <div class="review">
                 <span class="star-point">${item.string_average_arting }</span>
-                <span class="txt3">${item.total_sell}</span>
+                <span class="txt3">${item.total_sell}개</span>
               </div>
               <div class="type_list">
               <c:forEach var="nutrient" items="${item.nutrient}">
@@ -524,6 +543,15 @@ width: 170px;
   <ul id="nutrient-list">
     <!-- JavaScript will generate list items here -->
   </ul>
+  <!-- AI 비교 분석 버튼 추가 -->
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="aiCompareButton">AI 비교 분석</button>
+        </div>
+        <!-- AI 비교 분석 결과 표시 -->
+        <div id="aiComparisonResult" style="margin-top: 20px; display: none;">
+            <h3>AI 비교 분석 결과</h3>
+            <p id="aiComparisonContent"></p>
+        </div>
     </div>
   </div>
    
@@ -535,6 +563,10 @@ width: 170px;
   <script src="/js/swipertest.js"></script>
   <script>
   document.addEventListener('DOMContentLoaded', function () {
+	  // AI 비교 분석 버튼 클릭 이벤트 추가
+	    document.getElementById('aiCompareButton').addEventListener('click', function () {
+	        document.getElementById('aiComparisonResult').style.display = 'block'; // display none에서 block으로 변경
+	    });
 	  const optionsName = {
               recent: [
             	  <c:forEach var="item" items="${recenItems}" varStatus="status">
@@ -755,7 +787,7 @@ width: 170px;
       
       document.querySelectorAll('.compare-button').forEach(button => {
           button.addEventListener('click', function () {
-        	  console.log("1")
+              console.log("1")
               console.log(compareProduct1);
               console.log("2")
               console.log(compareProduct2);
@@ -775,14 +807,46 @@ width: 170px;
                   console.log('Success:', data);
                   updateModal(data.products, data.nutrients);
                   modal.style.display = "flex";
+
+                  // Fetch AI comparison result
+                  fetch('/Compare/Api/AiCompare', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({
+                          productId1: compareProduct1.id,
+                          productId2: compareProduct2.id
+                      })
+                  })
+                  .then(response => response.json())
+                  .then(data => {                      
+                      const formattedComparisonResult = formatAiComparisonResult(data.comparisonResult);
+                      document.getElementById('aiComparisonContent').innerHTML = formattedComparisonResult;
+                      document.getElementById('aiComparisonResult').style.display = 'none';
+                  })
+                  .catch((error) => {
+                      console.error('AI Comparison Error:', error);
+                  });
               })
               .catch((error) => {
                   console.error('Error:', error);
               });
-              
-              modal.style.display="flex";
+
+              modal.style.display = "flex";
           });
       });
+      function formatAiComparisonResult(text) {
+    	  return text
+    	  .replace(/제품 1인/g, '<strong>제품 1인</strong>')
+          .replace(/제품 2인/g, '<strong>제품 2인</strong>')
+          // 문장의 끝에서 띄어쓰기
+          .replace(/\.\s*/g, '.</p><p>')
+          // 모든 줄바꿈을 문단으로 변환합니다.
+          .replace(/\n/g, '</p><p>')
+          // 빈 문단을 제거합니다.
+          .replace(/<\/p><p>\s*<\/p>/g, '</p>');
+    	}
       closeModal.addEventListener('click', function () {
           modal.style.display = "none";
         });
@@ -961,12 +1025,20 @@ width: 170px;
 	        detailsContainer.appendChild(detailRow);
 	    });
 	    
-	    createList(nutrients);
+	 // 모달이 열릴 때 데이터 초기화
+	    const nutrientList = document.getElementById('nutrient-list');
+	    nutrientList.innerHTML = '';  // 기존 리스트 항목을 초기화
+	    createList(nutrients);  // 리스트 항목을 생성
 	    document.querySelectorAll('#nutrient-list li')[0].classList.add('on');
 	    updateChart(0, nutrients);
 	}
   
   function createList(nutrients) {
+	  
+	  if (!nutrients || nutrients.length === 0) {
+      console.error("Nutrients data is not available.");
+      return;
+ 			 }
 	    const list = document.getElementById('nutrient-list');
 	    nutrients.forEach((nutrient, index) => {
 	        const listItem = document.createElement('li');
@@ -992,6 +1064,10 @@ width: 170px;
 	}
 
 	function updateChart(index, nutrients) {
+		   if (!nutrients || nutrients.length === 0 || !nutrients[index]) {
+		        console.error("Nutrients data is not available or index is out of range.");
+		        return;
+		    }
 	    const nutrient = nutrients[index];
 	    const bar1 = document.querySelector('.bar1');
 	    const bar2 = document.querySelector('.bar2');
@@ -1034,8 +1110,7 @@ width: 170px;
 	    document.querySelector('#chart-name').textContent = `\${nutrient.name} 함량 비교 차트 (\${nutrient.unit})`;
 	}
 
-	createList();
-	updateChart(0);
+	
   </script>
  
 </body>

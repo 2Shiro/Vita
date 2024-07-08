@@ -4,55 +4,57 @@
   
 	<select id="findRecentItems">
  SELECT
-            P.PRO_ID,
-            P.NAME,
-            M.NAME AS MAKE_NAME,
-            P.ING_ID,
-            P.URL,
-            F.TYPE,
-            P.EXPLAIN,
-            P.PRICE,
-            I.img,
-            COALESCE(SUM(S.total_sell), 0) AS total_sell,
-            AVG(R.rating) AS average_rating,
-            W.wish_id
-        FROM 
-            PRODUCT P
-        JOIN 
-            MAKE M ON P.MAKE_ID = M.MAKE_ID
-        JOIN 
-            FORM F ON P.form_id = F.form_id
-        JOIN 
-            IMGS I ON P.pro_id = I.pro_id
-        LEFT JOIN
-            (SELECT 
-                pro_id,
-                SUM(count) AS total_sell
-             FROM 
-                stock
-             WHERE 
-                state = 0
-             GROUP BY 
-                pro_id) S ON P.pro_id = S.pro_id
-        LEFT JOIN 
-            review R ON P.pro_id = R.pro_id
-        LEFT JOIN
-            wishlist W ON P.pro_id = W.pro_id
-        WHERE P.PRO_ID IN
+    P.PRO_ID,
+    P.NAME,
+    M.NAME AS MAKE_NAME,
+    P.ING_ID,
+    P.URL,
+    F.TYPE,
+    P.EXPLAIN,
+    P.PRICE,
+    I.img,
+    COALESCE(S.total_sell, 0) AS total_sell,
+    COALESCE(R.average_rating, 0) AS average_rating,
+    W.wish_id
+FROM 
+    PRODUCT P
+JOIN 
+    MAKE M ON P.MAKE_ID = M.MAKE_ID
+JOIN 
+    FORM F ON P.form_id = F.form_id
+JOIN 
+    (SELECT pro_id, MIN(img) AS img FROM IMGS GROUP BY pro_id) I ON P.pro_id = I.pro_id
+LEFT JOIN
+    (SELECT 
+        pro_id,
+        SUM(count) AS total_sell
+     FROM 
+        stock
+     WHERE 
+        state = 0
+     GROUP BY 
+        pro_id) S ON P.pro_id = S.pro_id
+LEFT JOIN 
+    (SELECT pro_id, AVG(rating) AS average_rating FROM review GROUP BY pro_id) R ON P.pro_id = R.pro_id
+LEFT JOIN
+    (SELECT DISTINCT pro_id, MIN(wish_id) AS wish_id FROM wishlist GROUP BY pro_id) W ON P.pro_id = W.pro_id
+WHERE P.PRO_ID IN
         <foreach item="proId" collection="proIdList" open="(" separator="," close=")">
             #{proId}
         </foreach>
-        GROUP BY
-            P.PRO_ID,
-            P.NAME,
-            M.NAME,
-            P.ING_ID,
-            P.URL,
-            F.TYPE,
-            P.EXPLAIN,
-            P.PRICE,
-            I.img,
-            W.wish_id
+GROUP BY
+    P.PRO_ID,
+    P.NAME,
+    M.NAME,
+    P.ING_ID,
+    P.URL,
+    F.TYPE,
+    P.EXPLAIN,
+    P.PRICE,
+    I.img,
+    S.total_sell,
+    R.average_rating,
+    W.wish_id
 	</select>  
   
     <select id="findIWishtems">

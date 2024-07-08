@@ -34,21 +34,17 @@
                   <li><a href="./program/level_system"><span>종합비타민</span></a></li>
                   <li><a href="./program/curriculum"><span>비타민</span></a></li>
                   <li><a href="./program/textbooks"><span>밀크씨슬</span></a></li>
-                  <li><a href="./program/homework"><span>프로바이오틱스</span></a></li>
-                  <li><a href="/Pds/List?nowpage=1"><span>리스트</span></a></li>
+                  <li><a href="./program/homework"><span>프로바이오틱스</span></a></li> 
                   <li><a href="/Pds/Write"><span>글쓰기</span></a></li>
-                  <li><a href="/Pds/View?post_id=2&nowpage=1"><span>글상세보기</span></a></li>
+            
                 </ul>
               </div>
             </li>
             <li class="gnb2">
-              <a href="./program/level_system">나에게 맞는 영양제</a>
+              <a href="/Mypage">내정보</a>
               <div class="gnb-2dep">
-                <ul>
-                  <li><a href="/Compare/View"><span>비교하기</span></a></li>
-				 <li><a href="/Pay/Basket"><span>장바구니</span></a></li>
-				 <li><a href="/Pay/PayForm"><span>결제</span></a></li>
-				 <li><a href="/Pay/Success"><span>결제완료</span></a></li>
+                <ul>                 
+				 <li><a href="/Pay/Basket"><span>장바구니</span></a></li>		
 				 <li><a href="/Mypage"><span>내정보</span></a></li>
                 </ul>
               </div>
@@ -61,20 +57,15 @@
               <div class="gnb-2dep">
                 <ul>
                   <li><a href="/Pds/List?nowpage=1"><span>자유게시판</span></a></li>
-                  <li><a href="#"><span>정보</span></a></li>
                   <li><a href="#" target="_blank"><span>QnA</span></a></li>
-
-
                 </ul>
               </div>
             </li>
             <li class="gnb4">
-              <a href="#">매거진</a>
+              <a href="/Compare/View">비교하기</a>
               <div class="gnb-2dep">
                 <ul>
-                  <li><a href="./contest/magazine"><span>영양소 정보</span></a></li>
-                  <li><a href="./contest/dream_star"><span>영양 상식</span></a></li>
-                  <li><a href="./contest/dream_star"><span>health & life</span></a></li>
+                  <li><a href="/Compare/View"><span>비교하기</span></a></li>
                 </ul>
               </div>
             </li>
@@ -83,7 +74,6 @@
               <div class="gnb-2dep">
                 <ul>
                   <li><a href="./program/level_system"><span>이벤트</span></a></li>
-
                 </ul>
               </div>
             </li>
