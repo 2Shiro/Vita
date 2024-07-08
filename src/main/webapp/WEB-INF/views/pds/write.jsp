@@ -82,7 +82,7 @@
 }
  .scrapList li .info {
     display: block;
-    height: 15px;
+    height: 25px;
     line-height: 14px;
 }
 .scrapList li .info .day.today {
@@ -130,27 +130,22 @@
               <p>wodud6967@naver.com</p>
             </a>
             <p class="left_textleft">
-              <a href="#">나의 글 0</a>
+              <a href="#">나의 글 ${myPostCount}</a>
               <a href="#">답변 0</a>
             </p>
 
           </li>
+          
           <p class="line"></p>
-          <li>
-            <h4>북마크</h4>
+        
+            <h4>최근 본 내용</h4>
             <ul>
-              <li><a href="#"">나우푸드 비타민B</a></li>
-          <li><a href=" #"">21st detsqy 비타민A</a></li>
+              <c:forEach var="item" items="${hitList}">	
+                <li><a href="#">${item.title}</a></li>
+              
+             </c:forEach>
             </ul>
-          </li>
-          <p class="line"></p>
-          <li>
-            <h4>최근 검색내용</h4>
-            <ul>
-              <li><a href="#">종합비타민</a></li>
-              <li><a href="#">밀크씨슬</a></li>
-            </ul>
-          </li>
+         
         </ul>
       </div>
       <div class="main-content">

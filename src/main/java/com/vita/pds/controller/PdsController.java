@@ -29,6 +29,7 @@ import com.vita.paging.domain.Pagination;
 import com.vita.controller.GetUserIdService;
 import com.vita.paging.domain.PagingResponse;
 import com.vita.pds.domain.CommentsVo;
+import com.vita.pds.domain.PostHitVo;
 import com.vita.pds.domain.PostListVo;
 import com.vita.pds.domain.PostRecommendVo;
 import com.vita.pds.domain.PostViewVo;
@@ -58,12 +59,19 @@ public class PdsController {
 	@GetMapping("/Pds/Write")
 	public ModelAndView PdsWriteForm(HttpServletRequest request) {
 		Long id = getUserIdService.getId(request);
+		int myPostCount = pdsService.findAllMyPost(id);
 		List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
 		List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+		List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+		
+		
+		
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/write");
 		mv.addObject("recommendList",recommendList);
 		mv.addObject("basketList", basketList);  
+		mv.addObject("myPostCount", myPostCount);  
+		mv.addObject("hitList", hitList);  
 		
 		return mv;
 	}
@@ -118,7 +126,8 @@ public class PdsController {
         
         List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
 	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
-	
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+	    
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/list");
 		mv.addObject("response", response);
@@ -127,6 +136,7 @@ public class PdsController {
 		mv.addObject("myPostCount", myPostCount);
 		mv.addObject("recommendList",recommendList);
 		mv.addObject("basketList", basketList);  
+		mv.addObject("hitList", hitList);  
 		return mv;
 	
 	
@@ -179,6 +189,7 @@ public class PdsController {
         System.out.println("222222222222222");
         List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
 	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
 	    
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("pds/mylist");
@@ -188,6 +199,7 @@ public class PdsController {
 		mv.addObject("myPostCount", myPostCount);
 		mv.addObject("recommendList",recommendList);
 		mv.addObject("basketList", basketList); 
+		mv.addObject("hitList", hitList); 
 		return mv;
 	
 	
@@ -203,8 +215,10 @@ public class PdsController {
 	public ModelAndView PdsUpdate(HttpServletRequest request,@RequestParam("post_id") Long post_id) {
 		System.out.println("일로오나?");
 	    Long id = getUserIdService.getId(request);
+	    int myPostCount = pdsService.findAllMyPost(id);
 	    List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
 	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
 	   
 	    
 		ModelAndView mv = new ModelAndView();
@@ -224,6 +238,8 @@ public class PdsController {
 		mv.addObject("basketList", basketList);  
 		mv.addObject("postVo", postVo);
 		mv.addObject("contentMarks", contentMarks);
+		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("hitList", hitList);
 		return mv;
 	}
 	
@@ -237,7 +253,7 @@ public class PdsController {
 		
 		boolean myPostView = false;
 	    Long id = getUserIdService.getId(request);
-	    
+	    int myPostCount = pdsService.findAllMyPost(id);
 	    
 	    
 		HashMap<String, Object> hitMap = new HashMap<>();
@@ -290,6 +306,7 @@ public class PdsController {
 				
 		List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
 	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
 	   
 		ModelAndView mv = new ModelAndView();
 		mv.addObject("response",response);
@@ -303,6 +320,8 @@ public class PdsController {
 		mv.addObject("contentMarks", contentMarks);
 		mv.addObject("recommendList",recommendList);
 		mv.addObject("basketList", basketList);
+		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("hitList", hitList);
 		return mv;
 	}
 	

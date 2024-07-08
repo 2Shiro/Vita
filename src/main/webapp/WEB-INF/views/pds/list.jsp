@@ -42,7 +42,7 @@
 }
  .scrapList li .info {
     display: block;
-    height: 15px;
+    height: 25px;
     line-height: 14px;
 }
 .scrapList li .info .day.today {
@@ -82,7 +82,7 @@
      <div class="left-sidebar">
        <ul class="left_nav">
          <li class="nav_top">
-           <a href="#">질문 · 글쓰기</a>
+           <a href="/Pds/Write">질문 · 글쓰기</a>
          </li>
          <li id="my_container">
            <a href="#">
@@ -113,10 +113,12 @@
          </li>
          <p class="line"></p>
          <li>
-           <h4>최근 검색내용</h4>
+           <h4>최근 본 내용</h4>
            <ul>
-             <li><a href="#">종합비타민</a></li>
-             <li><a href="#">밀크씨슬</a></li>
+           	<c:forEach var="item" items="${hitList}">	
+                <li><a href="#">${item.title}</a></li>
+              
+             </c:forEach>
            </ul>
          </li>
        </ul>

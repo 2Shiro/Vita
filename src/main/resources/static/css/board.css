@@ -527,3 +527,10 @@ main {
   .pagination .next_item{
   	margin-left: 10px
   }
+  
+  .container_wrap .left-sidebar .left_nav > li h4{
+  	margin-bottom: 10px;
+  }
+  .container_wrap .left-sidebar .left_nav h4{
+   margin-bottom: 10px;	
+  }

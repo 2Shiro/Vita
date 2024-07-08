@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vita.pds.mapper.PdsSideMapper">  
+
   
    <select id="findRecommendPost">
    	SELECT 
@@ -14,23 +15,46 @@
 	WHERE
 	   ROWNUM  <![CDATA[<=]]> 3
    </select>
+   
    <select id="findbasketPost">
    	 SELECT 
-    P.pro_id,
-    P.name,
-    I.img
-FROM 
-    product P
-LEFT JOIN 
-    IMGS I ON P.pro_id = I.pro_id
-JOIN
-    basket B ON P.pro_id = B.pro_id
-WHERE 
-    B.id = #{id} AND ROWNUM <![CDATA[<=]]>3
-GROUP BY 
-    P.pro_id, P.name, I.img
+	    P.pro_id,
+	    P.name,
+	    I.img
+	FROM 
+	    product P
+	LEFT JOIN 
+	    IMGS I ON P.pro_id = I.pro_id
+	JOIN
+	    basket B ON P.pro_id = B.pro_id
+	WHERE 
+	    B.id = #{id} AND ROWNUM <![CDATA[<=]]>3
+	GROUP BY 
+	    P.pro_id, P.name, I.img
 	
    </select>
+   
+   <select id="findHitList">
+   	SELECT
+	    H.hit_id,
+	    H.id,
+	    H.post_id,
+	    H.read,
+	    P.title
+	FROM
+	    hit H
+	LEFT JOIN post P ON H.post_id = P.post_id
+	WHERE H.id = 3
+	  AND H.hit_id IN (
+	    SELECT MAX(hit_id)
+	    FROM hit
+	    WHERE id = #{id}
+	    GROUP BY post_id
+	  )
+	AND ROWNUM <![CDATA[<=]]> 3
+
+   </select>
+   
 </mapper>
 
 
