@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -135,18 +134,17 @@
 										<div class="text__title">
 											주문상품<span class="text__count"></span>
 										</div>
-										<%-- 총합을 저장할 변수를 선언합니다. --%>
 										<c:set var="totalPrice" value="0" />
 										<c:forEach var="basketPageList" items="${basketPageList}"
 										    varStatus="status">
 										    <input type="hidden" id="basket_id_${status.index}"
 										        value="${basketPageList.basket_id}">
-										    <%-- 각 항목의 가격을 계산합니다. --%>
 										    <c:set var="prodPrice"
 										        value="${basketPageList.price * basketPageList.count}" />
-										    <%-- 계산된 가격을 총합 변수에 더합니다. --%>
+										    <c:set var="prodtotalPrice"
+										        value="${prodPrice + basketPageList.delivery_charge}" />
 										    <c:set var="totalPrice"
-										        value="${totalPrice + prodPrice + basketPageList.delivery_charge}" />
+										        value="${totalPrice + prodtotalPrice}" />
 										    <div class="box__goods js-goods-space"
 										        data-index="${status.index}">
 										        <ul class="list__goods-view">
@@ -193,6 +191,7 @@
 										                        <input type="checkbox" class="checkbox__goods"
 										                            style="width: 36px; height: 36px;"
 										                            data-basket-id="${basketPageList.basket_id}"
+										                            data-prodtotal-price="${prodtotalPrice}"
 										                            ${basketPageList.state == 1 ? 'checked' : ''}>
 										                        <button type="button" class="remove__goods"
 										                            style="width: 36px; height: 36px; background-color: red; color: white; border: none; cursor: pointer;"
@@ -263,8 +262,7 @@
 		</form>
 	</div>
 </body>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="/js/header.js"></script>
 <script>
 function getCookie(name) {
@@ -357,30 +355,45 @@ $(document).ready(function() {
             }
         });
     }
-});
-</script>
-<script>
-// 구매상태 체크박스 변화 감지
-$(".checkbox__goods").change(function() {
-    var basketId = $(this).data("basket-id"); // 올바른 속성 접근 방식
-    var state = $(this).is(":checked") ? 1 : 0;
 
-    console.log("basketId: ", basketId); // 디버깅을 위한 로그
-    console.log("state: ", state);       // 디버깅을 위한 로그
-
-    // AJAX 요청으로 상태 업데이트
-    $.ajax({
-        url: "/Pay/UpdateState",
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ basketId: basketId, state: state }),
-        success: function(response) {
-            console.log("State updated successfully");
-        },
-        error: function(error) {
-            console.error("Error updating state", error);
-        }
+    // 상품 체크 상태 변경 기능
+    $(".checkbox__goods").change(function() {
+        var basketId = $(this).data("basket-id");
+        var prodtotalPrice = parseFloat($(this).data("prodtotal-price"));
+        var isChecked = $(this).is(":checked");
+        
+        $.ajax({
+            url: "/Pay/UpdateState",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ basketId: basketId, state: isChecked ? 1 : 0 }),
+            success: function(response) {
+                console.log("State updated successfully");
+                updateTotalPrice(prodtotalPrice, isChecked);
+            },
+            error: function(error) {
+                console.error("Error updating state", error);
+            }
+        });
     });
+
+    function updateTotalPrice(prodtotalPrice, isChecked) {
+        var $totalPriceElement = $('.list__detail-price .price');
+        var $totalPaymentElement = $('.list__total-price .price');
+        var currentTotalPrice = parseFloat($totalPriceElement.attr('data-price').replace(/,/g, ''));
+        
+        if (isChecked) {
+            currentTotalPrice += prodtotalPrice;
+        } else {
+            currentTotalPrice -= prodtotalPrice;
+        }
+        
+        $totalPriceElement.attr('data-price', currentTotalPrice);
+        $totalPaymentElement.attr('data-price', currentTotalPrice);
+
+        $totalPriceElement.text(currentTotalPrice.toLocaleString('ko-KR') + '원');
+        $totalPaymentElement.text(currentTotalPrice.toLocaleString('ko-KR') + '원');
+    }
 });
 </script>
 <script>
