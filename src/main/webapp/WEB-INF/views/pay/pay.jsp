@@ -317,22 +317,6 @@ input[type="button"]:hover {
 							</div>
 						</div>
 					</section>
-					<section class="section__checkout-info section__paycase-info">
-						<div class="box__card box__paycase-info">
-							<div class="box__inner">
-								<div class="text__title">결제수단</div>
-								<div class="box__info box__payment-wrap">
-									<!-- 주문서 영역 -->
-									<div class="wrapper">
-										<div class="box_section"
-											style="padding: 40px 30px 50px 30px; margin-top: 30px; margin-bottom: 50px;">
-
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</section>
 				</div>
 				<div class="section__right">
 					<div class="section__right-inner">
