@@ -1,19 +1,18 @@
 package com.vita.detail.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vita.detail.domain.ProductVo;
+import com.vita.controller.GetUserIdService;
 import com.vita.detail.mapper.DetailMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -22,16 +21,24 @@ public class DetailApiController {
 	 @Autowired
 	 private DetailMapper detailMapper;
 	 
+	 @Autowired
+	 private GetUserIdService getUserIdService;
+	 
 		@PostMapping("/cart")
 		public Map<String,Object> cart(
-				@RequestBody HashMap<String, Object> map
+										@RequestBody HashMap<String, Object> map,
+										HttpServletRequest request
 				){
 
 			int count = Integer.parseInt(String.valueOf(map.get("count")));
 			int price = Integer.parseInt(String.valueOf(map.get("price")));
 			
+			Long id = getUserIdService.getId(request);
+			map.put("id", id);
+			
 		    // 장바구니에 상품이 존재?
 		    int being = detailMapper.incart(map);
+		    System.out.println("being :"+being);
 		 	    
 		    // 장바구니의 상품의 재고 수량 확인
 		    int stockCount = detailMapper.getProductStock(map);
@@ -46,7 +53,7 @@ public class DetailApiController {
 		            map.put("status", "new");
 		            map.put("message", "상품을 장바구니에 담았습니다.");
 		        }
-		    } else {
+		    } else if(being >= 1){
 		        // 2.장바구니에 있는 상품일 경우
 		    	
 		        //   기존 장바구니 수량 가져오기
@@ -78,42 +85,24 @@ public class DetailApiController {
 		}
 		
 		@PostMapping("/buy")
-		public Map<String,Object> buy(
-				@RequestBody HashMap<String, Object> map
-				){			
+		public Map<String,Object> buy( @RequestBody HashMap<String, Object> map
+										,HttpServletRequest request
+										){	
+			Long id = getUserIdService.getId(request);
+			map.put("id", id);
+			
 			detailMapper.buy(map);			
 			return map;
 		}
 		
-//		@PostMapping("/LikeReview")
-//		public Map<String,String> likeReview( @RequestParam("rev_id") int rev_id,
-//											  @RequestBody Map<String, Object> payload,
-//											  ReviewVo reviewVo) {
-////	        int id = (int) payload.get("id");
-//			int id = 1;
-//	        Map<String, Integer> params = new HashMap<>();
-//	        params.put("rev_id", rev_id);
-//	        params.put("id", id);
-//	
-//	        int likeStatus = detailMapper.getLikeStatus(params);
-//	
-//	        Map<String, String> response = new HashMap<>();
-//	        if (likeStatus > 0) {
-//	            // 좋아요가 이미 있는 경우, 좋아요 삭제
-//	            detailMapper.removeLike(params);
-//	            response.put("status", "removed");
-//	        } else if(likeStatus == 0) {
-//	            // 좋아요가 없는 경우, 좋아요 추가
-//	            detailMapper.addLike(params);
-//	            response.put("status", "added");
-//	        }
-//	
-//	        return response;
-//	    }
-		
 		@RequestMapping("/checkWishlist")
-		public Map<String, Object> checkWishlist(@RequestBody HashMap<String, Object> map,Model model) {
+		public Map<String, Object> checkWishlist(@RequestBody HashMap<String, Object> map
+												,HttpServletRequest request
+												) {
 			
+			Long id = getUserIdService.getId(request);
+			map.put("id", id);
+
 		    int pro_id = Integer.parseInt(String.valueOf(map.get("pro_id")));
 		    int wish = detailMapper.getWish(map);
 		    map.put("pro_id",pro_id);
@@ -128,8 +117,10 @@ public class DetailApiController {
 		
 
 	    @RequestMapping("/addWishlist")
-	    public Map<String,Object> addWishlist(@RequestBody HashMap<String, Object> map) {
-			int id = 1;
+	    public Map<String,Object> addWishlist(@RequestBody HashMap<String, Object> map
+	    									,HttpServletRequest request) {
+	    	
+	    	Long id = getUserIdService.getId(request);
 			map.put("id",id);
 			int pro_id = Integer.parseInt(String.valueOf(map.get("pro_id")));
 			map.put("pro_id",pro_id);
@@ -150,6 +141,72 @@ public class DetailApiController {
 			}
 			return map;
 		}
+	    
+	    @RequestMapping("/checkThumb")
+	    public  Map<String,Object> checkthumb( @RequestBody HashMap<String,Object> map
+	    									  ,HttpServletRequest request
+	    									  ){
+	    	Long id = getUserIdService.getId(request);
+	    	map.put("id", id);
+	    	int rev_id = Integer.parseInt(String.valueOf(map.get("rev_id")));
+	    	map.put("rev_id", rev_id);
+	    		    	
+	    	// 추천 개수
+	    	int thumb = detailMapper.thumb(rev_id); 
+	    	map.put("thumb", thumb);
+	    	
+	    	int status = detailMapper.status(map);
+	    	if(status > 0) {
+	    		map.put("state", "liked");
+	    	} else if(status == 0) {
+	    		map.put("state", "not");
+	    	}
+	    	
+	    	return map;
+	    }
+	    
+	    @RequestMapping("/thumb")
+	    public Map<String,Object> thumb( @RequestBody HashMap<String,Object> map,
+	    								 HttpServletRequest request
+	    								){
+	    	
+	    	Long id = getUserIdService.getId(request);
+	    	map.put("id", id);
+	    	int rev_id = Integer.parseInt(String.valueOf(map.get("rev_id")));
+	    	map.put("rev_id", rev_id);
+
+	    	
+	    	// 추천 상태
+	    	int status = detailMapper.status(map);	  
+
+	    	
+	    	if(status == 0) {
+	    		detailMapper.addThumb(map);
+	    		map.put("current", "added");
+	    	} else if(status > 0) {
+	    		detailMapper.removeThumb(map);
+	    		map.put("current", "removed");
+	    	}
+
+	        int thumb = detailMapper.thumb(rev_id); 
+	        map.put("thumb", thumb);
+	    	
+	    	return map;
+	    }
+	    
+	    // 리뷰 신고
+	    @PostMapping("/notify")
+	    public Map<String, Object> notify(@RequestBody HashMap<String,Object> map
+	    								  ,HttpServletRequest request ){
+	    	Long id = getUserIdService.getId(request);
+	    	map.put("id", id);
+	    	int rev_id = Integer.parseInt(String.valueOf(map.get("rev_id")));
+	    	map.put("rev_id", rev_id);
+	    	
+	    	detailMapper.notify(map);	
+	    	
+	    	return map;
+	    }
 	  
 		// 리뷰 페이징
 //		@RequestMapping("/Detail/Reviews")
@@ -189,5 +246,64 @@ public class DetailApiController {
 //		    return ResponseEntity.ok(response);
 //		}
 	    
+		// Q&A 팝업
+		@PostMapping("/qnaSubmit")
+		public Map<String, Object> qna(@RequestBody HashMap<String,Object> map
+										,HttpServletRequest request ){
+			
+			Long id = getUserIdService.getId(request);
+	    	map.put("id", id);
+	    	int pro_id = Integer.parseInt(String.valueOf(map.get("pro_id")));
+	    	map.put("pro_id", pro_id);
+	    	
+	    	detailMapper.qnaSubmit(map);
+	    	
+	    	return map;
+		}
+		
+		// QnA 삭제
+		@RequestMapping("/deleteQnA")
+		public Map<String, Object> deleteQnA(@RequestBody HashMap<String,Object> map
+				,HttpServletRequest request ){
+			
+			Long id = getUserIdService.getId(request);
+			map.put("id", id);
+			
+			int qna_id = Integer.parseInt(String.valueOf(map.get("qna_id")));
+			map.put("qna_id", qna_id);
+			
+			detailMapper.deleteQ(map);
+			
+			return map;
+		}
+		
+		
+		// QnA 수정
+		@RequestMapping("/modifyQnA")
+		public Map<String, Object> modifyQnA(
+							@RequestBody HashMap<String,Object> map
+							,HttpServletRequest request ){
+			
+			Long id = getUserIdService.getId(request);
+			map.put("id", id);
+			
+			int qna_id = Integer.parseInt(String.valueOf(map.get("qna_id")));
+			map.put("qna_id", qna_id);
+			detailMapper.modifyQ(map);
+			
+			return map;
+		}
+		
+		
+		
+		// 장바구니 인기아이템 10개
+//		@RequestMapping("/items")
+//		public Map<String,Object> items( @RequestBody HashMap<String,Object> map ){
+//			
+//			List<ProductVo> items = detailMapper.getItems();
+//			
+//			return map;
+//			
+//		}
 
 }

@@ -14,7 +14,7 @@ public class ReviewVo {
 	private int pro_id;
 	private String content;
 	private String created;
-	private String rating;
+	private int rating;
 	private String img;
 	
 	// 좋아요
@@ -32,5 +32,15 @@ public class ReviewVo {
 	
 	// 막대바 확률
 	private int ratio;
+	
+	// 리뷰 신고
+	private int noti_id;
+	private int noti_type;
+	private String noti_reason;
+	private String noti_date;
+	private int status;
+	private String resolution_date;
+	private String resolver_id;
+	private String notes;
 
 }

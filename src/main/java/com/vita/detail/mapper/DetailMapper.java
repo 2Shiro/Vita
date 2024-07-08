@@ -4,17 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
-import com.vita.detail.domain.FaqVo;
 import com.vita.detail.domain.ProductVo;
 import com.vita.detail.domain.ReviewVo;
 @Mapper
 public interface DetailMapper {
 	
 	ProductVo getProductDetail(int pro_id);
-
-	List<FaqVo> getFaqList();
 
 	int getReviewCount(int pro_id);
 
@@ -25,9 +21,6 @@ public interface DetailMapper {
 	int star5(int pro_id);
 
 	Double getAvgStar(int pro_id);
-	
-	List<ReviewVo> getReviewList(@Param("pro_id") int pro_id, @Param("offset") int offset,
-								@Param("pageSize") int pageSize);
 
 	int one(int pro_id);
 	int two(int pro_id);
@@ -63,14 +56,87 @@ public interface DetailMapper {
 	// 바로 구매
 	void buy(HashMap<String, Object> map);
 	
-	// 좋아요
-//	int getLikeStatus(Map<String, Integer> params);
-//
-//	void removeLike(Map<String, Integer> params);
-//
-//	void addLike(Map<String, Integer> params);
-//
-//	int countLikes(int rev_id);
+	// 리뷰 추천
+	int status(HashMap<String, Object> map);
 
+	int thumb(int rev_id);
+
+	void addThumb(HashMap<String, Object> map);
+
+	void removeThumb(HashMap<String, Object> map);
 	
+	// 리뷰 신고
+	void notify(HashMap<String, Object> map);
+	
+	// 상품 질문
+	void qnaSubmit(HashMap<String, Object> map);
+
+	List<ProductVo> getQnaList(int pro_id);
+
+	List<ProductVo> withoutSecret(int pro_id);
+
+	List<ProductVo> getSellerInfo(int pro_id);
+
+	List<ProductVo> getItems();
+
+	List<ProductVo> getpopList();
+
+	void deleteQ(HashMap<String, Object> map);
+
+	void modifyQ(HashMap<String, Object> map);
+
+	List<ProductVo> getSearchList(String keyword, int pro_id);
+
+	int countQna(int pro_id);
+
+	List<ProductVo> getQnaListPaging(int offset, int pageSize, int pro_id);
+
+	List<ProductVo> getQnaListPagingSearch(int offset, int pageSize, String keyword, int pro_id, Long id);
+
+//	List<ProductVo> getQnaListPagingSearch(int offset, String keyword, int pageSize, int pro_id);
+	
+	// 리뷰페이지
+	List<ReviewVo> getReviewList(int pro_id);
+
+	List<ReviewVo> getSearchReviewList(int pro_id, String keyword);
+
+	int countReviewList(List<ReviewVo> reviewList);
+
+	List<ReviewVo> getReListPaging(int pro_id, int offset, int pageSize);
+
+	List<ReviewVo> getReListPagingSearch(int pro_id, String keyword, int offset, int pageSize);
+
+	int getSearchReviewCount(int pro_id, String keyword);
+
+	ReviewVo getBestReview(int pro_id);
+
+	List<ReviewVo> bestReviewList(int pro_id);
+
+	List<ProductVo> getQnaList5(int pro_id);
+
+	List<ReviewVo> getReviewListByRatings(int pro_id, int rating);
+
+	int getReviewCountByRatings(int pro_id, int rating);
+
+	List<ReviewVo> getReListPagingByRatings(int pro_id, int rating, int offset, int pageSize);
+
+	List<ProductVo> getQnaListSorted(int pro_id, int q_type);
+
+	List<ProductVo> getSearchListSorted(String keyword, int pro_id, int q_type);
+
+	int countQnaSorted(int pro_id, int q_type);
+
+	int countQnaSS(String keyword, int pro_id, int q_type);
+
+	List<ProductVo> getQnaListPagingSorted(int offset, int pageSize, int pro_id, int q_type);
+
+	List<ProductVo> getQnaListPagingSearchSorted(int offset, int pageSize, String keyword, int pro_id, Long id,
+			int q_type);
+
+	int getSearchReviewCountByRatings(int pro_id, String keyword, int rating);
+
+	List<ReviewVo> getReListPagingSearchByRatings(int pro_id, String keyword, int offset, int pageSize, int rating);
+
+	List<ReviewVo> getSearchReviewListByRatings(int pro_id, String keyword, int rating);
+
 }
