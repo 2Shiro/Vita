@@ -175,7 +175,7 @@ public class PdsController {
         System.out.println("pageSize" + pageSize);
         params.put("id", id);
         
-        List<PostListVo> list = pdsService.PostMyList(params);
+        List<PostListVo> list = pdsService.PostMyList(params); 
         
       
         
