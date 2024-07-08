@@ -699,7 +699,7 @@ td>img {
 	        .then(response => {
 	            if (response.ok) {
 	                alert("질문 등록이 완료되었습니다.");
-	                window.close();
+	                imagePopup('close');
 	            } else {
 	                alert("질문 등록에 실패했습니다.");
 	            }

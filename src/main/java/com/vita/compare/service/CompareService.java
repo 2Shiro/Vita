@@ -60,6 +60,14 @@ public class CompareService {
 		  List<CompareNutrientDto> nutrients = compareMapper.findCompareNutrients(productId1, productId2);
 		return nutrients;
 	}
+
+	public List<AllProductsDto> findRecentItems(List<Long> proIdList) {
+		System.out.println("값이 넘어왓나?");
+		System.out.println(proIdList);
+		List<AllProductsDto> items = compareMapper.findRecentItems(proIdList);
+		System.out.println(items);
+		return items;
+	}
 	
 	
 

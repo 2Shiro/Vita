@@ -19,8 +19,11 @@ public interface PdsService {
 	  List<CommentsVo> findPageingComments(HashMap<String, Object> params);
 	
 	  int findAllPost();
+	  
+	  int findAllMyPost(Long id);
 
 	  List<PostListVo> PostList(HashMap<String, Object> params);
+	  List<PostListVo> PostMyList(HashMap<String, Object> params);
 	
 	  void saveComment(CommentsVo commentsVo);
 
@@ -35,5 +38,19 @@ public interface PdsService {
 	void addPostReport(Map<String, Object> params);
 
 	void addHit(HashMap<String, Object> hitMap);
+
+	List<PostListVo> PostPopulList(HashMap<String, Object> params);
+
+	List<PostListVo> PostLikeList(HashMap<String, Object> params);
+
+	List<PostListVo> PostReviewList(HashMap<String, Object> params);
+
+	void updatePost(HashMap<String, Object> map);
+
+	void deletePost(Long post_id);
+
+	
+
+	
 
 }

@@ -423,11 +423,45 @@
     document.body.addEventListener('click', function(event) {
         if (event.target.classList.contains('cart-button')) {
             event.preventDefault();
-            overlay.classList.add('show');
             
-            setTimeout(() => {
-                modal.classList.add('show');
-            }, 10); // 10ms 딜레이를 줘서 트랜지션이 잘 작동하도록 함
+            // 상품 정보를 가져오기 위해 DOM 요소로부터 데이터를 추출합니다.
+            const productElement = event.target.closest('.product');
+            const proId = productElement.dataset.proid;
+            const price = parseInt(productElement.querySelector('.product-price .price').dataset.productPrice, 10);
+            const count = 1;
+            
+            console.log("proId" +proId);
+            console.log("price" +price);
+            console.log("count" +count);
+            // Fetch API를 사용하여 서버로 데이터 전송
+            fetch('/Basket/Api/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ pro_id: proId, count: count, price: price })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('서버 응답:', data);
+                const basketVo = data.basketVo;
+                const combineList = data.combineList;
+                const similarList = data.similarList;
+                
+                // 모달 업데이트
+                updateModal(basketVo, combineList, similarList);
+             
+                // 응답 데이터를 사용하여 필요한 작업 수행
+                overlay.classList.add('show');
+                // 필요한 경우 모달을 추가로 표시
+                setTimeout(() => {
+                    modal.classList.add('show');
+                    initSwipers(); // 모달이 열릴 때 Swiper 초기화
+                }, 10);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
     });
 
@@ -464,24 +498,7 @@
         event.stopPropagation();
     });
 
-    // Swiper 초기화
-    var swiper1 = new Swiper('.swiper1', {
-        slidesPerView: 2,
-        spaceBetween: 10,
-        navigation: {
-            nextEl: '.swiper1 .custom-swiper-button-next',
-            prevEl: '.swiper1 .custom-swiper-button-prev',
-        },
-    });
-
-    var swiper2 = new Swiper('.swiper2', {
-        slidesPerView: 2,
-        spaceBetween: 10,
-        navigation: {
-            nextEl: '.swiper2 .custom-swiper-button-next',
-            prevEl: '.swiper2 .custom-swiper-button-prev',
-        },
-    });
+   
 	
 	 
 	 //---------모달 ---------------
@@ -687,7 +704,7 @@
              const nutrientStr = product.nutrient.map(nutrient => `<p class="type">#\${nutrient}</p>`).join('');
              const wishClass = product.wish_id ? 'wishlist on' : 'wishlist';
              const productHtml = `
-                 <a href="#" class="product" data-proId="\${product.pro_id}">
+                 <a href="/Detail?pro_id=\${product.pro_id}&nowpage=1" class="product" data-proId="\${product.pro_id}">
                      <div class="ranking_list">
                          <div class="ranking">\${index + 1}위</div>
                      </div>
@@ -699,6 +716,9 @@
                          <div class="review">
                              <span class="star-point">\${product.string_average_arting}</span>
                              <span class="txt3">(\${product.total_sell}개)</span>
+                         </div>
+                         <div class="product-price">
+                         	<span class="price" data-product-price="\${product.price}">\${product.string_price}원</span>
                          </div>
                          <div class="type_list">
                              \${nutrientStr}
@@ -714,6 +734,126 @@
          console.error('Error fetching products:', error);
      });
  }
+ 
+ /* 모달 업데이트 구문  */
+ function updateModal(basketVo, combineList, similarList) {
+    document.querySelector('.product-image img').src = `/img/\${basketVo.img}.jpg`;
+    document.querySelector('.product-name').innerText = basketVo.name;
+    document.querySelector('.subtotal-items strong font').innerText = ` (\${basketVo.total_items}개 항목)`;
+    document.querySelector('.subtotal-items font font').innerText = `(총 \${basketVo.total_count}개 상품)`;
+    document.querySelector('.subtotal-price font').innerText = `\${basketVo.string_total_price}원`;
+
+    // 무료 배송 여부 업데이트
+    const enoughDiv = document.querySelector('.enough');
+    const shortDiv = document.querySelector('.short');
+
+    if (basketVo.free) {
+        // 무료 배송 가능
+        enoughDiv.style.display = 'flex';
+        shortDiv.style.display = 'none';
+    } else {
+        // 무료 배송 불가능
+        const freeShippingMessage = shortDiv.querySelector('.free-shipping b font font');
+        freeShippingMessage.innerText = `\${basketVo.string_free_delivery}원 부족합니다`;
+        shortDiv.style.display = 'flex';
+        enoughDiv.style.display = 'none';
+    }
+    // Progress bar 업데이트
+    const progressBarForeground = document.querySelector('.progress-bar-foreground');
+    const progressPercentage = (basketVo.total_price / basketVo.free_delivery) * 100;
+    progressBarForeground.style.width = `\${progressPercentage}%`;
+
+    // 함께 많이 주문하는 조합 업데이트
+    const combineListContainer = document.querySelector('.swiper1 .swiper-wrapper');
+    combineListContainer.innerHTML = '';
+    combineList.forEach(item => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        slide.innerHTML = `
+            <div class="product-item">
+                <img src="/img/\${item.img}.jpg" alt="\${item.name}">
+                <div class="product-name">\${item.name}</div>
+                <div class="item-star">
+	           		<input type ="hidden" class ="recoAvg" data-rev-rating="\${item.average_rating}">
+	                <div id="recostars" class="recoContainer">
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                </div>
+	            </div>
+                <div class="product-price">\${item.string_price}원</div>
+            </div>
+        `;
+        combineListContainer.appendChild(slide);
+    });
+
+    // 다른 고객이 함께 본 상품 업데이트
+    const similarListContainer = document.querySelector('.swiper2 .swiper-wrapper');
+    similarListContainer.innerHTML = '';
+    similarList.forEach(item => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        slide.innerHTML = `
+            <div class="product-item">
+                <img src="/img/\${item.img}.jpg" alt="\${item.name}">
+                <div class="product-name">\${item.name}</div>
+                <div class="item-star">
+               		<input type ="hidden" class ="recoAvg" data-rev-rating="\${item.average_rating}">
+	                <div id="recostars" class="recoContainer">
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                    <div class="recoStar"></div>
+	                </div>
+                </div>
+                <div class="product-price">\${item.string_price}원</div>
+            </div>
+        `;
+        similarListContainer.appendChild(slide);
+    });
+
+    // 별점 업데이트
+    document.querySelectorAll('.recoAvg').forEach(starScoreElement => {
+    	console.log("별점콘솔찎히나?");
+        const avgstar = parseFloat(starScoreElement.getAttribute('data-rev-rating'));
+        console.log(avgstar);
+        const fullStars = Math.floor(avgstar);
+        const partialStar = avgstar - fullStars;
+        const percentage = Math.round(partialStar * 100);
+
+        const stars = starScoreElement.nextElementSibling.querySelectorAll('.recoStar');
+        stars.forEach((recoStar, index) => {
+            if (index < fullStars) {
+                recoStar.classList.add('full');
+            } else if (index === fullStars) {
+                recoStar.innerHTML = '<div class="fill" style="width: ' + percentage + '%;"></div>';
+            }
+        });
+    });
+}
+ function initSwipers() {
+	    // Swiper 초기화
+	    var swiper1 = new Swiper('.swiper1', {
+	        slidesPerView: 2,
+	        spaceBetween: 10,
+	        navigation: {
+	            nextEl: '.swiper1 .custom-swiper-button-next',
+	            prevEl: '.swiper1 .custom-swiper-button-prev',
+	        },
+	    });
+
+	    var swiper2 = new Swiper('.swiper2', {
+	        slidesPerView: 2,
+	        spaceBetween: 10,
+	        navigation: {
+	            nextEl: '.swiper2 .custom-swiper-button-next',
+	            prevEl: '.swiper2 .custom-swiper-button-prev',
+	        },
+	    });
+	}
  </script>
  
 </body>

@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
  <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -271,6 +273,60 @@
 .ben_detail  ul li:last-child {
 	padding-bottom: 10px
 }
+.scrapList li:first-child {
+    border-top: 1px solid #e6eaf1;
+}
+ .scrapList li .item {
+    display: block;
+    padding: 13px 10px 12px;
+    background-color: #fff;
+}
+ .scrapList li .info {
+    display: block;
+    height: 25px;
+    line-height: 14px;
+}
+.scrapList li .info .day.today {
+    color: #fff;
+    background-color: #ffa257;
+    padding: 0 2px;
+}
+.scrapList li .info .day {
+    font-size: 11px;
+    letter-spacing: 0px;
+    color: #666;
+}
+.scrapList li .co {
+    font-weight: bold;
+    margin-top: 4px;
+}
+.scrapList li .co, .scrapList li .tx {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    letter-spacing: 0px;
+    color: #333;
+    padding-bottom: 1px;
+}
+.post_update{
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	gap: 4px;
+}
+.post_update a{
+ 	display: flex;
+ 	justify-content: center;
+   align-content: center;
+   padding: 4px 8px;
+   border: 1px solid black;
+   box-sizing: border-box;
+   
+   
+} 
 </style>
 </head>
 <body>
@@ -290,26 +346,22 @@
               <p>wodud6967@naver.com</p>
             </a>
             <p class="left_textleft">
-              <a href="#">나의 글 0</a>
+              <a href="#">나의 글 ${myPostCount}</a>
               <a href="#">답변 0</a>
             </p>
           </li>
+         
+         
           <p class="line"></p>
-          <li>
-            <h4>북마크</h4>
+          
+            <h4>최근 본 내용</h4>
             <ul>
-              <li><a href="#">나우푸드 비타민B</a></li>
-              <li><a href="#">21st detsqy 비타민A</a></li>
+              <c:forEach var="item" items="${hitList}">	
+                <li><a href="#">${item.title}</a></li>
+              
+             </c:forEach>
             </ul>
-          </li>
-          <p class="line"></p>
-          <li>
-            <h4>최근 검색내용</h4>
-            <ul>
-              <li><a href="#">종합비타민</a></li>
-              <li><a href="#">밀크씨슬</a></li>
-            </ul>
-          </li>
+         
         </ul>
       </div>
       <div class="main-content">
@@ -336,6 +388,14 @@
             <span>${postVo.like_count}</span>
             <button>싫어요</button>
           </div>
+          
+          
+          <div class="post_update">
+                <a href="/Pds/Update?post_id=${postVo.post_id}" class="updateButton" data-post-id="${postVo.id }">수정하기</a>
+                <a href="/Pds/Delete?post_id=${postVo.post_id}" class="updateButton" data-post-id="${postVo.id }">삭제하기</a>
+           </div>
+            
+            
           <div class="ben">
             <button>목록으로</button>
             <button id="benBtn">신고하기</button>
@@ -395,18 +455,40 @@
         </div>
       </div>
       <div class="right-sidebar">
-        <h2>내가 본 상품</h2>
-        <ul>
-          <li>상품 1</li>
-          <li>상품 2</li>
-          <li>상품 3</li>
-        </ul>
-        <h2>내가 본 글</h2>
-        <ul>
-          <li>글 제목 1</li>
-          <li>글 제목 2</li>
-          <li>글 제목 3</li>
-        </ul>
+        <div id="side_area">
+		   <div id="sideScrap">
+		     <strong class="titTotal"><a href="#" class="link">추천 상품</a></strong>
+		     <ul class="scrapList">  
+		      <c:forEach var="item" items="${recommendList}">		           
+		          <li class="on">
+		             <a href="#" class="item">
+		               <span class="info">              
+		                     <em class="day today">${item.name }</em>         
+		               </span>
+		               <span class="co">
+		                 <img src="/img/${item.img}.jpg" >
+		               </span>
+		             </a>
+		           </li>   
+		         </c:forEach>  	
+		     </ul>
+		     <strong class="titTotal"><a href="#" class="link">장바구니 상품</a></strong>
+		     <ul class="scrapList">  
+		      <c:forEach var="item" items="${basketList}">		           
+		          <li class="on">
+		             <a href="#" class="item">
+		               <span class="info">              
+		                     <em class="day today">${item.name }</em>         
+		               </span>
+		               <span class="co">
+		                 <img src="/img/${item.img}.jpg" >
+		               </span>
+		             </a>
+		           </li>   
+		         </c:forEach>  	
+		     </ul>
+		   </div><!-- sideScrap -->   
+		 </div>
       </div>
      
      
@@ -423,7 +505,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     let postId = ${post_id};
     let totalPageCount = 1; // 초기 페이지 수 설정, 실제 값으로 업데이트 필요
-
+    console.log("없데이트 되나?");
+    /*  업데이트 로직 */
+   
+        
+   
+    /* -------------------------------- */
     // 페이지 링크 클릭 이벤트 위임
     document.querySelector('.pagination').addEventListener('click', function(event) {
         if (event.target.classList.contains('page-link')) {

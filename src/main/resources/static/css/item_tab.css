@@ -464,7 +464,30 @@ button{
     padding: 0;
 
   }
-
+  .product .product_util .product-price{
+   margin-bottom: 5px;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 34px;
+    line-height: 34px;
+    overflow: hidden;
+    padding-left: 4px;
+  }
+  .product .product_util .product-price .price{
+  	font-weight: 700;
+    color: #101219;
+    display: block !important;
+    font-size: 18px;
+    text-align: left;
+    line-height: 27px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
   @media (max-width: 1200px) {
     .product {
       width: calc(33.33% - 20px);

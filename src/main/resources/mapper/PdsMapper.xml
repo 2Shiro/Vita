@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vita.pds.mapper.PdsMapper">  
+  	<delete id="deletedPost">
+  	   DELETE FROM post
+              WHERE
+                post_id = #{post_id}
+  	</delete>
   
     <insert id="SavePost">
     INSERT INTO post (
@@ -20,6 +25,15 @@
 )
     
     </insert>
+    <update id="updatePost">
+     UPDATE post
+    SET title = #{title},
+        content = #{content},
+        created = SYSDATE
+    WHERE post_id = #{post_id}
+    </update>
+    
+    
    <select id="FindPostId">
    SELECT
     P.post_id,
@@ -80,10 +94,73 @@ WHERE
    	SELECT COUNT(*) AS total_count
       FROM post
    
-   
-   
+    
    </select>
+   
+   <select id="FindListMyPost">
+   SELECT COUNT(*) AS total_count
+      FROM post
+      WHERE post.id =#{id}
+   </select>
+   
+   
+   
    <select id="FindAllPostList">
+    WITH HitCount AS (
+    SELECT post_id, COUNT(hit_id) AS hit_count
+    FROM HIT
+    GROUP BY post_id
+	),
+	LikeCount AS (
+	    SELECT post_id, COUNT(like_id) AS like_count
+	    FROM POSTLIKE
+	    GROUP BY post_id
+	),
+	CommentCount AS (
+	    SELECT post_id, COUNT(COMME_ID) AS comment_count
+	    FROM COMMENTS
+	    GROUP BY post_id
+	),
+	Read AS (
+	    SELECT post_id, MAX(read) AS read
+	    FROM hit
+	    WHERE id = #{id}
+	    GROUP BY post_id
+	),
+	BookmarkCount AS (
+	    SELECT post_id, COUNT(book_id) AS bookmark_count
+	    FROM bookmark
+	    GROUP BY post_id
+	)
+	SELECT
+	    P.post_id,
+	    P.id AS id,
+	    U.name,
+	    P.ptype_id,
+	    P.title,
+	    P.content,
+	    P.state,
+	    P.created,
+	    COALESCE(H.hit_count, 0) AS hit_count,
+	    COALESCE(PL.like_count, 0) AS like_count,
+	    COALESCE(C.comment_count, 0) AS comment_count,
+	    COALESCE(IR.read, 0) AS read,
+	    COALESCE(B.bookmark_count, 0) AS bookmark_count
+	FROM
+	    post P
+	JOIN
+	    USERS U ON P.id = U.id
+	LEFT JOIN HitCount H ON P.post_id = H.post_id
+	LEFT JOIN LikeCount PL ON P.post_id = PL.post_id
+	LEFT JOIN CommentCount C ON P.post_id = C.post_id
+	LEFT JOIN Read IR ON P.post_id = IR.post_id
+	LEFT JOIN BookmarkCount B ON P.post_id = B.post_id
+	ORDER BY P.post_id DESC
+	OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+   
+
+   </select>
+   <select id="FindAllMyPostList">
    WITH HitCount AS (
     SELECT post_id, COUNT(hit_id) AS hit_count
     FROM HIT
@@ -104,6 +181,11 @@ WHERE
 	    FROM hit
 	    WHERE id = #{id}
 	    GROUP BY post_id
+	),
+	BookmarkCount AS (
+	    SELECT post_id, COUNT(book_id) AS bookmark_count
+	    FROM bookmark
+	    GROUP BY post_id
 	)
 	SELECT
 	    P.post_id,
@@ -117,7 +199,8 @@ WHERE
 	    COALESCE(H.hit_count, 0) AS hit_count,
 	    COALESCE(PL.like_count, 0) AS like_count,
 	    COALESCE(C.comment_count, 0) AS comment_count,
-	    COALESCE(IR.read, 0) AS read
+	    COALESCE(IR.read, 0) AS read,
+	    COALESCE(B.bookmark_count, 0) AS bookmark_count
 	FROM
 	    post P
 	JOIN
@@ -126,11 +209,176 @@ WHERE
 	LEFT JOIN LikeCount PL ON P.post_id = PL.post_id
 	LEFT JOIN CommentCount C ON P.post_id = C.post_id
 	LEFT JOIN Read IR ON P.post_id = IR.post_id
+	LEFT JOIN BookmarkCount B ON P.post_id = B.post_id
+	WHERE
+	    P.id = #{id}
+	ORDER BY
+	    P.post_id DESC
 	OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+   </select>
    
    
    
    
+   
+   <select id="FindPopulList">
+   WITH HitCount AS (
+    SELECT post_id, COUNT(hit_id) AS hit_count
+    FROM HIT
+    GROUP BY post_id
+	),
+	LikeCount AS (
+	    SELECT post_id, COUNT(like_id) AS like_count
+	    FROM POSTLIKE
+	    GROUP BY post_id
+	),
+	CommentCount AS (
+	    SELECT post_id, COUNT(COMME_ID) AS comment_count
+	    FROM COMMENTS
+	    GROUP BY post_id
+	),
+	Read AS (
+	    SELECT post_id, MAX(read) AS read
+	    FROM hit
+	    WHERE id = #{id}
+	    GROUP BY post_id
+	),
+	BookmarkCount AS (
+	    SELECT post_id, COUNT(book_id) AS bookmark_count
+	    FROM bookmark
+	    GROUP BY post_id
+	)
+	SELECT
+	    P.post_id,
+	    P.id AS id,
+	    U.name,
+	    P.ptype_id,
+	    P.title,
+	    P.content,
+	    P.state,
+	    P.created,
+	    COALESCE(H.hit_count, 0) AS hit_count,
+	    COALESCE(PL.like_count, 0) AS like_count,
+	    COALESCE(C.comment_count, 0) AS comment_count,
+	    COALESCE(IR.read, 0) AS read,
+	    COALESCE(B.bookmark_count, 0) AS bookmark_count
+	FROM
+	    post P
+	JOIN
+	    USERS U ON P.id = U.id
+	LEFT JOIN HitCount H ON P.post_id = H.post_id
+	LEFT JOIN LikeCount PL ON P.post_id = PL.post_id
+	LEFT JOIN CommentCount C ON P.post_id = C.post_id
+	LEFT JOIN Read IR ON P.post_id = IR.post_id
+	LEFT JOIN BookmarkCount B ON P.post_id = B.post_id
+	ORDER BY CASE WHEN hit_count = 0 THEN 1 ELSE 0 END, hit_count DESC, P.post_id DESC
+	OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+   </select>
+   <select id="FindPostLikeList">
+    WITH HitCount AS (
+    SELECT post_id, COUNT(hit_id) AS hit_count
+    FROM HIT
+    GROUP BY post_id
+	),
+	LikeCount AS (
+	    SELECT post_id, COUNT(like_id) AS like_count
+	    FROM POSTLIKE
+	    GROUP BY post_id
+	),
+	CommentCount AS (
+	    SELECT post_id, COUNT(COMME_ID) AS comment_count
+	    FROM COMMENTS
+	    GROUP BY post_id
+	),
+	Read AS (
+	    SELECT post_id, MAX(read) AS read
+	    FROM hit
+	    WHERE id = #{id}
+	    GROUP BY post_id
+	),
+	BookmarkCount AS (
+	    SELECT post_id, COUNT(book_id) AS bookmark_count
+	    FROM bookmark
+	    GROUP BY post_id
+	)
+	SELECT
+	    P.post_id,
+	    P.id AS id,
+	    U.name,
+	    P.ptype_id,
+	    P.title,
+	    P.content,
+	    P.state,
+	    P.created,
+	    COALESCE(H.hit_count, 0) AS hit_count,
+	    COALESCE(PL.like_count, 0) AS like_count,
+	    COALESCE(C.comment_count, 0) AS comment_count,
+	    COALESCE(IR.read, 0) AS read,
+	    COALESCE(B.bookmark_count, 0) AS bookmark_count
+	FROM
+	    post P
+	JOIN
+	    USERS U ON P.id = U.id
+	LEFT JOIN HitCount H ON P.post_id = H.post_id
+	LEFT JOIN LikeCount PL ON P.post_id = PL.post_id
+	LEFT JOIN CommentCount C ON P.post_id = C.post_id
+	LEFT JOIN Read IR ON P.post_id = IR.post_id
+	LEFT JOIN BookmarkCount B ON P.post_id = B.post_id
+	ORDER BY CASE WHEN like_count = 0 THEN 1 ELSE 0 END, like_count DESC, P.post_id DESC
+	OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
+   </select>
+   <select id="PostReviewList">
+   WITH HitCount AS (
+    SELECT post_id, COUNT(hit_id) AS hit_count
+    FROM HIT
+    GROUP BY post_id
+	),
+	LikeCount AS (
+	    SELECT post_id, COUNT(like_id) AS like_count
+	    FROM POSTLIKE
+	    GROUP BY post_id
+	),
+	CommentCount AS (
+	    SELECT post_id, COUNT(COMME_ID) AS comment_count
+	    FROM COMMENTS
+	    GROUP BY post_id
+	),
+	Read AS (
+	    SELECT post_id, MAX(read) AS read
+	    FROM hit
+	    WHERE id = #{id}
+	    GROUP BY post_id
+	),
+	BookmarkCount AS (
+	    SELECT post_id, COUNT(book_id) AS bookmark_count
+	    FROM bookmark
+	    GROUP BY post_id
+	)
+	SELECT
+	    P.post_id,
+	    P.id AS id,
+	    U.name,
+	    P.ptype_id,
+	    P.title,
+	    P.content,
+	    P.state,
+	    P.created,
+	    COALESCE(H.hit_count, 0) AS hit_count,
+	    COALESCE(PL.like_count, 0) AS like_count,
+	    COALESCE(C.comment_count, 0) AS comment_count,
+	    COALESCE(IR.read, 0) AS read,
+	    COALESCE(B.bookmark_count, 0) AS bookmark_count
+	FROM
+	    post P
+	JOIN
+	    USERS U ON P.id = U.id
+	LEFT JOIN HitCount H ON P.post_id = H.post_id
+	LEFT JOIN LikeCount PL ON P.post_id = PL.post_id
+	LEFT JOIN CommentCount C ON P.post_id = C.post_id
+	LEFT JOIN Read IR ON P.post_id = IR.post_id
+	LEFT JOIN BookmarkCount B ON P.post_id = B.post_id
+	ORDER BY CASE WHEN comment_count = 0 THEN 1 ELSE 0 END, comment_count DESC, P.post_id DESC
+	OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
    </select>
    
    <insert id ="saveComment">
@@ -240,13 +488,13 @@ WHERE
    	INSERT INTO hit (
 	    hit_id,
 	    id,
-	    post_id
-	    
+	    post_id,
+	    read
 	) VALUES (
 	    (SELECT NVL(MAX(hit_id), 0) + 1 FROM hit),
 	    #{id},
-	    #{post_id}
-	    
+	    #{post_id},
+	    1
 	)
    
    </insert>

@@ -26,17 +26,32 @@ public class PdsServiceImpl implements PdsService{
 	@Autowired
 	private PdsMapper pdsMapper;
 
+	
+
+
+	@Override
+	public void deletePost(Long post_id) {
+		pdsMapper.deletedPost(post_id);
+		
+	}
+
+
 	@Override
 	public void savePost(HashMap<String, Object> map) {
 		System.out.println("savePost까지 왔나 ?");
 		System.out.println("savePost까지 왔나 ?");
 		
 		Long id = Long.parseLong(map.get("id").toString()); // 유저아이뒤
+		System.out.println("id" + id);
         String title = (String) map.get("title"); // 게시글 제목
+        System.out.println("title" + title);
         String content = (String) map.get("content");
+        System.out.println("content" + content);
         String tags = (String) map.get("tags");
+        System.out.println("tags" + tags);
         String updatedContent = saveBase64ImagesAndReplaceWithUrls(content);// 게시글 내용 변환 파일저장하고 변환값 가져옴
-		
+        System.out.println("updatedContent" + updatedContent);
+        
         String StringContent = updatedContent + ',' + tags;
         
 
@@ -51,9 +66,35 @@ public class PdsServiceImpl implements PdsService{
     
         pdsMapper.SavePost(postVo);
         System.out.println("파일저장 db저장 둘다 완료");
+        
 	}
 
 	
+	@Override
+	public void updatePost(HashMap<String, Object> map) {
+		Long id = Long.parseLong(map.get("id").toString()); // 유저 아이디
+	    Long postId = Long.parseLong(map.get("postId").toString()); // 게시글 아이디
+	    String title = (String) map.get("title"); // 게시글 제목
+	    String content = (String) map.get("content");
+	    String tags = (String) map.get("tags");
+	    String updatedContent = saveBase64ImagesAndReplaceWithUrls(content); // 게시글 내용 변환 파일 저장하고 변환 값 가져옴
+
+	    String StringContent = updatedContent + ',' + tags;
+
+	    System.out.println("updatedContent : " + updatedContent);
+
+	    PostVo postVo = new PostVo();
+	    postVo.setPost_id(postId); // 기존 게시글 아이디 설정
+	    postVo.setId(id);
+	    postVo.setTitle(title);
+	    postVo.setContent(StringContent);
+	    System.out.println("postVo : " + postVo);
+
+	    pdsMapper.updatePost(postVo); // 업데이트 메서드 호출
+	    System.out.println("파일 저장 DB 저장 둘 다 완료");		
+	}
+
+
 	private String saveBase64ImagesAndReplaceWithUrls(String content) {
         if (content == null) {
             return null;
@@ -137,6 +178,14 @@ public class PdsServiceImpl implements PdsService{
 		
 		return count;
 	}
+	
+
+
+	@Override
+	public int findAllMyPost(Long id) {
+		int  count = pdsMapper.FindListMyPost(id);
+		return count;
+	}
 
 
 	@Override
@@ -150,7 +199,53 @@ public class PdsServiceImpl implements PdsService{
         return list;
 		
 	}
+	
+	@Override
+	public List<PostListVo> PostMyList(HashMap<String, Object> params) {
+		List<PostListVo> list = pdsMapper.FindAllMyPostList(params);
+		
+		for (PostListVo post : list) {
+            post.splitContent();
+            System.out.println(post);
+        }
+        return list;
+	}
 
+
+	@Override
+	public List<PostListVo> PostPopulList(HashMap<String, Object> params) {
+		List<PostListVo> list = pdsMapper.FindPopulList(params);
+		
+		for (PostListVo post : list) {
+            post.splitContent();
+            System.out.println(post);
+        }
+        return list;
+	}
+
+
+	@Override
+	public List<PostListVo> PostLikeList(HashMap<String, Object> params) {
+        List<PostListVo> list = pdsMapper.FindPostLikeList(params);
+		
+		for (PostListVo post : list) {
+            post.splitContent();
+            System.out.println(post);
+        }
+        return list;
+	}
+
+
+	@Override
+	public List<PostListVo> PostReviewList(HashMap<String, Object> params) {
+        List<PostListVo> list = pdsMapper.PostReviewList(params);
+		
+		for (PostListVo post : list) {
+            post.splitContent();
+            System.out.println(post);
+        }
+        return list;
+	}
 
 	@Override
 	public void saveComment(CommentsVo commentsVo) {
@@ -218,6 +313,11 @@ public class PdsServiceImpl implements PdsService{
 		pdsMapper.addHit(hitMap);
 		
 	}
+
+
+	
+
+	
 	
 
 

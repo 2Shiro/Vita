@@ -82,7 +82,7 @@
      <div class="left-sidebar">
        <ul class="left_nav">
          <li class="nav_top">
-           <a href="/Pds/Write">질문 · 글쓰기</a>
+           <a href="#">질문 · 글쓰기</a>
          </li>
          <li id="my_container">
            <a href="#">
@@ -98,24 +98,23 @@
          <li>
            <h4>북마크</h4>
            <ul>
-           <c:forEach var="post" items="${response.list}"> 
-           	<c:choose>
+             <c:forEach var="post" items="${response.list}"> 
+           	     <c:choose>
 		                  <c:when test="${post.bookmark_count == true}">		                         
 		                         <li><a href="#">${post.title }</a></li>
 		                  </c:when>
 		                  <c:otherwise>				              
 		                          
 		                 </c:otherwise>
-		              </c:choose>
+		          </c:choose>
            </c:forEach>
-             
            </ul>
          </li>
          <p class="line"></p>
          <li>
            <h4>최근 본 내용</h4>
            <ul>
-           	<c:forEach var="item" items="${hitList}">	
+             <c:forEach var="item" items="${hitList}">	
                 <li><a href="#">${item.title}</a></li>
               
              </c:forEach>
@@ -125,8 +124,8 @@
      </div>
      <div class="main-content">
        <div class="tabs">
-         <button class="tablink active" onclick="openTab(event, 'entire-tab')">전체</button>
-         <button class="tablink" onclick="location.href='/Pds/List/MyList?nowpage=1'">나의 글</button>
+         <button class="tablink" onclick="location.href='/Pds/List?nowpage=1'">전체</button>
+         <button class="tablink active" onclick="openTab(event, 'my-tab')">나의 글</button>
          <button class="tablink" onclick="openTab(event, 'book-tab')">북마크</button>
        </div>
        <div class="headerWrap">
@@ -241,39 +240,29 @@
      </div>
      <div class="right-sidebar">
        <div id="side_area">
-		   <div id="sideScrap">
-		     <strong class="titTotal"><a href="#" class="link">추천 상품</a></strong>
-		     <ul class="scrapList">  
-		      <c:forEach var="item" items="${recommendList}">		           
-		          <li class="on">
-		             <a href="#" class="item">
-		               <span class="info">              
-		                     <em class="day today">${item.name }</em>         
-		               </span>
-		               <span class="co">
-		                 <img src="/img/${item.img}.jpg" >
-		               </span>
-		             </a>
-		           </li>   
-		         </c:forEach>  	
-		     </ul>
-		     <strong class="titTotal"><a href="#" class="link">장바구니 상품</a></strong>
-		     <ul class="scrapList">  
-		      <c:forEach var="item" items="${basketList}">		           
-		          <li class="on">
-		             <a href="#" class="item">
-		               <span class="info">              
-		                     <em class="day today">${item.name }</em>         
-		               </span>
-		               <span class="co">
-		                 <img src="/img/${item.img}.jpg" >
-		               </span>
-		             </a>
-		           </li>   
-		         </c:forEach>  	
-		     </ul>
-		   </div><!-- sideScrap -->   
-		 </div>
+   <div id="sideScrap">
+     <strong class="titTotal"><a href="#" class="link">스크랩 내용</a></strong>
+     <ul class="scrapList">  
+           <li class="on">
+             <a href="/Detail/Detail?po_id=11" class="item">
+               <span class="info">              
+                     <em class="day today">곧 마감</em>         
+               </span>
+               <span class="co">ddd</span>
+             </a>
+           </li>
+          <li class="on">
+             <a href="/Detail/Detail?po_id=11" class="item">
+               <span class="info">              
+                     <em class="day today">곧 마감</em>         
+               </span>
+               <span class="co">ddd</span>
+             </a>
+           </li>   	
+     </ul>
+   </div><!-- sideScrap -->
+   
+ </div>
      </div>
    </div>
   </main>
