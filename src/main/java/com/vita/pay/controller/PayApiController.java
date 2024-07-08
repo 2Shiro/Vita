@@ -229,6 +229,7 @@ public class PayApiController {
        for (Long basket_id : basketIds) {
     	   BasketVo basketvo = payMapper.getBasket(basket_id);
            payMapper.saveGoods(id, basketvo.getPro_id(), pay_id, basketvo.getCount(), basketvo.getPrice());
+           payMapper.outStock(basketvo.getPro_id(), basketvo.getCount());
        }
 
        // 성공적으로 처리되었음을 클라이언트에 반환
