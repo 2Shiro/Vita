@@ -89,8 +89,7 @@ public class PdsController {
 		
 		int myPostCount = pdsService.findAllMyPost(id);
 		int count = pdsService.findAllPost();
-		System.out.println("count 갯수 : " + count);
-		System.out.println("count 갯수 : " + count);
+		
 		
 		PagingResponse<PostListVo> response = null;
 		if( count<1 ) {
