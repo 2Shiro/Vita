@@ -83,7 +83,7 @@
 	<%@include file="/WEB-INF/include/Header.jsp"%>
 	<div id="container">
 		<div class="box__checkout-title">
-			<h2 class="text__main-title">장바구니</h2>
+			<h2 class="text__main-title">주문완료</h2>
 			<ul class="list__location">
 				<li class="list-item">장바구니</li>
 				<li class="list-item">주문결제</li>
