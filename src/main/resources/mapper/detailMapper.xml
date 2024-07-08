@@ -4,6 +4,14 @@
 	
 <!-- 상품정보 가져오기 -->
 <select id="getProductDetail" parameterType="int" resultType="com.vita.detail.domain.ProductVo">
+WITH IMG_CTE AS (
+    SELECT 
+        IM.PRO_ID,
+        IM.IMG,
+        ROW_NUMBER() OVER (PARTITION BY IM.PRO_ID ORDER BY IM.IMG ASC) AS RN
+    FROM IMGS IM
+)
+
 SELECT 
     P.PRO_ID, 
     P.NAME, 
@@ -11,15 +19,16 @@ SELECT
     P.EXPLAIN, 
     P.CAUTION, 
     (SELECT 
-        (a.total_count_1 + b.total_count_0) AS total_count
+        (COALESCE(a.total_count_1, 0) + COALESCE(b.total_count_0, 0)) AS total_count
      FROM
         (SELECT SUM(count) AS total_count_1 FROM stock WHERE pro_id = P.PRO_ID AND state = 1) a,
         (SELECT SUM(count) AS total_count_0 FROM stock WHERE pro_id = P.PRO_ID AND state = 0) b) AS STOCK_COUNT, 
     P.PRICE AS PRO_PRICE,
-    LISTAGG(DISTINCT IM.IMG, ', ') WITHIN GROUP (ORDER BY IM.IMG) AS IMG,     
+    COALESCE(LISTAGG(DISTINCT IM.IMG, ', ') WITHIN GROUP (ORDER BY IM.IMG), '') AS IMG,
+    COALESCE((SELECT IMG FROM IMG_CTE WHERE PRO_ID = P.PRO_ID AND RN = 1), '') AS IMAGE,
     F.TYPE AS FORM_TYPE,  
     M.NAME AS BRAND_NAME, 
-    LISTAGG(DISTINCT I.NAME || ' (' || N.CAPACITY || ')', ', ') WITHIN GROUP (ORDER BY I.NAME) AS INGREDIENTS
+    COALESCE(LISTAGG(DISTINCT I.NAME || ' (' || N.CAPACITY || ')', ', ') WITHIN GROUP (ORDER BY I.NAME), '') AS INGREDIENTS
 FROM PRODUCT P
 LEFT JOIN FORM F        ON P.FORM_ID = F.FORM_ID
 LEFT JOIN NUTRIENT N    ON P.PRO_ID = N.PRO_ID
@@ -30,17 +39,6 @@ LEFT JOIN MAKE M        ON P.MAKE_ID = M.MAKE_ID
 WHERE P.PRO_ID = #{pro_id}
 GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 </select>
-
-<!-- 상품 리뷰 페이징 
-<select id="getReviewList" parameterType="map" resultType="com.vita.detail.domain.ReviewVo">
-    SELECT R.REV_ID, R.PRO_ID, R.CONTENT, TO_CHAR(R.CREATED,'YYYY-MM-DD') AS CREATED,
-           SUBSTR(U.EMAIL,1,5)||'***' AS NICK, R.RATING, R.IMG
-    FROM REVIEW R
-    LEFT JOIN USERS U ON R.ID = U.ID
-    WHERE PRO_ID = #{pro_id}
-    ORDER BY CREATED DESC
-    OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
-</select>-->
 
 <!-- 리뷰 별 평균 -->
 <select id="getAvgStar" parameterType="int" resultType="Double">
@@ -175,19 +173,21 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 
 <!-- 바로 구매 -->
 <insert id="buy">
-   DECLARE
-       v_new_basket_id NUMBER;
-   BEGIN
-       INSERT INTO BASKET (BASKET_ID, ID, PRO_ID, COUNT, STATE, PRICE, DELIVERY_CHARGE)
-       VALUES ((SELECT NVL(MAX(BASKET_ID), 0) + 1 FROM BASKET), #{id}, #{pro_id}, #{count}, 1, #{price}, #{delivery_charge})
-       RETURNING BASKET_ID INTO v_new_basket_id;
+    <![CDATA[
+    DECLARE
+        v_new_basket_id NUMBER;
+    BEGIN
+        INSERT INTO BASKET (BASKET_ID, ID, PRO_ID, COUNT, STATE, PRICE, DELIVERY_CHARGE)
+        VALUES ((SELECT NVL(MAX(BASKET_ID), 0) + 1 FROM BASKET), #{id}, #{pro_id}, #{count}, 1, #{price}, #{delivery_charge})
+        RETURNING BASKET_ID INTO v_new_basket_id;
 
-       UPDATE BASKET
-       SET STATE = 0
-       WHERE BASKET_ID &lt;&gt; v_new_basket_id;
-       
-       COMMIT;
-   END;
+        UPDATE BASKET
+        SET STATE = 0
+        WHERE BASKET_ID <> v_new_basket_id;
+
+        COMMIT;
+    END;
+    ]]>
 </insert>
 
 <!-- 리뷰 추천 개수 -->
@@ -274,7 +274,7 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 
 <!-- QnAList -->
 <select id="withoutSecret">
-	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, 
+	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER,Q.STATUS, 
 				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
 				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
 				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
@@ -323,7 +323,7 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 
 <!-- QnAList + search -->
 <select id="getSearchList">
-	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, 
+	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS,
 				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
 				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
 				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
@@ -343,7 +343,7 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 
 <!-- QnAList + paging -->
 <select id="getQnaListPaging">
-		SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, 
+		SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS,
 				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
 				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
 				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
@@ -357,7 +357,7 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 
 <!-- QnAList + paging + search -->
 <select id="getQnaListPagingSearch">
-	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, 
+	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS,
 				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
 				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
 				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
@@ -392,6 +392,29 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
   ORDER BY REV_ID DESC
 </select>
 
+<!-- reviewList + search + rating -->
+<select id="getSearchReviewListByRatings">
+  SELECT R.REV_ID, R.PRO_ID, R.CONTENT, TO_CHAR(R.CREATED,'YYYY-MM-DD') AS CREATED,
+         SUBSTR(U.OAUTH_EMAIL,1,5)||'***' AS NICK, R.RATING, R.IMG
+  FROM REVIEW R
+  LEFT JOIN USERS U ON R.ID = U.ID
+  WHERE PRO_ID = #{arg0}
+  			AND (R.CONTENT LIKE '%' || #{arg1} || '%')
+  			AND R.RATING = #{arg2}
+  ORDER BY REV_ID DESC
+</select>
+
+<!-- reviewList + search + rating -->
+<select id="getReviewListByRatings" >
+  SELECT R.REV_ID, R.PRO_ID, R.CONTENT, TO_CHAR(R.CREATED,'YYYY-MM-DD') AS CREATED,
+         SUBSTR(U.OAUTH_EMAIL,1,5)||'***' AS NICK, R.RATING, R.IMG
+  FROM REVIEW R
+  LEFT JOIN USERS U ON R.ID = U.ID
+  WHERE PRO_ID = #{arg0}
+  			AND R.RATING = #{arg1}
+  ORDER BY REV_ID DESC
+</select>
+
 <!-- reviewList + paging -->
 <select id="getReListPaging">
   SELECT R.REV_ID, R.PRO_ID, R.CONTENT, TO_CHAR(R.CREATED,'YYYY-MM-DD') AS CREATED,
@@ -402,6 +425,18 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
   ORDER BY REV_ID DESC
   OFFSET #{ arg1 } ROWS FETCH NEXT #{ arg2 }
   ROWS ONLY	
+</select>
+
+<!-- reviewList + paging + rating -->
+<select id="getReListPagingByRatings">
+  SELECT R.REV_ID, R.PRO_ID, R.CONTENT, TO_CHAR(R.CREATED,'YYYY-MM-DD') AS CREATED,
+         SUBSTR(U.OAUTH_EMAIL,1,5)||'***' AS NICK, R.RATING, R.IMG
+  FROM REVIEW R
+  LEFT OUTER JOIN USERS U ON R.ID = U.ID
+  WHERE PRO_ID = #{arg0}
+ 				AND R.RATING = #{arg1}
+  ORDER BY REV_ID DESC
+  OFFSET #{arg2} ROWS FETCH NEXT #{arg3} ROWS ONLY
 </select>
 
 <!-- reviewList + paging + search -->
@@ -417,6 +452,20 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
   ROWS ONLY	
 </select>
 
+<!-- reviewList + paging + search + rating -->
+<select id="getReListPagingSearchByRatings">
+  SELECT R.REV_ID, R.PRO_ID, R.CONTENT, TO_CHAR(R.CREATED,'YYYY-MM-DD') AS CREATED,
+         SUBSTR(U.OAUTH_EMAIL,1,5)||'***' AS NICK, R.RATING, R.IMG
+  FROM REVIEW R
+  LEFT JOIN USERS U ON R.ID = U.ID
+  WHERE PRO_ID = #{ arg0 }
+  			AND (R.CONTENT LIKE '%' || #{arg1} || '%')
+  			AND R.RATING = #{arg4}
+  ORDER BY REV_ID DESC
+  OFFSET #{ arg2 } ROWS FETCH NEXT #{ arg3 }
+  ROWS ONLY	
+</select>
+
 <!-- 리뷰 총 개수 -->
 <select id="getReviewCount">
 	SELECT COUNT(*)
@@ -424,6 +473,15 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 	WHERE  PRO_ID = #{pro_id}
 </select>
 
+<!-- 리뷰 별점에 따른 총 개수 -->
+<select id="getReviewCountByRatings">
+	SELECT COUNT(*)
+	FROM 	 REVIEW
+	WHERE  PRO_ID = #{arg0}	
+				 AND R.RATING = #{arg1}
+</select>
+
+<!-- 리뷰 search에 따른 총 개수 -->
 <select id="getSearchReviewCount">
 	SELECT COUNT(*)
 	FROM 	 REVIEW
@@ -431,6 +489,16 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 				 AND (CONTENT LIKE '%' || #{arg1} || '%')
 </select>
 
+<!-- 리뷰 별점+search에 따른 총 개수 -->
+<select id="getSearchReviewCountByRatings">
+	SELECT COUNT(*)
+	FROM 	 REVIEW
+	WHERE  PRO_ID = #{arg0}
+				 AND (CONTENT LIKE '%' || #{arg1} || '%')
+				 AND R.RATING = #{arg2}
+</select>
+
+<!-- 베스트 리뷰 1개 -->
 <select id="getBestReview">
 	WITH MOSTLIKEDREVIEW AS (
 	    SELECT REV_ID
@@ -448,6 +516,7 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 	FETCH FIRST 1 ROW ONLY
 </select>
 
+<!-- 베스트 리뷰 5개 -->
 <select id="bestReviewList">
 	WITH MostLikedReview AS (
 	    SELECT REV_ID, COUNT(*) AS LIKE_COUNT
@@ -465,6 +534,78 @@ GROUP BY P.PRO_ID, P.NAME, P.URL, P.EXPLAIN, P.CAUTION, P.PRICE, F.TYPE, M.NAME
 	WHERE R.PRO_ID = #{arg0}
 	ORDER BY MLR.LIKE_COUNT DESC, R.REV_ID DESC
 </select>
+
+<!-- qna 검색 분류 1.상품 2.배송 3.반품/취소 4.교환/변경 5.기타 -->
+<select id="getQnaListSorted">
+	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS,
+				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
+				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
+				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
+	FROM	 PROD_QNA Q
+  LEFT JOIN USERS U ON Q.ID = U.ID
+  WHERE PRO_ID = #{arg0} AND Q.Q_TYPE =#{arg1}
+  ORDER BY Q_CREATED DESC
+</select>
+
+<!-- QnAList + search + q_type-->
+<select id="getSearchListSorted">
+	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER,Q.STATUS, 
+				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
+				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
+				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
+	FROM	 PROD_QNA Q
+  LEFT JOIN USERS U ON Q.ID = U.ID
+  WHERE PRO_ID = #{arg1} 
+				AND (Q.QUESTION LIKE '%' || #{arg0} || '%')
+				AND  Q.Q_TYPE =#{arg2}
+  ORDER BY Q_CREATED DESC  
+</select>
+
+<!-- 검색어 없을 때 QnAcount + q_type -->
+<select id="countQnaSorted">
+	SELECT COUNT(*) AS QNA_COUNT 
+	FROM PROD_QNA 
+	WHERE PRO_ID = #{arg0} AND Q_TYPE =#{arg1}
+</select>
+
+<!-- QnAcount + q_type + keyword-->
+<select id="countQnaSS">
+	SELECT COUNT(*) AS QNA_COUNT 
+	FROM PROD_QNA 
+	WHERE PRO_ID = #{arg1} AND Q_TYPE =#{arg2} AND (QUESTION LIKE '%' || #{arg0} || '%')
+</select>
+
+<!-- QnAList + paging + q_type -->
+<select id="getQnaListPagingSorted">
+		SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS,
+				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
+				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
+				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
+	FROM	 PROD_QNA Q
+  LEFT JOIN USERS U ON Q.ID = U.ID
+  WHERE PRO_ID = #{arg2} AND  Q.Q_TYPE =#{arg3}
+  ORDER BY Q_CREATED DESC  
+ 	OFFSET #{ arg0 } ROWS FETCH NEXT #{ arg1 }
+  ROWS ONLY
+</select>
+
+<!-- QnAList + paging + search + q_type -->
+<select id="getQnaListPagingSearchSorted">
+	SELECT Q.QNA_ID, Q.PRO_ID, Q.ID, Q.Q_TYPE, Q.QUESTION, Q.SECRET, Q.ANSWER, Q.STATUS,
+				 TO_CHAR(Q.Q_CREATED,'YYYY-MM-DD HH24:MI:SS') AS Q_CREATED,
+				 TO_CHAR(Q.A_CREATED,'YYYY-MM-DD HH24:MI:SS') AS A_CREATED,
+				 SUBSTR(U.OAUTH_EMAIL,1,4)||'****' AS NICKNAME
+	FROM	 PROD_QNA Q
+  LEFT JOIN USERS U ON Q.ID = U.ID
+  WHERE Q.PRO_ID = #{arg3} 
+				AND ((Q.SECRET ='N' AND Q.QUESTION LIKE '%' || #{arg2} || '%')
+							OR (Q.SECRET ='Y' AND U.ID=#{arg4} AND Q.QUESTION LIKE '%' || #{arg2} || '%'))
+				AND Q.Q_TYPE =#{arg5}
+  ORDER BY Q.Q_CREATED DESC  
+ 	OFFSET #{ arg0 } ROWS FETCH NEXT #{arg1}
+  ROWS ONLY	
+</select>
+
 
 </mapper>
   

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,8 +81,6 @@ public class DetailController {
 	        List<Integer> sortedProIdList = proIdList.stream().sorted().collect(Collectors.toList());
 	        mv.addObject("sortedProIdList", sortedProIdList);
 	        
-	        
-	        
 		    Long id = getUserIdService.getId(request);
 		    mv.addObject("id", id);
 		    
@@ -89,10 +88,23 @@ public class DetailController {
 		    ProductVo prod = detailMapper.getProductDetail(pro_id);
 		    mv.addObject("prod", prod);
 		    
+	        if (prod == null) {
+	            throw new NoSuchElementException("Product not found with ID: " + pro_id);
+	        }
+	        System.out.println("prodprodprodprod:"+prod);
+		    System.out.println("imgListimgListimgList"+prod.getImg());
+		    System.out.println("imageimageimageimage"+prod.getImage());
 		    int price =prod.getPro_price();//23000
 		    
 		    NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 		    String f_Price = numberFormat.format(price);
+		    
+		    String img = prod.getImg();
+		    String [] imgs = img.split(", ");
+		    mv.addObject("imgs", imgs);
+	        for (String imgElement : imgs) {
+	            System.out.println("imgsimgsimgs"+imgElement);
+	        };
 		    
 		    mv.addObject("f_Price", f_Price);
 		    System.out.println("formattedPrice:"+f_Price);
@@ -121,18 +133,6 @@ public class DetailController {
 		    mv.addObject("four", four);
 		    mv.addObject("five", five);
 		    
-		    // 리뷰 평점별 인원수
-		    int star1 = detailMapper.star1(pro_id);
-		    int star2 = detailMapper.star2(pro_id);
-		    int star3 = detailMapper.star3(pro_id);
-		    int star4 = detailMapper.star4(pro_id);
-		    int star5 = detailMapper.star5(pro_id);
-		    mv.addObject("star1", star1);
-		    mv.addObject("star2", star2);
-		    mv.addObject("star3", star3);
-		    mv.addObject("star4", star4);
-		    mv.addObject("star5", star5);    
-		        
 		    // 3. Q&A
 		    
 		    //    비밀글 포함
@@ -170,7 +170,7 @@ public class DetailController {
 	    	// 장바구니 인기상품
 	    	List<ProductVo> popList = detailMapper.getpopList();
 		    
-	    	mv.setViewName("detail5");
+	    	mv.setViewName("detail6");
 	    	
 		    return mv;	    
 		}
@@ -190,11 +190,11 @@ public class DetailController {
 	        return new ModelAndView("redirect:/Detail");
 	    }
 	    
-	    
 	    @RequestMapping("/reviews")
 	    public ModelAndView test(@RequestParam(value = "pro_id") int pro_id,
 	    						 @RequestParam(value = "nowpage") int nowpage,
 	    						 @RequestParam(value="keyword",defaultValue = "none") String keyword,
+	    						 @RequestParam(value = "rating", defaultValue = "0") int rating,
 	    						 HttpServletRequest request) {
 	    	
 	    	ModelAndView mv = new ModelAndView();
@@ -211,11 +211,19 @@ public class DetailController {
 		    
 		    // 리뷰 목록 
 		    List<ReviewVo> reviewList = new ArrayList<>();
-		    if(keyword.equals("none")) {
-		    	reviewList = detailMapper.getReviewList(pro_id);
-		    } else {
-		    	reviewList = detailMapper.getSearchReviewList(pro_id,keyword);
-		    }
+	        if(keyword.equals("none")) {
+	            if (rating == 0) {
+	                reviewList = detailMapper.getReviewList(pro_id);
+	            } else {
+	                reviewList = detailMapper.getReviewListByRatings(pro_id, rating);
+	            }
+	        } else {
+	        	if (rating == 0) {
+	        		reviewList = detailMapper.getSearchReviewList(pro_id, keyword);
+	        	} else {
+	        		reviewList = detailMapper.getSearchReviewListByRatings(pro_id, keyword,rating);
+	        	}
+	        }
 		    
 		    mv.addObject("reviewList", reviewList);
 		    
@@ -228,15 +236,20 @@ public class DetailController {
 		   int count = 0;
 		   
 		   // 검색어 별 count
-		   if(keyword.equals("none")) {
-			   count = detailMapper.getReviewCount(pro_id);
-		   } else {
-				for(int i = 0; i < reviewList.size(); i++) {
-			   count = detailMapper.getSearchReviewCount(pro_id, keyword);
-				}
-		   }
+	        if(keyword.equals("none")) {
+	            if(rating == 0) {
+	                count = detailMapper.getReviewCount(pro_id);
+	            } else {
+	                count = detailMapper.getReviewCountByRatings(pro_id, rating);
+	            }
+	        } else {
+	        	if(rating == 0) {
+	        		 count = detailMapper.getSearchReviewCount(pro_id, keyword);
+	        	}else {
+	        		count = detailMapper.getSearchReviewCountByRatings(pro_id, keyword,rating);
+	        	}
+	        }
 		   mv.addObject("count", count);
-		   System.out.println("countcountcount"+count);
 		   
 		   PagingResponse<ReviewVo> response = null;
 			if (count < 1 ) {
@@ -258,12 +271,19 @@ public class DetailController {
 	      
 	      List<ReviewVo> pagingList = new ArrayList<>();
 	      
-		 if(keyword.equals("none")){
-		 	 pagingList = detailMapper.getReListPaging( pro_id, offset, pageSize);
-		 } else {
-			 pagingList = detailMapper.getReListPagingSearch(pro_id, keyword, offset, pageSize);
-		 }	      
-		 
+	        if(keyword.equals("none")) {
+	            if(rating == 0) {
+	                pagingList = detailMapper.getReListPaging(pro_id, offset, pageSize);
+	            } else {
+	                pagingList = detailMapper.getReListPagingByRatings(pro_id, rating, offset, pageSize);
+	            }
+	        } else {
+	        	if(rating == 0) {
+	        		pagingList = detailMapper.getReListPagingSearch(pro_id, keyword, offset, pageSize);
+	        	} else {
+	        		pagingList = detailMapper.getReListPagingSearchByRatings(pro_id, keyword, offset, pageSize, rating);
+	        	}
+	        }
 	     response = new PagingResponse<>(pagingList, pagination);
 	     
 	     System.out.println("nowpagenowpagenowpage"+nowpage);
@@ -311,7 +331,7 @@ public class DetailController {
 	    ReviewVo best = detailMapper.getBestReview(pro_id);
 	    mv.addObject("best", best);
 
-    	mv.setViewName("reviews");
+    	mv.setViewName("reviews3");
     	return mv;
     	
 	    } 
@@ -321,6 +341,7 @@ public class DetailController {
 	    		@RequestParam(value="keyword",defaultValue = "none") String keyword,
 	    		@RequestParam(value = "pro_id",defaultValue = "") int pro_id,
 	    		@RequestParam(value = "nowpage") int nowpage,
+	    		@RequestParam(value = "q_type",defaultValue = "0") int q_type,
 	    		HttpServletRequest request  ) {
 	    	
 	    	ModelAndView mv = new ModelAndView();
@@ -337,7 +358,7 @@ public class DetailController {
 	    	List<ProductVo> prodList = detailMapper.getProdList(pro_id);
 	    	mv.addObject("prodList", prodList);
 
-			
+			System.out.println("prodListprodListprodList"+prodList);
 			// 검색
 			String origin = keyword;
 			keyword = keyword.replaceAll(" ", "");
@@ -345,20 +366,37 @@ public class DetailController {
 			// QnA 목록 가져오기
 			List<ProductVo> qnaList = new ArrayList<>();
 			if(keyword.equals("none")) {
-				qnaList = detailMapper.getQnaList(pro_id);
+				if(q_type == 0) {
+					qnaList = detailMapper.getQnaList(pro_id);
+				} else {
+					qnaList = detailMapper.getQnaListSorted(pro_id,q_type);
+				}
 			} else {
-				qnaList = detailMapper.getSearchList(keyword,pro_id);
+				if(q_type == 0) {
+					qnaList = detailMapper.getSearchList(keyword,pro_id);
+				} else {
+					qnaList = detailMapper.getSearchListSorted(keyword,pro_id,q_type);
+				}
 			}
+			System.out.println("qnaListqnaListqnaList"+qnaList);
 			
 			// 페이징
 			int count= 0;
 			
 			// 검색어 별 count
 			if(keyword.equals("none")) {
-				count = detailMapper.countQna(pro_id);
+				if(q_type == 0) {
+					count = detailMapper.countQna(pro_id);
+				} else {
+					count = detailMapper.countQnaSorted(pro_id,q_type);
+				}
 			}else {
-				for(int i = 0; i < qnaList.size(); i++) {
-					count++;
+				if(q_type == 0) {
+					for(int i = 0; i < qnaList.size(); i++) {
+						count++;
+					}
+				}else {
+					count = detailMapper.countQnaSS(keyword,pro_id,q_type);
 				}
 			}
 			
@@ -382,11 +420,20 @@ public class DetailController {
 			List<ProductVo> pagingList = new ArrayList<>();
 			
 			if(keyword.equals("none")){
-				pagingList = detailMapper.getQnaListPaging(offset,pageSize,pro_id);
+				if(q_type == 0) {
+					pagingList = detailMapper.getQnaListPaging(offset,pageSize,pro_id);
+				} else {
+					pagingList = detailMapper.getQnaListPagingSorted(offset,pageSize,pro_id,q_type);
+				}
 			} else {
-				pagingList = detailMapper.getQnaListPagingSearch(offset,pageSize,keyword,pro_id,id);
+				if(q_type == 0) {
+					pagingList = detailMapper.getQnaListPagingSearch(offset,pageSize,keyword,pro_id,id);
+				} else {
+					pagingList = detailMapper.getQnaListPagingSearchSorted(offset,pageSize,keyword,pro_id,id,q_type);
+				}
+				
 			}
-			
+			System.out.println("pagingListpagingList"+pagingList);
 			response = new PagingResponse<>(pagingList, pagination);
 			
 			// 검색어 원래 값으로 돌리기
@@ -403,3 +450,5 @@ public class DetailController {
     	
 		
 }
+    	
+		

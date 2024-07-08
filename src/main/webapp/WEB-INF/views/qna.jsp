@@ -17,8 +17,16 @@
 	crossorigin="anonymous"></script>
 <link href="/css/header.css" rel="stylesheet" />
 <style>
+ #header{
+ 		background-color: white;
+ 		position: fixed;
+	top: 0;
+	z-index: 5;
+	il,ul {
+		list-style-type: none;
+	}
+ }
 /* 질문하기 팝업창 */
-
 .qnacontainer{
 	margin : 150px 150px 0 150px; 
 }
@@ -26,10 +34,11 @@
 	width: 760px;
 	justify-content: center;
 	z-index:1000000;
-}
-.tbl tr {
-	margin: 10px;
-}
+	.tbl tr {
+		margin: 10px;
+		width: 100%;
+		}
+	}
 #prodImg{
 	 height : 80px;
 	 width : 80px;
@@ -120,7 +129,7 @@
 
 /* QnA List */
 .qnacontainer table {
-	width: 1200px;
+	width: 100%;
 	border-collapse: collapse;
 	border: 1px solid #ddd; 
 	tr { width : 1030px; }
@@ -342,12 +351,36 @@ td>img {
 	align-items: center;
 	justify-content : center;
 }
+.dropdown {
+    position: relative;
+}
+
+.select-label {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background-color: white;
+    padding: 0 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.styled-select {
+    padding: 10px 10px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
 </style>
 </head>
 <body>
 <div id="header"><%@include file="/WEB-INF/include/Header.jsp" %></div>
 	<div class="navbar">
-	<span><a href="/Detail?pro_id=${prod.pro_id}&nowpage=1"><img id="prodImg" src="img/${ prod.img }.jpg" alt="prodImg"><span id="link">${ prod.name }</span></a></span>
+	<span><a href="/Detail?pro_id=${prod.pro_id}&nowpage=1"><img id="prodImg" src="img/${ prod.image }.jpg" alt="prodImg"><span id="link">${ prod.name }</span></a></span>
 	<span><button id="addToCart" class="btn btn-outline-dark btn-lg" type="button" data-bs-toggle="offcanvas"
 								data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">장바구니에 담기</button></span>
 				<input type="hidden" name="id" id="id" value="${id}">
@@ -357,51 +390,7 @@ td>img {
 				<input type="hidden" name="delivery_charge" id="delivery_charge" value="">
 				<input type="hidden" name="count" id="count" value="1">
 	</div>
-		<!-- offcanvas -->
-		<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-			<div class="offcanvas-header">
-				<h5 id="offcanvasRightLabel"></h5>
-				<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-			</div>
-			<div class="offcanvas-body">
-				<div>함께 보시면 좋은 상품</div>
-				<table>
-					<c:forEach var="reco" items="${prodList}">
-						<tr>
-							<input type="hidden" id="prodList_id" value="${reco.pro_id }">
-							<td rowspan="3"><img src="img/${ reco.img }.jpg"></td>
-							<td><a href="/Detail?pro_id=${reco.pro_id}&nowpage=1">${ reco.name }</a></td>
-						</tr>
-						<tr>
-							<td>가격 ${ reco.price }</td>
-						</tr>
-						<tr>
-							<td><input type="hidden" class="recoAvg"
-								data-reco-rating="${ reco.avg_rating }"> <span>
-									<div id="recostars" class="recoContainer">
-										<div class="recoStar"></div>
-										<div class="recoStar"></div>
-										<div class="recoStar"></div>
-										<div class="recoStar"></div>
-										<div class="recoStar"></div>
-									</div>
-							</span> ${ reco.avg_rating }, (${ reco.review_count }건)
-								<button type="button" id="wishButton"
-									style="border: none; background-color: white;">
-									<ion-icon name="heart"></ion-icon>
-								</button></td>
-						</tr>
-					</c:forEach>
-				</table>
-				<div>
-					<button id="goCart" type="button"
-						onclick="location.href='/Pay/Basket'">장바구니로 가기</button>
-				</div>
-			</div>
-		</div>
-		<!-- offcanvas 끝 -->				
 	<div class="qnacontainer">
-	
 			<div class="buttons">
 					<!-- 팝업창 문의 버튼 -->
 				<input type="button" href="javascript:" onClick="imagePopup('open')"
@@ -423,8 +412,8 @@ td>img {
 									<div class="tblwrap">
 										<table class="tbl">
 											<colgroup>
-												<col style="width: 15%">
-												<col style="width: 85%">
+												<col style="width: 30%">
+												<col style="width: 70%">
 											</colgroup>
 											<tbody>
 												<tr>
@@ -484,9 +473,33 @@ td>img {
 					</div>
 				</div>
 				<!-- QnA 팝업창 끝 -->
-			
+			  <!-- 검색 -->
 				<form class="d-flex justify-content-end mt-3" role="search"  id="search"
-					action="/QnA?nowpage=1&pro_id=${prod.pro_id}" method="POST">
+					    action="/QnA?nowpage=1&pro_id=${prod.pro_id}" method="POST">
+					<c:choose>
+						<c:when test="${q_type eq 'none'}">
+							<label for="category">카테고리</label>
+	            <select id="category" name="q_type" class="form-select" aria-label="Default select example" style="width:150px; margin-right :20px;">
+	                <option selected>전체</option>
+	                <option value="1">상품</option>
+	                <option value="2">배송</option>
+	                <option value="3">반품/취소</option>
+	                <option value="4">교환/변경</option>
+	                <option value="5">기타</option>
+	            </select>
+		         </c:when>
+		         <c:otherwise>
+		            <select id="category"  name="q_type" class="form-select" aria-label="Default select example" style="width:150px; margin-right :20px;">
+	                <option selected value="0">문의유형</option>
+	                <option value="0">------------</option>
+	                <option value="1">상품</option>
+	                <option value="2">배송</option>
+	                <option value="3">반품/취소</option>
+	                <option value="4">교환/변경</option>
+	                <option value="5">기타</option>
+		            </select>
+		         </c:otherwise>
+		      </c:choose>
 					<c:choose>
 						<c:when test="${keyword eq 'none'}">
 							<input class="form-control me-2" style="width: 300px;" type="search"
@@ -499,7 +512,9 @@ td>img {
 					</c:choose>
 					<button class="btn btn-outline-secondary" style="width: 110px; margin-right: 9px;" type="submit">검색</button>
 				</form>
-			</div>		
+			</div>
+			<!-- 검색 끝 -->
+			<!-- qna 리스트 -->		
 					<table>
 						<tr>
 							<th>문의유형</th>
@@ -509,10 +524,11 @@ td>img {
 							<th>작성일</th>
 							<th></th>
 						</tr>
-						<c:forEach var="qna" items="${response.list}" >
+						<c:forEach var="qna" items="${response.list}">
 							<tr>
 								<td>
-									<!--1 = 상품, 2 = 배송, 3 = 반품/취소, 4 = 교환/변경, 5 = 기타 --> <c:choose>
+									<!--1 = 상품, 2 = 배송, 3 = 반품/취소, 4 = 교환/변경, 5 = 기타 --> 
+									<c:choose>
 										<c:when test="${qna.q_type eq 1}"> 상품 </c:when>
 										<c:when test="${qna.q_type eq 2}"> 배송 </c:when>
 										<c:when test="${qna.q_type eq 3}"> 반품/취소 </c:when>
@@ -521,46 +537,48 @@ td>img {
 									</c:choose>
 								</td>
 								<td>
-									<!-- 1 - 대기중, 2 - 답변완료 --> <c:choose>
+								<!-- 	1 - 대기중, 2 - 답변완료  -->
+									<c:choose>
 										<c:when test="${qna.status eq 1}"> 대기중 </c:when>
 										<c:when test="${qna.status eq 2}"> 답변완료 </c:when>
 									</c:choose>
 								</td>
-								<td><c:choose>
+								<td>
+									<c:choose>
 										<c:when test="${qna.secret == 'N'}">
-											<button type="button" class="qnaBtn"
-												style="border: none; background-color: white;">${qna.question}</button>
+											<button type="button" class="qnaBtn" style="border: none; background-color: white;">${qna.question}</button>
 										</c:when>
 										<c:when test="${qna.secret == 'Y'}">
 											<c:choose>
 												<c:when test="${qna.id != id}">🔒비밀글입니다.</c:when>
-										 	  <c:otherwise>
+												<c:otherwise> 
 													<button type="button" class="qnaBtn" style="border: none; background-color: white;">🔒${qna.question}</button>
-											  </c:otherwise>
-										  </c:choose>
+												</c:otherwise>
+											</c:choose>
 										</c:when>
-									</c:choose></td>
+									</c:choose>
+								</td>
 								<td>${qna.nickname}</td>
 								<td>${qna.q_created}</td>
 								<td><c:choose>
 										<c:when test="${qna.id == id}">
 										 <div class="buttonQnA">
 											<input type="hidden" class="qna_id" value="${qna.qna_id}">
-											<button type="button" id="modifyQ" href="javascript:" onClick="modify('open')" class="modifyQ">수정</button>
+											<button type="button" id="modifyQ" href="javascript:"
+												onClick="modify('open')" class="modifyQ">수정</button>
 											<button type="button" id="deleteQ" class="deleteQ">삭제</button>
-										</div>
+											</div>
 										</c:when>
 									</c:choose>
-								<td>
+								</td>
 							</tr>
-							<tr class="panel" >
+							<tr class="panel">
 								<td>답변</td>
 								<td colspan="3"><p>${qna.answer}</p></td>
 								<td>${qna.a_created }</td>
 							</tr>
 						</c:forEach>
 					</table>
-				</div>
 				<div class="d-flex justify-content-center paging-bottom-container">
 					<%@include file="/WEB-INF/pagination/qnaPaging.jsp"%>
 				</div>
@@ -609,7 +627,7 @@ td>img {
 					                    </div>
 					                    <div class="form-check">
 					                        <input class="form-check-input" type="checkbox" value="" name="serect" id="modifySerect">
-					                        <label class="form-check-label" for="serect"> 비밀글로 문의하기 </label>
+					                        <label class="form-check-label" for="modifySerect"> 비밀글로 문의하기 </label>
 					                    </div>
 					                    <p class="text_secret" id="paraSecretYn" style="display: none">비밀글로 등록됩니다.</p>
 					                    <div class="notice_box">
@@ -636,6 +654,7 @@ td>img {
 					</div>
 				<!-- QnA 수정 팝업창 끝 -->
 							<!-- Q&A 리스트 -->
+		<script src="/js/header.js"></script>
 		<script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
         let openAnswerRow = null;
@@ -659,8 +678,7 @@ td>img {
   </script>
 
 		<!-- Q&A -->
-		<script type="text/JavaScript"
-			src="http://code.jquery.com/jquery-1.7.min.js"></script>
+		<script type="text/JavaScript" src="http://code.jquery.com/jquery-1.7.min.js"></script>
 		<script type="text/javascript">
     function imagePopup(type) {
         if (type === 'open') {
@@ -716,79 +734,83 @@ td>img {
 	<!-- Q&A 수정하기 -->
 	<script type="text/javascript">
 	  function modify(type) {
-	      if (type === 'open') {
-	          jQuery('#modifylayer').css('display', 'block');
-	          jQuery('#overlay').css('display', 'block');
-	      } else if (type === 'close') {
-	          jQuery('#modifylayer').css('display', 'none');
-	          jQuery('#overlay').css('display', 'none');
-	      }
-	  }
+		    if (type === 'open') {
+		      document.getElementById('modifylayer').style.display = 'block';
+		      document.getElementById('overlay').style.display = 'block';
+		    } else if (type === 'close') {
+		      document.getElementById('modifylayer').style.display = 'none';
+		      document.getElementById('overlay').style.display = 'none';
+		    }
+		  }
 
-	  document.addEventListener('DOMContentLoaded', function () {
-	      document.querySelectorAll('.modifyQ').forEach(function(button){
-	          button.addEventListener('click', function() {
-	              // 버튼과 같은 행(row)을 찾음
-	              let row = button.closest('tr');
-	              // 같은 행에 있는 숨겨진 qna_id 값을 찾음
-	              let qna_id = parseInt(row.querySelector('.qna_id').value);
-	              console.dir(qna_id);
+		  document.addEventListener('DOMContentLoaded', function () {
+		    document.querySelectorAll('.modifyQ').forEach(function(button) {
+		      button.addEventListener('click', function() {
+		        // 버튼과 같은 행(row)을 찾음
+		        let row = button.closest('tr');
+		        // 같은 행에 있는 숨겨진 qna_id 값을 찾음
+		        let qna_id = parseInt(row.querySelector('.qna_id').value);
+		        console.dir(qna_id);
 
-	              // 팝업을 열기 위한 코드
-	              modify('open');
+		        // 팝업을 열기 위한 코드
+		        modify('open');
 
-	              // 팝업에 qna_id 값 설정
-	              let qna_id_input = document.getElementById('qna_id');
-	              if (qna_id_input) {
-	                  qna_id_input.value = qna_id;
-	              } else {
-	                  console.error("qna_id input element not found");
-	              }
-	          });
-	      });
+		        // 팝업에 qna_id 값 설정
+		        let qna_id_input = document.getElementById('qna_id');
+		        if (qna_id_input) {
+		          qna_id_input.value = qna_id;
+		        } else {
+		          console.error("qna_id input element not found");
+		        }
+		      });
+		    });
+		    
+		    
+		    document.getElementById('buttonClose').addEventListener('click', function() {
+		      modify('close');
+		    });
 
-	      $('#buttonClose').click(function() {
-	          modify('close');
-	      });
+		    document.getElementById('buttonSave').addEventListener('click', function() {
+		      handleSubmit();
+		    });
 
-	      $('#buttonSave').click(function() {
-	          handleSubmit();
-	      });
+		    function handleSubmit() {
+		      let q_type = document.querySelector('input[name="q_type"]:checked').value;
+		      let question = document.getElementById('modifyQuestion').value;
+		      let secret = document.getElementById('modifySerect').checked ? 'Y' : 'N';
+		      let qna_id = document.getElementById('qna_id').value;
 
-	      function handleSubmit() {
-	    	    let q_type = document.querySelector('input[name="q_type"]:checked').value;
-	          let question = document.getElementById('modifyQuestion').value;
-	          let secret = document.getElementById('modifySerect').checked ? 'Y' : 'N';
-	          let qna_id = document.getElementById('qna_id').value;
+		      if (question.includes('010') || question.includes('@')) {
+		        secret = 'Y';
+		        alert("개인정보가 포함되어 비밀글로 등록되었습니다.");
+		      }
 
-	          if (question.includes('010') || question.includes('@')) {
-	              secret = 'Y';
-	              alert("개인정보가 포함되어 비밀글로 등록되었습니다.");
-	          }
+		      console.dir("qna_id" + qna_id);
 
-	        	console.dir("qna_id"+qna_id)
-
-	          fetch('/modifyQnA', {
-	              method: 'POST',
-	              headers: {
-	                  'Content-Type': 'application/json'
-	              },
-	              body: JSON.stringify({ question, secret, qna_id })
-	          })
-	          .then(response => {
-	              if (response.ok) {
-	                  alert("질문 수정이 완료되었습니다.");
-	                  modify('close');
-	              } else {
-	                  alert("질문 수정에 실패했습니다.");
-	              }
-	          })
-	          .catch(error => {
-	              console.error('Error:', error);
-	              alert("질문 수정 중 오류가 발생했습니다.");
-	          });
-	      }
-	  });
+		      fetch('/modifyQnA', {
+		        method: 'POST',
+		        headers: {
+		          'Content-Type': 'application/json'
+		        },
+		        body: JSON.stringify({ question, secret, qna_id })
+		      })
+		      .then(response => {
+		        if (response.ok) {
+		        	console.dir("돼라")
+		          alert("질문 수정이 완료되었습니다.");
+		          modify('close');
+		        } else {
+		        	console.dir("안돼냐?")
+		          alert("질문 수정에 실패했습니다.");
+		        }
+		      })
+		      .catch(error => {
+		        console.error('Error:', error);
+		        alert("질문 수정 중 오류가 발생했습니다.");
+		      });
+		    }
+		  });
+		</script>
 	</script>
 
 
@@ -829,72 +851,7 @@ td>img {
       });
   });
   </script>
-  <!-- 장바구니에 담기 -->
-  <script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", () => {
-	  let addToCartButton = document.querySelector("#addToCart");
-	  let id = parseInt(document.querySelector("#id").value);
-	  let pro_id = parseInt(document.querySelector("#pro_id").value);
-	  let count = parseInt(document.querySelector("#count").value);
-	  
-	  let delivery_charge = parseInt(document.querySelector("#delivery_charge").value);
-	  
-	 
-  </script>
-	<!-- 장바구니 추천상품 별 -->
-	<script>
-   document.addEventListener('DOMContentLoaded', function() {
-       // 
-       document.querySelectorAll('.recoAvg').forEach(starScoreElement => {
-           // 데이터 속성에서 별점 값 가져오기
-           const avgstar = parseFloat(starScoreElement.getAttribute('data-reco-rating'));
-           
-           const fullStars = Math.floor(avgstar);
-           const partialStar = avgstar - fullStars;
-           const percentage = Math.round(partialStar * 100)
-           
-           // 현재 리뷰의 별 요소들 가져오기
-           const stars = starScoreElement.nextElementSibling.querySelectorAll('.recoStar');
-           
-           // 별 채우기
-           stars.forEach((recoStar, index) => {
-               if (index < fullStars) {
-               		recoStar.classList.add('full');
-                  } else if (index == fullStars) {
-               	   recoStar.innerHTML = '<div class="fill" style="width: ' +  percentage + '%;"></div>';
-                  }
-           });
-       });
-   });
-   </script>
    
-  <!-- 평균 별 -->
-	<script>
-   document.addEventListener('DOMContentLoaded', function() {
-		
-      const avgstar = parseFloat(document.querySelector('#avgStar').value);
-
-      // 정수 부분과 소수 부분 계산
-      const fullStars = Math.floor(avgstar);
-      const partialStar = avgstar - fullStars;
-      const percentage = Math.round(partialStar * 100)
-      
-      // 현재 리뷰의 별 요소들 가져오기
-      const stars = document.querySelectorAll('#starRating2 .avgStar');
-      
-      // 별 채우기
-       stars.forEach((avgstar, index) => {
-          if (index < fullStars) {
-          	avgstar.classList.add('full');
-          } else if (index == fullStars) {
-          	avgstar.innerHTML = '<div class="fill" style="width: ' +  percentage + '%;"></div>';
-          }
-       });
-   });
-   </script>
-   
-		
- 
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   

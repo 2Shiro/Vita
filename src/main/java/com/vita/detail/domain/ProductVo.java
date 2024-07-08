@@ -1,7 +1,5 @@
 package com.vita.detail.domain;
 
-import com.fasterxml.jackson.databind.node.IntNode;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +13,7 @@ public class ProductVo {
 	private int pro_id;
 	private String name;
 	private String img;
+	private String image;
 	private int ing_id;
 	private String url;
 	private int form_id;

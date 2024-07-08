@@ -1,24 +1,18 @@
 package com.vita.detail.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.vita.controller.GetUserIdService;
-import com.vita.detail.domain.ProductVo;
 import com.vita.detail.mapper.DetailMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Delegate;
 
 
 @RestController
@@ -289,13 +283,15 @@ public class DetailApiController {
 		public Map<String, Object> modifyQnA(
 							@RequestBody HashMap<String,Object> map
 							,HttpServletRequest request ){
-			
+			System.out.println("111111");
 			Long id = getUserIdService.getId(request);
 			map.put("id", id);
-			
+			System.out.println("222222");
 			int qna_id = Integer.parseInt(String.valueOf(map.get("qna_id")));
 			map.put("qna_id", qna_id);
 			detailMapper.modifyQ(map);
+			
+			System.out.println("3333333333");
 			
 			return map;
 		}

@@ -72,6 +72,7 @@ public class SecurityConfig {
                 .requestMatchers("/login/write")
                 .requestMatchers("/reissue");
                 
+
     }
 
     @Bean

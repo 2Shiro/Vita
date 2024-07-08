@@ -14,7 +14,7 @@ public class ReviewVo {
 	private int pro_id;
 	private String content;
 	private String created;
-	private String rating;
+	private int rating;
 	private String img;
 	
 	// 좋아요
