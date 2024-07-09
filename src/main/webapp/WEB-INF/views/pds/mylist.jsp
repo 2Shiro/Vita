@@ -126,7 +126,7 @@
        <div class="tabs">
          <button class="tablink" onclick="location.href='/Pds/List?nowpage=1'">전체</button>
          <button class="tablink active" onclick="openTab(event, 'my-tab')">나의 글</button>
-         <button class="tablink" onclick="openTab(event, 'book-tab')">북마크</button>
+         <button class="tablink" onclick="location.href='/Pds/List/BookList?nowpage=1'">북마크</button>
        </div>
        <div class="headerWrap">
          <p class="numBx"> <span>총 <b class="num">${count }</b>건</span></p>

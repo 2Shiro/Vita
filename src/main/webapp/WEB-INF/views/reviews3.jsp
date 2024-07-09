@@ -185,8 +185,7 @@
 													class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"
 													style="text-align: right;">신고하기</button>
 										 </span>
-			              <button>공유하기</button>
-										</div>
+			              <button id="shareButton">공유하기 <ion-icon name="share-social-outline"></ion-icon></button>										</div>
 			            </div>
 			        </div> 
 					   
@@ -412,7 +411,26 @@
        });
    });
    </script>
-
+   <script>
+   document.addEventListener('DOMContentLoaded', function() {
+          const shareButton = document.getElementById('shareButton');
+   
+          shareButton.addEventListener('click', function() {
+              if (navigator.share) {
+                  navigator.share({
+                      title: 'My Website',
+                      text: 'Check out this awesome page!',
+                      url: window.location.href
+                  }).then(() => {
+                      console.log('Thanks for sharing!');
+                  }).catch(console.error);
+              } else {
+                  alert('Sharing is not supported in your browser.');
+              }
+          });
+      });
+   </script> 
+   <script src="share.js"></script>
 	<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>

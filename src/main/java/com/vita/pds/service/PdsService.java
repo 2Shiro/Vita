@@ -49,6 +49,8 @@ public interface PdsService {
 
 	void deletePost(Long post_id);
 
+	List<PostListVo> PostBookList(HashMap<String, Object> params);
+
 	
 
 	
