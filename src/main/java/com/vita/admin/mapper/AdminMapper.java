@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.vita.admin.domain.AdminVo;
 import com.vita.admin.domain.BenVo;
+import com.vita.admin.domain.CReportVo;
 import com.vita.admin.domain.FormVo;
 import com.vita.admin.domain.ImgsVo;
 import com.vita.admin.domain.IngredientVo;
@@ -120,6 +121,14 @@ public interface AdminMapper {
            @Param("count") int count);
 
 	List<ReportVo> LcgetReportList(ReportVo reporttVo);
+
+	List<ReportVo> LgetmodalReportList(ReportVo reportVo);
+
+	void LinsertBen(BenVo benVo);
+
+	void LPermanentBen(BenVo benVo);
+
+	List<CReportVo> LgetCReportList(CReportVo creportVo);
 
 
 

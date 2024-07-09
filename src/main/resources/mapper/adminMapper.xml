@@ -560,6 +560,64 @@
 	    SYSDATE
 	) 
 	</insert>
+	<select id="LgetmodalReportList">
+	SELECT
+		R.REPORT_ID,
+		U.EMAIL,
+		P.TITLE,
+		R.REASON,
+		U.ID
+	FROM REPORT R
+	JOIN POST P ON P.POST_ID = R.POST_ID
+    JOIN USERS U ON P.ID =U.ID
+	WHERE REPORT_ID = #{report_id}
+	</select>
 	
-
+	<insert id="LinsertBen">
+	INSERT INTO BEN (
+        BEN_ID,
+        ID,
+        REASON,
+        CREATED,
+        DISMISS
+	)
+	VALUES (
+        (SELECT COALESCE(MAX(BEN_ID), 0) + 1 FROM BEN),
+        #{id},
+        #{reason},
+        #{created},
+        #{dismiss}
+    )
+	</insert>
+	<insert id="LPermanentBen">
+	INSERT INTO BEN (
+	    BEN_ID,
+	    ID,
+	    REASON,
+	    CREATED,
+	    DISMISS
+	)
+	VALUES (
+	    (SELECT COALESCE(MAX(BEN_ID), 0) + 1 FROM BEN),
+	    1,
+	    #{reason}, 
+	    SYSDATE,
+	    TO_DATE('2999/12/31', 'YYYY/MM/DD')
+	    )
+	</insert>
+	
+	<select id="LgetCReportList">
+	SELECT
+	    CR.CREPORT_ID,
+	    U.EMAIL,
+	    CASE
+	        WHEN LENGTH(C.CONTENT) > 10 THEN SUBSTR(C.CONTENT, 1, 10) || '...'
+	        ELSE C.CONTENT
+	    END AS CONTENT,
+	    CR.REASON,
+	    CR.CREATED
+	FROM CREPORT CR
+	JOIN USERS U ON CR.ID = U.ID
+	JOIN COMMENTS C ON C.COMME_ID = CR.COMME_ID
+	</select>
 </mapper>

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vita.admin.domain.AdminVo;
 import com.vita.admin.domain.BenVo;
+import com.vita.admin.domain.CReportVo;
 import com.vita.admin.domain.FormVo;
 import com.vita.admin.domain.ImgsVo;
 import com.vita.admin.domain.IngredientVo;
@@ -502,5 +503,54 @@ public class AdminRestController {
 	            .body(Map.of("error", "서버 오류: " + e.getMessage()));
 	    }
 	}
-
+	@PostMapping("/GetReportList")
+	public ResponseEntity<List<ReportVo>> getreportlist(@RequestBody ReportVo reportVo) {
+		try {
+			List<ReportVo> reportList = adminMapper.LgetmodalReportList(reportVo);
+			return ResponseEntity.ok().body(reportList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	@PutMapping("/InsertBen")
+	public ResponseEntity<Map<String, Object>> insertben(@RequestBody BenVo benVo) {
+	    Map<String, Object> response = new HashMap<>();
+	    System.out.println(response + "=========================");
+	    try {
+	        adminMapper.LinsertBen(benVo);
+	        response.put("success", true);
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        log.error("Error inserting admin: {}", e.getMessage(), e); // 예외 메시지와 스택 트레이스 로그 출력
+	        response.put("success", false);
+	        response.put("message", "관리자 추가 중 오류가 발생했습니다.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+	    }
+	}
+	@PutMapping("/PermanentBen")
+	public ResponseEntity<Map<String, Object>> permanentben(@RequestBody BenVo benVo) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			adminMapper.LPermanentBen(benVo);
+			response.put("success", true);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			log.error("Error inserting admin: {}", e.getMessage(), e); // 예외 메시지와 스택 트레이스 로그 출력
+			response.put("success", false);
+			response.put("message", "관리자 추가 중 오류가 발생했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
+	}
+	@PostMapping("/CRportButton")
+	public ResponseEntity<List<CReportVo>> crportbutton(@RequestBody CReportVo creportVo) {
+		try {
+			List<CReportVo> stockList = adminMapper.LgetCReportList(creportVo);
+			return ResponseEntity.ok().body(stockList);
+		} catch (Exception e) {
+			e.printStackTrace(); // Add this line to log the exception details
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
 }
