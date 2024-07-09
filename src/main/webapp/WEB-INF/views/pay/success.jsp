@@ -105,7 +105,7 @@
 							<div class="box__card box__payment-info">
 								<div class="box__inner">
 									<button type="button" id="goMypage"
-										class="button__total-price">마이페이지로</button>
+										class="button__total-price"><a href="/Mypage">마이페이지로</a></button>
 								</div>
 							</div>
 						</div>

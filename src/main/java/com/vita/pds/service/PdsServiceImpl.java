@@ -23,6 +23,12 @@ import com.vita.pds.mapper.PdsMapper;
 @Service
 public class PdsServiceImpl implements PdsService{
 	
+	
+
+
+
+
+
 	@Autowired
 	private PdsMapper pdsMapper;
 
@@ -210,7 +216,16 @@ public class PdsServiceImpl implements PdsService{
         }
         return list;
 	}
-
+	@Override
+	public List<PostListVo> PostBookList(HashMap<String, Object> params) {
+		List<PostListVo> list = pdsMapper.FindAllBookList(params);
+		for (PostListVo post : list) {
+            post.splitContent();
+            System.out.println(post);
+        }
+		
+		return list;
+	}
 
 	@Override
 	public List<PostListVo> PostPopulList(HashMap<String, Object> params) {

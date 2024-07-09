@@ -57,6 +57,8 @@ public interface PdsMapper {
 
 	void deletedPost(Long post_id);
 
+	List<PostListVo> FindAllBookList(HashMap<String, Object> params);
+
 	
 
 	

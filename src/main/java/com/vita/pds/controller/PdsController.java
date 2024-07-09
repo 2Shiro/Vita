@@ -140,6 +140,70 @@ public class PdsController {
 	
 	
 	}
+	
+	@GetMapping("/Pds/List/BookList")
+	public ModelAndView PdsBookList(HttpServletRequest request, @RequestParam("nowpage") int nowPage) {
+		
+		Long id = getUserIdService.getId(request);
+		
+		
+		int myPostCount = pdsService.findAllMyPost(id);
+		int count = pdsService.findAllPost();
+		
+		
+		PagingResponse<PostListVo> response = null;
+		if( count<1 ) {
+			response = new PagingResponse<>(Collections.emptyList(), null); //초기화
+		}
+		// 페이징을 위한 초기설정값
+		SearchVo searchVo = new SearchVo();
+		searchVo.setPage(nowPage); // 페이지번호 처음 1 고정	
+		searchVo.setPageSize(10); //화면 하단에 출력할 페이징 사이즈
+		
+		Pagination pagination = new Pagination(count, searchVo); // Offset값을 만들기위해
+		searchVo.setPagination(pagination);//몇개를 보여줄지 이두개가  OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY; 이값
+		
+		int    offset   = pagination.getLimitStart();
+		int    pageSize = searchVo.getRecordSize();
+		
+		HashMap<String, Object> params = new HashMap<>();
+        params.put("offset", offset);
+        params.put("pageSize", pageSize);
+        params.put("id", id);
+        
+        List<PostListVo> list = pdsService.PostBookList(params);
+        
+      
+        
+        System.out.println(list);
+        System.out.println("-------------");
+        response = new PagingResponse<>(list, pagination);
+        System.out.println(response.getPagination().getStartPage());
+        System.out.println(response.getPagination().getEndPage());
+        
+        System.out.println("222222222222222");
+        
+        List<PostRecommendVo> recommendList = pdsSideMapper.findRecommendPost();
+	    List<PostRecommendVo> basketList = pdsSideMapper.findbasketPost(id);
+	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
+	    
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("pds/list");
+		mv.addObject("response", response);
+		mv.addObject("searchVo", searchVo);
+		mv.addObject("count", count);
+		mv.addObject("myPostCount", myPostCount);
+		mv.addObject("recommendList",recommendList);
+		mv.addObject("basketList", basketList);  
+		mv.addObject("hitList", hitList);  
+		return mv;
+	
+	
+	}
+	
+	
+	
+	
 	@GetMapping("/Pds/List/MyList")
 	public ModelAndView PdsListMyList(HttpServletRequest request, @RequestParam("nowpage") int nowPage) {
 		System.out.println("마이뷰로옴");
@@ -260,6 +324,10 @@ public class PdsController {
 		hitMap.put("id", id);
 		pdsService.addHit(hitMap);
 		PostViewVo postVo = pdsService.findPost(post_id);
+		if(postVo.getId() == id) {
+			System.out.println("동일한 아이뒤");
+			myPostView = true;
+		}
 		postVo.removeHash();
 		String contentMarks = null;
 		if(postVo.getContent_mark() != null) {
@@ -321,6 +389,7 @@ public class PdsController {
 		mv.addObject("basketList", basketList);
 		mv.addObject("myPostCount", myPostCount);
 		mv.addObject("hitList", hitList);
+		mv.addObject("myPostView",myPostView);
 		return mv;
 	}
 	

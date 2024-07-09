@@ -347,12 +347,12 @@ select:not(#birth-year){
 									       
 								</div>
 								<div class="form_item" >
-									<input type="password" class="input" name="password" 
+									<input  class="input" name="password" 
 									       placeholder="비밀번호"> 
 									       
 								</div>
 								<div class="form_item" >
-									<input class="password" type="email"  id="user_passwd_detail"
+									<input type="password" class="password" type="email"  id="user_passwd_detail"
 									       placeholder="비밀번호 확인">
 								</div>
 									

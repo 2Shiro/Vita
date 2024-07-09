@@ -31,11 +31,11 @@
               <a href="#">비타민</a>
               <div class="gnb-2dep">
                 <ul>
-                  <li><a href="./program/level_system"><span>종합비타민</span></a></li>
-                  <li><a href="./program/curriculum"><span>비타민</span></a></li>
-                  <li><a href="./program/textbooks"><span>밀크씨슬</span></a></li>
-                  <li><a href="./program/homework"><span>프로바이오틱스</span></a></li> 
-                  <li><a href="/Pds/Write"><span>글쓰기</span></a></li>
+                  <li><a href="/Item/View"><span>종합비타민</span></a></li>
+                  <li><a href="/Item/View"><span>비타민</span></a></li>
+                  <li><a href="/Item/Views"><span>밀크씨슬</span></a></li>
+                  <li><a href="/Item/View"><span>프로바이오틱스</span></a></li> 
+                  <!--<li><a href="/Pds/Write"><span>글쓰기</span></a></li>  -->
             
                 </ul>
               </div>
@@ -44,7 +44,7 @@
               <a href="/Mypage">내정보</a>
               <div class="gnb-2dep">
                 <ul>                 
-				 <li><a href="/Pay/Basket"><span>장바구니</span></a></li>		
+				 <li><a href="/Pay/Basket"><span>장바구니</span></a></li>
 				 <li><a href="/Mypage"><span>내정보</span></a></li>
                 </ul>
               </div>

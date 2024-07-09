@@ -316,6 +316,8 @@
 	width: 100%;
 	justify-content: center;
 	gap: 4px;
+	margin-top: 20px;
+    margin-bottom: 20px;
 }
 .post_update a{
  	display: flex;
@@ -383,17 +385,22 @@
           <div class="post-content">
             ${postVo.content}
           </div>
-          <div class="content_like">
-            <button class="icon-like">좋아요</button>
-            <span>${postVo.like_count}</span>
-            <button>싫어요</button>
-          </div>
           
           
-          <div class="post_update">
-                <a href="/Pds/Update?post_id=${postVo.post_id}" class="updateButton" data-post-id="${postVo.id }">수정하기</a>
-                <a href="/Pds/Delete?post_id=${postVo.post_id}" class="updateButton" data-post-id="${postVo.id }">삭제하기</a>
-           </div>
+         <c:if test="${myPostView == false}">
+		    <div class="content_like">
+		        <button class="icon-like">좋아요</button>
+		        <span>${postVo.like_count}</span>
+		        <button>싫어요</button>
+		    </div>
+		</c:if>
+		
+		<c:if test="${myPostView == true}">
+		    <div class="post_update">
+		        <a href="/Pds/Update?post_id=${postVo.post_id}" class="updateButton" data-post-id="${postVo.id}">수정하기</a>
+		        <a href="/Pds/Delete?post_id=${postVo.post_id}" class="updateButton" data-post-id="${postVo.id}">삭제하기</a>
+		    </div>
+		</c:if>
             
             
           <div class="ben">
@@ -592,8 +599,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
                 commentList.appendChild(newComment);
+                // textarea의 value값 지우기
+                const textarea = document.getElementById('editor_textarea');
+                textarea.value = '';
             });
-
+			
             // 페이징 정보 업데이트
             updatePagination(data.pagination);
         })

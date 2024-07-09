@@ -216,7 +216,60 @@ WHERE
 	    P.post_id DESC
 	OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
    </select>
+   <select id="FindAllBookList">
+   WITH HitCount AS (
+    SELECT post_id, COUNT(hit_id) AS hit_count
+    FROM HIT
+    GROUP BY post_id
+	),
+	LikeCount AS (
+	    SELECT post_id, COUNT(like_id) AS like_count
+	    FROM POSTLIKE
+	    GROUP BY post_id
+	),
+	CommentCount AS (
+	    SELECT post_id, COUNT(COMME_ID) AS comment_count
+	    FROM COMMENTS
+	    GROUP BY post_id
+	),
+	Read AS (
+	    SELECT post_id, MAX(read) AS read
+	    FROM hit
+	    WHERE id = #{id}
+	    GROUP BY post_id
+	),
+	BookmarkCount AS (
+	    SELECT post_id, COUNT(book_id) AS bookmark_count
+	    FROM bookmark
+	    GROUP BY post_id
+	)
+	SELECT
+	    P.post_id,
+	    P.id AS id,
+	    U.name,
+	    P.ptype_id,
+	    P.title,
+	    P.content,
+	    P.state,
+	    P.created,
+	    COALESCE(H.hit_count, 0) AS hit_count,
+	    COALESCE(PL.like_count, 0) AS like_count,
+	    COALESCE(C.comment_count, 0) AS comment_count,
+	    COALESCE(IR.read, 0) AS read,
+	    COALESCE(B.bookmark_count, 0) AS bookmark_count
+	FROM
+	    post P
+	JOIN
+	    USERS U ON P.id = U.id
+	LEFT JOIN HitCount H ON P.post_id = H.post_id
+	LEFT JOIN LikeCount PL ON P.post_id = PL.post_id
+	LEFT JOIN CommentCount C ON P.post_id = C.post_id
+	LEFT JOIN Read IR ON P.post_id = IR.post_id
+    JOIN BookmarkCount B ON P.post_id = B.post_id
+	ORDER BY P.post_id DESC
+   OFFSET #{offset} ROWS FETCH NEXT #{pageSize} ROWS ONLY
    
+   </select>
    
    
    
