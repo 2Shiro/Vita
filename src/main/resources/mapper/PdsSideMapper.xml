@@ -44,7 +44,7 @@
 	FROM
 	    hit H
 	LEFT JOIN post P ON H.post_id = P.post_id
-	WHERE H.id = 3
+	WHERE H.id = #{id}
 	  AND H.hit_id IN (
 	    SELECT MAX(hit_id)
 	    FROM hit

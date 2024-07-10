@@ -879,9 +879,6 @@ td>img {
 						<img id="bigImage" src="img/${prod.image}.jpg" alt="bigimage">
 					</div>
 					<div class="mini">
-		        <c:forEach var="img" items="${imgs}">
-		            <span data-image="img/${img}.jpg"><img src="img/${img}.jpg" alt="product-image"></span>
-		        </c:forEach>
 					</div>
 				</div>
 				<div class="right">

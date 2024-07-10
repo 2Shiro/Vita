@@ -188,7 +188,7 @@ public class PdsController {
 	    List<PostHitVo> hitList = pdsSideMapper.findHitList(id);
 	    
 		ModelAndView mv = new ModelAndView();
-		mv.setViewName("pds/list");
+		mv.setViewName("pds/booklist");
 		mv.addObject("response", response);
 		mv.addObject("searchVo", searchVo);
 		mv.addObject("count", count);
