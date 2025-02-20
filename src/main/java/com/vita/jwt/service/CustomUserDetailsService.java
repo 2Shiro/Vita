@@ -22,12 +22,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 				
 				//DB에서 조회
-        UserVo usrVo = loginMapper.findByUsername(email);
+        UserVo userVo = loginMapper.findByCommonUsername(email);
+        userVo.setOauth("common");
 
-        if (usrVo != null) {
+        if (userVo != null) {
 						
 						//UserDetails에 담아서 return하면 AutneticationManager가 검증 함
-            return new CustomUserDetails(usrVo);
+            return new CustomUserDetails(userVo);
         }
 
        

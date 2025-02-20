@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.basket.mapper.BasketModalMapper">  
+  
+ <insert id="saveBasket">
+ INSERT INTO basket (
+    basket_id,
+    id,
+    pro_id,
+    count,
+    state,
+    price,
+    delivery_charge
+) VALUES (
+    (SELECT NVL(MAX(basket_id), 0) + 1 FROM basket),
+    #{id},
+    #{pro_id},
+    #{count},
+    1,
+    #{price},
+    0
+)
+ </insert>
+ 
+ <select id="getBasketModal">
+    SELECT 
+    P.pro_id,
+    P.name,
+    P.ing_id,
+    P.price,
+    P.img,
+    B.total_count,
+    B.total_items,
+    B.total_price
+FROM
+    (SELECT 
+        P.pro_id,
+        P.name,   
+        P.ing_id,
+        P.price,
+        I.img
+     FROM 
+        product P
+     LEFT JOIN 
+        IMGS I ON P.pro_id = I.pro_id
+     WHERE 
+        P.pro_id = #{pro_id}) P,
+    (SELECT
+        COUNT(DISTINCT pro_id) AS total_items,
+        SUM(count) AS total_count,
+        SUM(price * count) AS total_price
+     FROM
+        basket
+     WHERE
+        id = #{id}) B
+ </select>
+  <select id="getSimilarList">
+  	  SELECT
+    P.pro_id,
+    P.name,
+    P.ing_id,
+    P.price,
+    I.img,
+    ROUND(AVG(R.rating), 2) AS average_rating
+FROM
+    product P
+JOIN 
+    IMGS I ON P.pro_id = I.pro_id
+LEFT JOIN 
+    review R ON P.pro_id = R.pro_id
+WHERE 
+    P.ing_id = #{ing_id} AND P.pro_id != #{pro_id}
+GROUP BY 
+    P.pro_id, P.name, P.ing_id, P.price, I.img
+  
+  </select>
+  <select id="getCombineList">
+  SELECT
+    P.pro_id,
+    P.name,
+    P.ing_id,
+    P.price,
+    I.img,
+    ROUND(AVG(R.rating), 2) AS average_rating
+FROM
+    product P
+JOIN 
+    IMGS I ON P.pro_id = I.pro_id
+LEFT JOIN 
+    review R ON P.pro_id = R.pro_id
+WHERE 
+    P.ing_id !=#{ing_id} AND P.pro_id != #{pro_id}
+GROUP BY 
+    P.pro_id, P.name, P.ing_id, P.price, I.img
+  
+  
+  </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

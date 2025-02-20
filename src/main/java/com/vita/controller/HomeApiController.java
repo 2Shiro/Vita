@@ -38,6 +38,7 @@ public class HomeApiController {
             // nutrient 리스트가 비어 있으면 기본값 "비타민A" 설정
             if (nutrients.isEmpty()) {
                 nutrients.add("비타민A");
+          
             }
             product.setNutrient(nutrients.toArray(new String[0]));
             
@@ -48,11 +49,15 @@ public class HomeApiController {
             
             //별점 계산 나누기 2한거
             if (product.getAverage_rating() == null) {
-                product.setAverage_rating(0L);
+                product.setAverage_rating(0.0);
                 product.setString_average_arting("3.0");
             } else {
-            	  double avgRating = (product.getAverage_rating() / 2.0) / 10.0;
-                  
+            	  double avgRating = product.getAverage_rating();
+            	  System.out.println(avgRating);
+            	  System.out.println(avgRating);
+            	  System.out.println(avgRating);
+            	  System.out.println(avgRating);
+            	  System.out.println(avgRating);
                   product.setString_average_arting(String.format("%.2f", avgRating));
             }
         }
@@ -60,7 +65,7 @@ public class HomeApiController {
         for (AllProductsDto allProducts : productsDto) {
             System.out.println(allProducts);
         }
-
+ 
         return ResponseEntity.ok(productsDto);
     }
 	

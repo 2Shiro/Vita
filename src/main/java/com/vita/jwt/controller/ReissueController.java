@@ -65,10 +65,10 @@ public class ReissueController {
         String role = jwtUtil.getRole(refresh);
         Long userId = jwtUtil.getUserId(refresh);
         String name = jwtUtil.getName(refresh);
-        
+        String oauth = jwtUtil.getOauth(refresh);
         System.out.println("밑에 까지 내려옴 reisue");
         //make new JWT
-        String newAccess = jwtUtil.createJwt("access", username, role, 600000L, userId, name);
+        String newAccess = jwtUtil.createJwt("access", username, role, 600000L, userId, name, oauth);
 
         //response
         response.setHeader("access", newAccess);

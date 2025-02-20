@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vita.admin.mapper.AdminMapper">
+	<select id="LadminLogin">
+    SELECT
+        ADMIN_ID,
+        NAME,
+        ID,
+        PASSWORD
+    FROM ADMIN
+    WHERE
+        ID = #{arg0}
+        AND
+        PASSWORD = #{arg1}
+	</select>
+	
+	<select id="LgetadminList">
+	SELECT
+		ADMIN_ID,
+		NAME,
+		ID,
+		PASSWORD
+    FROM ADMIN
+	</select>
+	
+<select id="LgetproductList">
+	SELECT
+	    P.PRO_ID,
+	    P.NAME,
+	    M.NAME AS MAKE_NAME,
+	    I.NAME AS ING_NAME,
+	    P.URL,
+	    F.TYPE AS TYPE,
+	    P.EXPLAIN,
+	    P.CAUTION,
+	    P.PRICE,
+	    NVL(S1.COUNT, 0) + NVL(S0.COUNT, 0) AS COUNT,
+	    A.NAME AS ADMIN_NAME
+	FROM PRODUCT P
+	JOIN (SELECT PRO_ID, SUM(COUNT) AS COUNT 
+	      FROM STOCK 
+	      WHERE STATE = 0 
+	      GROUP BY PRO_ID) S0 ON P.PRO_ID = S0.PRO_ID
+	JOIN (SELECT PRO_ID, ADMIN_ID, SUM(COUNT) AS COUNT 
+	      FROM STOCK 
+	      WHERE STATE = 1 
+	      GROUP BY PRO_ID, ADMIN_ID) S1 ON P.PRO_ID = S1.PRO_ID
+	JOIN MAKE M ON P.MAKE_ID = M.MAKE_ID
+	JOIN INGREDIENT I ON P.ING_ID = I.ING_ID
+	JOIN FORM F ON P.FORM_ID = F.FORM_ID
+	JOIN ADMIN A ON S1.ADMIN_ID = A.ADMIN_ID
+	ORDER BY P.PRO_ID
+
+</select>
+
+
+
+	<select id="LgetadminId" resultType="Integer">
+		SELECT MAX(ADMIN_ID) + 1 AS ADMIN_ID
+		FROM ADMIN
+	</select>
+	
+		
+	<insert id="LinsertAdmin">
+	    INSERT INTO ADMIN (
+	        ADMIN_ID,
+	        NAME,
+	        ID,
+	        PASSWORD
+	    )
+	    VALUES (
+	        #{admin_id},
+	        #{name},
+	        #{id},
+	        #{password}
+	    )
+	</insert>
+
+	<select id="LgetadminListmodal">
+    SELECT
+        ADMIN_ID,
+        NAME,
+        ID,
+        PASSWORD
+    FROM ADMIN
+    WHERE ADMIN_ID = #{admin_id}
+	</select>
+	
+	<select id="LgetProId">
+		SELECT MAX(PRO_ID) + 1 AS PRO_ID
+		FROM PRODUCT
+	</select>
+	
+<insert id="insertProduct">
+    INSERT INTO PRODUCT (
+        PRO_ID,
+        NAME,
+        MAKE_ID,
+        ING_ID,
+        URL,
+        FORM_ID,
+        EXPLAIN,
+        CAUTION,
+        PRICE
+    ) VALUES (
+        #{pro_id},
+        #{name},
+        #{make_id},
+        #{ing_id},
+        #{url},
+        #{form_id},
+        #{explain},
+        #{caution},
+        #{price}
+    )
+</insert>
+
+<insert id="insertStock">
+    INSERT INTO STOCK (
+        STOCK_ID,
+        PRO_ID,
+        ADMIN_ID,
+        COUNT,
+        STATE
+    ) 
+    VALUES (
+        (SELECT COALESCE(MAX(STOCK_ID), 0) + 1 FROM STOCK),
+        #{pro_id},
+        #{admin_id},
+        #{count},
+        #{state}
+    )
+</insert>
+
+<insert id="insertImgs">
+    INSERT INTO IMGS (
+        IMG_ID,
+        PRO_ID,
+        IMG
+    ) VALUES (
+        (SELECT COALESCE(MAX(IMG_ID), 0) + 1 FROM IMGS),
+        #{pro_id},
+        #{img}
+    )
+</insert>
+
+
+
+	<select id="LgetUserList">
+		SELECT
+		    ID,
+		    COALESCE(EMAIL, OAUTH_EMAIL) AS EMAIL,
+		    NAME,
+		    PASSWORD,
+		    SEX,
+		    BIRTH
+		FROM USERS
+	</select>
+	
+	<delete id="deleteById">
+	DELETE  
+    FROM USERS
+    WHERE ID = #{id}
+	</delete>
+	
+	<select id="getProductById">
+	SELECT 
+		P.PRO_ID,
+		P.NAME,
+		M.MAKE_ID,
+        IMG.IMG_ID,
+		I.ING_ID,
+		P.URL,
+		F.FORM_ID,
+		P.EXPLAIN,
+		P.CAUTION,
+		P.PRICE,
+		S.STOCK_ID
+	FROM PRODUCT P
+	JOIN STOCK S ON P.PRO_ID = S.PRO_ID
+    JOIN MAKE M ON P.MAKE_ID = M.MAKE_ID
+    JOIN INGREDIENT I ON P.ING_ID = I.ING_ID
+    JOIN FORM F ON P.FORM_ID = F.FORM_ID
+    JOIN IMGS IMG ON P.PRO_ID = IMG.PRO_ID
+	WHERE P.PRO_ID = #{pro_id}
+	</select>
+	
+	<update id="updateAdminDetails">
+	 UPDATE ADMIN
+	 SET NAME = #{arg1},
+	     ID = #{arg2},
+	     PASSWORD = #{arg3}
+	 WHERE ADMIN_ID = #{arg0}
+	</update>
+	
+	
+	<delete id="deleteAdmin">
+	DELETE  
+    FROM ADMIN
+    WHERE ADMIN_ID = #{admin_id}
+	</delete>
+	
+	<select id="getAllUsers">
+	 SELECT
+     	COUNT(ID)
+     FROM USERS
+	</select>
+	<select id="LgetMakeList">
+	SELECT
+		MAKE_ID,
+		NAME,
+		TEL,
+		ZIPCODE,
+		ADDRESS,
+		ADDRESSDETAIL
+	FROM MAKE
+	</select>
+	<insert id="LinsertMake">
+	 INSERT INTO MAKE (
+		MAKE_ID,
+		NAME,
+		TEL,
+		ZIPCODE,
+		ADDRESS,
+		ADDRESSDETAIL
+    ) VALUES (
+        (SELECT COALESCE(MAX(MAKE_ID), 0) + 1 FROM MAKE),
+        #{name},
+        #{tel},
+        #{zipcode},
+        #{address},
+        #{addressdetail}
+    )
+	</insert>
+	<select id="LgetingList">
+	SELECT
+		ING_ID,
+		NAME
+	FROM INGREDIENT
+	</select>
+		<insert id="LinsertIng">
+	 INSERT INTO INGREDIENT (
+		ING_ID,
+		NAME
+
+    ) VALUES (
+        (SELECT COALESCE(MAX(ING_ID), 0) + 1 FROM INGREDIENT),
+        #{name}
+    )
+	</insert>
+	
+	<select id="LgetFormList">
+	SELECT
+		FORM_ID,
+		TYPE
+	FROM FORM
+	</select>
+	
+	<insert id="LinsertForm">
+	INSERT INTO FORM (
+		FORM_ID,
+		TYPE
+		)
+	VALUES (
+        (SELECT COALESCE(MAX(FORM_ID), 0) + 1 FROM FORM),
+        #{type}
+    )
+	</insert>
+	<select id="LgetNutrientList">
+	SELECT
+        N.NUT_ID,
+        P.NAME AS PRO_NAME,
+        I.NAME AS ING_NAME,
+        CAPACITY
+    FROM NUTRIENT N 
+    JOIN PRODUCT P ON N.PRO_ID = P.PRO_ID
+    JOIN INGREDIENT I ON N.ING_ID = I.ING_ID
+	
+	</select>
+	<insert id="LinsertNut">
+	INSERT INTO NUTRIENT (
+		NUT_ID, 
+		PRO_ID, 
+		ING_ID, 
+		CAPACITY
+		)
+	VALUES (
+        (SELECT COALESCE(MAX(NUT_ID), 0) + 1 FROM NUTRIENT),
+        #{pro_id},
+        #{ing_id},
+        #{capacity}
+    )
+	</insert>
+	<select id="LgetMakeListmodal">
+   SELECT
+        MAKE_ID,
+        NAME,
+        TEL,
+        ZIPCODE,
+        ADDRESS,
+        ADDRESSDETAIL
+    FROM MAKE
+    WHERE MAKE_ID = #{make_id}
+	</select>
+	
+		<update id="updateMakeDetails">
+	 UPDATE MAKE
+	 SET NAME = #{arg1},
+	     TEL = #{arg2},
+	     ZIPCODE = #{arg3},
+	     ADDRESS = #{arg4},
+	     ADDRESSDETAIL = #{arg5}
+	 WHERE MAKE_ID = #{arg0}
+	</update>
+	
+	
+	<delete id="deleteMake">
+	DELETE  
+    FROM MAKE
+    WHERE MAKE_ID = #{make_id}
+	</delete>
+	
+	<select id="LgetIngListmodal">
+	SELECT	
+		ING_ID,
+		NAME
+	FROM INGREDIENT
+	WHERE ING_ID = #{ing_id}
+	</select>
+	
+	<update id="updateIngDetails">
+	UPDATE INGREDIENT
+	 SET NAME = #{arg1},
+	 WHERE MAKE_ID = #{arg0}
+	</update>
+	
+	<select id="LgetProdModalMakeList">
+	SELECT 
+		MAKE_ID,
+		NAME,
+		TEL
+	FROM MAKE
+	</select>
+	
+	<select id="getTotalAmount">
+	SELECT 
+	    SUM(P.PRICE + NVL(S.COUNT, 0)) AS PRICE
+	FROM 
+	    PRODUCT P
+	LEFT JOIN (
+	    SELECT 
+	        PRO_ID,
+	        ABS(COUNT) COUNT
+	    FROM 
+	        STOCK
+	    WHERE 
+	        STATE = 0
+	        AND ADDITIONAL BETWEEN TRUNC(SYSDATE, 'MM') AND LAST_DAY(SYSDATE)
+	) S ON P.PRO_ID = S.PRO_ID
+	</select>
+	
+	<select id="LgetStockList">
+	SELECT
+	    S.STOCK_ID,
+	    CASE 
+	        WHEN LENGTH(P.NAME) > 70 THEN SUBSTR(P.NAME, 1, 70) || '...'
+	        ELSE P.NAME
+	    END AS PRO_NAME,
+	    A.NAME AS ADMIN_NAME,
+	    ABS(S.COUNT) AS COUNT,
+	    TO_CHAR(S.ADDITIONAL, 'YYYY-MM-DD') AS ADDITIONAL
+	FROM STOCK S
+	JOIN ADMIN A ON S.ADMIN_ID = A.ADMIN_ID
+	JOIN PRODUCT P ON S.PRO_ID = P.PRO_ID
+	WHERE S.STATE = 0
+	ORDER BY S.STOCK_ID DESC
+	</select>
+	
+	<select id="LgetMonthbutton">
+	SELECT
+	    S.STOCK_ID,
+	    CASE 
+	        WHEN LENGTH(P.NAME) > 70 THEN SUBSTR(P.NAME, 1, 70) || '...'
+	        ELSE P.NAME
+	    END AS PRO_NAME,
+	    A.NAME AS ADMIN_NAME,
+	    ABS(S.COUNT) AS COUNT,
+	    TO_CHAR(S.ADDITIONAL, 'YYYY-MM-DD') AS ADDITIONAL
+	FROM STOCK S
+	JOIN ADMIN A ON S.ADMIN_ID = A.ADMIN_ID
+	JOIN PRODUCT P ON S.PRO_ID = P.PRO_ID
+	WHERE S.STATE = 0
+	AND S.ADDITIONAL BETWEEN TRUNC(SYSDATE, 'MM') AND LAST_DAY(SYSDATE)
+	ORDER BY S.STOCK_ID DESC
+	
+	</select>
+	<select id="LgetWeekbutton">
+	SELECT
+	    S.STOCK_ID,
+	    CASE 
+	        WHEN LENGTH(P.NAME) > 70 THEN SUBSTR(P.NAME, 1, 70) || '...'
+	        ELSE P.NAME
+	    END AS PRO_NAME,
+	    A.NAME AS ADMIN_NAME,
+	    ABS(S.COUNT) AS COUNT,
+	    TO_CHAR(S.ADDITIONAL, 'YYYY-MM-DD') AS ADDITIONAL
+	FROM STOCK S
+	JOIN ADMIN A ON S.ADMIN_ID = A.ADMIN_ID
+	JOIN PRODUCT P ON S.PRO_ID = P.PRO_ID
+	WHERE S.STATE = 0
+	AND S.ADDITIONAL BETWEEN TRUNC(SYSDATE) - 7 AND TRUNC(SYSDATE) + 7
+	ORDER BY S.STOCK_ID DESC
+	
+	</select>
+	<select id="LgetDailybutton">
+	SELECT
+	    S.STOCK_ID,
+	    CASE 
+	        WHEN LENGTH(P.NAME) > 70 THEN SUBSTR(P.NAME, 1, 70) || '...'
+	        ELSE P.NAME
+	    END AS PRO_NAME,
+	    A.NAME AS ADMIN_NAME,
+	    ABS(S.COUNT) AS COUNT,
+	    TO_CHAR(S.ADDITIONAL, 'YYYY-MM-DD') AS ADDITIONAL
+	FROM STOCK S
+	JOIN ADMIN A ON S.ADMIN_ID = A.ADMIN_ID
+	JOIN PRODUCT P ON S.PRO_ID = P.PRO_ID
+	WHERE S.STATE = 0
+	AND TRUNC(S.ADDITIONAL) = TRUNC(SYSDATE)
+	ORDER BY S.STOCK_ID DESC
+	</select>
+	
+	<select id="LgetinquiryList">
+	SELECT
+		I.INQUIRY_ID,
+		U.NAME AS NAME,
+		I.TITLE,
+		I.CONTENT,
+		TO_CHAR(I.CREATED, 'YYYY-MM-DD') AS CREATED
+	FROM INQUIRY I
+	JOIN USERS U ON I.ID = U.ID
+	
+	</select>
+	<select id="LcgetReportList">
+	SELECT 
+		R.REPORT_ID,
+		R.POST_ID,
+		P.TITLE AS TITLE,
+		COALESCE(U.EMAIL, U.OAUTH_EMAIL) AS EMAIL,
+		R.REASON,
+		R.CREATED
+	FROM REPORT R
+	JOIN USERS U ON R.ID = U.ID	
+	JOIN POST P ON R.POST_ID = P.POST_ID
+	</select>
+	<select id="LgetReportList">
+	SELECT
+	    P.POST_ID,
+	    P.TITLE,
+	    COALESCE(U.EMAIL, U.OAUTH_EMAIL) AS EMAIL
+	FROM POST P
+	JOIN (
+	    SELECT POST_ID
+	    FROM REPORT
+	    GROUP BY POST_ID
+	    HAVING COUNT(REPORT_ID) >= 5
+	) R ON P.POST_ID = R.POST_ID
+	JOIN USERS U ON P.ID = U.ID
+	</select>
+	
+	<select id="LgetallButtonReportList">
+	SELECT
+		R.REPORT_ID,
+		p.POST_ID,
+		P.TITLE,
+		COALESCE(U.EMAIL, U.OAUTH_EMAIL) AS EMAIL,
+		R.REASON,
+		R.CREATED
+	FROM REPORT R
+    JOIN POST P ON R.POST_ID = P.POST_ID
+    JOIN USERS U ON R.ID = U.ID
+	</select>
+	
+	<select id="LgetBenList">
+	SELECT
+        B.BEN_ID,
+        COALESCE(U.EMAIL, U.OAUTH_EMAIL) AS EMAIL,
+        B.REASON,
+        B.CREATED,
+        B.DISMISS
+    FROM BEN B
+    JOIN USERS U ON B.ID = U.ID
+	
+	</select>
+	<select id="LgetmodalproductList">
+	SELECT
+	    P.PRO_ID,
+	    P.NAME,
+	    M.NAME AS MAKE_NAME,
+	    I.NAME AS ING_NAME,
+	    P.URL,
+	    F.TYPE AS TYPE,
+	    P.EXPLAIN,
+	    P.CAUTION,
+	    P.PRICE,
+	    NVL(S1.COUNT, 0) + NVL(S0.COUNT, 0) AS COUNT,
+	    A.NAME AS ADMIN_NAME
+	FROM PRODUCT P
+	JOIN (SELECT PRO_ID, SUM(COUNT) AS COUNT 
+	      FROM STOCK 
+	      WHERE STATE = 0 
+	      GROUP BY PRO_ID) S0 ON P.PRO_ID = S0.PRO_ID
+	JOIN (SELECT PRO_ID, ADMIN_ID, SUM(COUNT) AS COUNT 
+	      FROM STOCK 
+	      WHERE STATE = 1 
+	      GROUP BY PRO_ID, ADMIN_ID) S1 ON P.PRO_ID = S1.PRO_ID
+	JOIN MAKE M ON P.MAKE_ID = M.MAKE_ID
+	JOIN INGREDIENT I ON P.ING_ID = I.ING_ID
+	JOIN FORM F ON P.FORM_ID = F.FORM_ID
+	JOIN ADMIN A ON S1.ADMIN_ID = A.ADMIN_ID
+	WHERE P.PRO_ID = #{pro_id}
+	</select>
+	<update id="updateProdModal">
+	UPDATE PRODUCT
+	SET
+	    PRO_ID = #{pro_id},
+	    NAME = #{name},
+	    MAKE_ID = (SELECT MAKE_ID FROM MAKE WHERE NAME = #{make_name}),
+	    ING_ID = (SELECT ING_ID FROM INGREDIENT WHERE NAME = #{ing_name}),
+	    URL = #{url},
+	    FORM_ID = (SELECT FORM_ID FROM FORM WHERE TYPE = #{type}),
+	    EXPLAIN = #{explain},
+	    CAUTION = #{caution},
+	    PRICE = #{price}
+	WHERE PRO_ID = #{pro_id}
+	</update>
+
+
+	<insert id="insertProMoadl">
+	    INSERT INTO STOCK (
+	        STOCK_ID,
+	        PRO_ID,
+	        ADMIN_ID,
+	        COUNT,
+	        STATE,
+	        ADDITIONAL
+	    ) VALUES (
+	        (SELECT COALESCE(MAX(STOCK_ID), 0) + 1 FROM STOCK),
+	        #{pro_id},
+	        (SELECT ADMIN_ID FROM ADMIN WHERE NAME = #{admin_name}),
+	    CASE
+	        WHEN (SELECT SUM(COUNT) FROM STOCK WHERE STATE = 1 AND PRO_ID = #{pro_id}) + (SELECT SUM(COUNT) FROM STOCK WHERE STATE = 0 AND PRO_ID = #{pro_id}) + #{count} > 0 THEN #{count} - ((SELECT SUM(COUNT) FROM STOCK WHERE STATE = 1 AND PRO_ID = #{pro_id}) + (SELECT SUM(COUNT) FROM STOCK WHERE STATE = 0 AND PRO_ID = #{pro_id}))
+	        
+	        ELSE #{count} + ((SELECT SUM(COUNT) FROM STOCK WHERE STATE = 1 AND PRO_ID = #{pro_id}) + (SELECT SUM(COUNT) FROM STOCK WHERE STATE = 0 AND PRO_ID = #{pro_id}))
+	    END,
+	    CASE
+	        WHEN (SELECT SUM(COUNT) FROM STOCK WHERE STATE = 0 AND PRO_ID = #{pro_id}) - (SELECT SUM(COUNT) FROM STOCK WHERE STATE = 1 AND PRO_ID = #{pro_id}) + #{count} > 0 THEN 1
+	        ELSE 0
+	    END,
+	    SYSDATE
+	) 
+	</insert>
+	
+
+</mapper>

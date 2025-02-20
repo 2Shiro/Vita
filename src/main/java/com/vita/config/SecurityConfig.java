@@ -34,18 +34,18 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenService refreshTokenService;
-    private final TokenRotate tokenRotate;
+   
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler,
                           JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService,
-                          AuthenticationConfiguration authenticationConfiguration, RefreshTokenService refreshTokenService, TokenRotate tokenRotate) {
+                          AuthenticationConfiguration authenticationConfiguration, RefreshTokenService refreshTokenService) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.jwtUtil = jwtUtil;
         this.customUserDetailsService = customUserDetailsService;
         this.authenticationConfiguration = authenticationConfiguration;
         this.refreshTokenService = refreshTokenService;
-        this.tokenRotate = tokenRotate;
+        
         
     }
 
@@ -59,23 +59,20 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers("/")
-                .requestMatchers("/login")
-                .requestMatchers("/redirectHome")
-                .requestMatchers("/css/**")
+        		.requestMatchers("/css/**")
                 .requestMatchers("/js/**")
                 .requestMatchers("/img/**")
-                .requestMatchers("/images/**")
+                .requestMatchers("/board/**") 
+                .requestMatchers("/")
+                .requestMatchers("/login")                              
                 .requestMatchers("/WEB-INF/**")
-                .requestMatchers("/token/retoken")
-                .requestMatchers("token/loginsuccess")
-                .requestMatchers("/token/loginsuccess")
                 .requestMatchers("/loginsuccess")
                 .requestMatchers("/favicon.ico")
                 .requestMatchers("/login/WriteForm")
                 .requestMatchers("/login/write")
-                .requestMatchers("/reissue")
-                .requestMatchers("/welcome");
+                .requestMatchers("/reissue");
+                
+
     }
 
     @Bean
@@ -90,7 +87,7 @@ public class SecurityConfig {
         http.httpBasic((auth) -> auth.disable());
 
         // JWTFilter 추가
-        http.addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService, tokenRotate), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         // oauth2
         http.oauth2Login((oauth2) -> oauth2
@@ -101,9 +98,12 @@ public class SecurityConfig {
 
         // 경로별 인가 작업
         http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/css/**", "/js/**", "/img/**","/board/**").permitAll()
                 .requestMatchers("/", "/home.jsp", "/home").permitAll()
                 .requestMatchers("/reissue").permitAll()
                 .requestMatchers("/ffdd").permitAll()
+                .requestMatchers("/home/allproducts").permitAll()      
+                
                 .anyRequest().authenticated()
         );
 

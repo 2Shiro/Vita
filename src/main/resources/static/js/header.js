@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+	console.log("헤더js 실행됨");
       var header = document.querySelector('#header');
       var menuItems = document.querySelectorAll('#gnb > ul > li');
       var overlay = document.querySelector('.gnb-overlay-bg');
@@ -35,4 +36,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
         lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
       });
+      
+       const token = getCookie('access');
+       console.log(token);
+       console.log(token);
+       console.log(token);
+	    
+	     if (token) {
+	        const memberList = document.getElementById('header-member-list');
+	        memberList.innerHTML = `
+	            <li><a href="#" id="logout">Logout</a></li>
+	        `;
+
+	        document.getElementById('logout').addEventListener('click', function(event) {
+	            event.preventDefault();
+	            logout(token);
+	        });
+	    } 
+	    
+	    
     });
+    
+    function logout() {
+    console.log("패치 실행됨");
+    fetch('/logout', {
+        method: 'POST'
+    })
+    .then(response => {
+        if (response.ok) {
+            // 쿠키 삭제
+          
+            location.reload();
+        } else {
+            alert('Logout failed!');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function getCookie(name) {
+	    let cookieArr = document.cookie.split(";");
+	    for (let i = 0; i < cookieArr.length; i++) {
+	        let cookiePair = cookieArr[i].split("=");
+	        if (name === cookiePair[0].trim()) {
+	            return decodeURIComponent(cookiePair[1]);
+	        }
+	    }
+	    return null;
+	}

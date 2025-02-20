@@ -1,5 +1,5 @@
 html {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   body {
@@ -7,6 +7,9 @@ html {
     font-family: 'Pretendard-Regular', sans-serif;
 
   }
+   * {
+            font-size: 1em; /* 모든 태그에 대해 상위 태그의 폰트 크기를 상속받도록 설정 */
+        }
 
   :root {
     --board-main-color: var(--main-color);
@@ -33,7 +36,7 @@ html {
   }
 
   #wrap {
-    overflow: hidden;
+    
     width: 100%;
     min-width: 320px;
     position: relative;
@@ -55,7 +58,7 @@ html {
     top: var(--header-top);
     left: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 100;
   }
 
   #header.top-fixed {
@@ -215,7 +218,7 @@ html {
     visibility: hidden;
     opacity: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 9997;
+    z-index: 100;
     transition: var(--transition-custom);
   }
 

@@ -18,9 +18,11 @@ public class AllProductsDto {
 	int price;
 	String img;
 	Integer total_sell;
-	Long average_rating;
+	Double average_rating;
+	Integer wish_id;
+    Long basket_id;
 	
-	
+	String string_price;
 	String string_average_arting;
 	String[] nutrient;
 	int rating;

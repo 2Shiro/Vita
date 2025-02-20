@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vita.login.mapper.LoginMapper">  
   
-    <select   id="findByUsername">
+    <select   id="findByCommonUsername">
 		  SELECT
 		    ID,
 		    EMAIL,
@@ -15,7 +15,7 @@
 		    OAUTH_EMAIL
 		FROM
 		    users
-		where email = #{email}
+		where EMAIL = #{email}
      </select>
      <select id="findOAuthEmail">
     
@@ -74,8 +74,8 @@
     defualt
 )
 VALUES (
+    (SELECT NVL(MAX(address_id), 0) + 1 FROM delivery),
     #{id},
-    (SELECT NVL(MAX(id), 0) + 1 FROM delivery),
     '기본배송지',
     #{name},
     #{tel},
@@ -84,7 +84,7 @@ VALUES (
     #{addressdetail},
     '없음',
     1
-);
+)
      
      </insert>
 </mapper>

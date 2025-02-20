@@ -24,13 +24,7 @@ public class LoginController {
 	@Autowired
 	private SignUpService signUpService;
 
-	@GetMapping("/token/loginsuccess")
-    public String loginSuccessb(@RequestParam("access") String accessToken, Model model) {
-        // 액세스 토큰을 모델에 추가하여 뷰에서 사용할 수 있도록 합니다.
-		System.out.println("로그인success컨트롤러가 실행됨");
-        model.addAttribute("accessToken", accessToken);
-        return "token/loginsuccess"; // loginsuccess.jsp로 포워드
-    }
+	
 	
 	@GetMapping("/")
 	public String gLogin() {
@@ -100,25 +94,9 @@ public class LoginController {
 		return "mypage/view";
 		
 	}
-	@GetMapping("/redirectHome")
-	public String redirectHome2(HttpServletRequest request) {
-		  String accessToken = request.getHeader("access"); 
-		  System.out.println("컨트롤러에서 accessToken 값이 오나 ? : " + accessToken);
-		  
-		
-		return "로그인옴";
-	}
 	
-	@GetMapping("/welcome")
-    public String welcomePage(@RequestParam("access") String access, HttpServletResponse response) {
-		
-	    System.out.println("웰컴으로오나?");
-	    System.out.println("access 값이 오나?:" + access);
-        // access 토큰을 받아서 사용
-        response.setHeader("access", access);
-
-        return "home"; // welcome.jsp로 포워딩
-    }
+	
+	
 	
 	@GetMapping("/token/addtoken")
     public String addtoken(@RequestHeader("access") String access,HttpServletResponse response) {
